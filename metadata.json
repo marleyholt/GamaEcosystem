@@ -1,0 +1,6 @@
+{
+  "name": "GamaEcosystem - Health Deglut",
+  "description": "Sistema avançado de gestão clínica em Fonoaudiologia, disfagia, triagem RaDI, registros alimentares com fotos, relatórios com marca d'água e conformidade LGPD.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

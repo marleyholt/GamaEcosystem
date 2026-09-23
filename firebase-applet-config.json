@@ -1,0 +1,12 @@
+{
+  "projectId": "finlhub",
+  "appId": "1:80100152503:web:d69e5f7492038ba4e0a932",
+  "apiKey": "AIzaSyAWsiRWFynuzmmVWtijPPugnZiA27Kus5I",
+  "authDomain": "finlhub.firebaseapp.com",
+  "firestoreDatabaseId": "ai-studio-813d244f-885b-453c-bf46-1e79ac7fe497",
+  "storageBucket": "finlhub.firebasestorage.app",
+  "messagingSenderId": "80100152503",
+  "measurementId": "",
+  "oAuthClientId": "80100152503-o4al8geedo0jhm8hfjq5h36it3e3muve.apps.googleusercontent.com",
+  "recaptchaSiteKey": ""
+}

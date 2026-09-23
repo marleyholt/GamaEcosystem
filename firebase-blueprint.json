@@ -1,0 +1,137 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile with role-based access for speech therapists, caregivers, and admins.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "email": { "type": "string", "maxLength": 256 },
+        "name": { "type": "string", "maxLength": 150 },
+        "role": { "type": "string", "enum": ["fonoaudiologo", "cuidador", "admin"] },
+        "approved": { "type": "boolean" },
+        "crfaNumber": { "type": "string", "maxLength": 50 },
+        "createdAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["id", "email", "name", "role", "approved"]
+    },
+    "Patient": {
+      "title": "Patient",
+      "description": "Clinical patient profile under speech therapy / swallowing care.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 200 },
+        "cpf": { "type": "string", "maxLength": 20 },
+        "birthDate": { "type": "string", "maxLength": 20 },
+        "phone": { "type": "string", "maxLength": 30 },
+        "email": { "type": "string", "maxLength": 256 },
+        "address": { "type": "string", "maxLength": 300 },
+        "diagnosis": { "type": "string", "maxLength": 300 },
+        "medicalHistory": { "type": "string", "maxLength": 2000 },
+        "currentMedications": { "type": "string", "maxLength": 2000 },
+        "guardianName": { "type": "string", "maxLength": 200 },
+        "guardianPhone": { "type": "string", "maxLength": 30 },
+        "guardianEmail": { "type": "string", "maxLength": 256 },
+        "fonoaudiologistId": { "type": "string", "maxLength": 128 },
+        "caregiverId": { "type": "string", "maxLength": 128 },
+        "status": { "type": "string", "enum": ["ativo", "inativo", "alta"] },
+        "createdAt": { "type": "string", "maxLength": 64 },
+        "updatedAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["id", "name", "diagnosis", "status"]
+    },
+    "RadiAssessment": {
+      "title": "RadiAssessment",
+      "description": "Rastreio e Triagem de Risco para Disfagia (RaDI) with 9 standard questions and clinical score.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "patientId": { "type": "string", "maxLength": 128 },
+        "evaluatorId": { "type": "string", "maxLength": 128 },
+        "evaluatorName": { "type": "string", "maxLength": 150 },
+        "score": { "type": "number" },
+        "riskLevel": { "type": "string", "enum": ["Baixo Risco", "Risco Moderado", "Risco Alto"] },
+        "clinicalRecommendations": { "type": "string", "maxLength": 2000 },
+        "createdAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["id", "patientId", "evaluatorId", "score", "riskLevel"]
+    },
+    "DailyFeedingLog": {
+      "title": "DailyFeedingLog",
+      "description": "Daily food consistency, IDDSI liquid levels, symptoms, and meal observations.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "patientId": { "type": "string", "maxLength": 128 },
+        "caregiverId": { "type": "string", "maxLength": 128 },
+        "caregiverName": { "type": "string", "maxLength": 150 },
+        "date": { "type": "string", "maxLength": 30 },
+        "foodConsistency": { "type": "string", "maxLength": 100 },
+        "foodConsistencyLevel": { "type": "number" },
+        "liquidConsistency": { "type": "string", "maxLength": 100 },
+        "liquidConsistencyLevel": { "type": "number" },
+        "liquidBrandDose": { "type": "string", "maxLength": 300 },
+        "observations": { "type": "string", "maxLength": 2000 },
+        "createdAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["id", "patientId", "date"]
+    },
+    "ClinicalPhoto": {
+      "title": "ClinicalPhoto",
+      "description": "Meal photos captured by caregivers or therapists.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "patientId": { "type": "string", "maxLength": 128 },
+        "mealType": { "type": "string", "enum": ["café", "lanche1", "almoço", "lanche2", "jantar", "ceia", "suco"] },
+        "photoUrl": { "type": "string", "maxLength": 5000000 },
+        "date": { "type": "string", "maxLength": 30 },
+        "notes": { "type": "string", "maxLength": 500 },
+        "uploadedAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["id", "patientId", "mealType", "photoUrl", "date"]
+    },
+    "ChatMessage": {
+      "title": "ChatMessage",
+      "description": "Audit-logged interdisciplinary communication per patient.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "patientId": { "type": "string", "maxLength": 128 },
+        "senderId": { "type": "string", "maxLength": 128 },
+        "senderName": { "type": "string", "maxLength": 150 },
+        "senderRole": { "type": "string", "maxLength": 50 },
+        "text": { "type": "string", "maxLength": 2000 },
+        "timestamp": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["id", "patientId", "senderId", "senderName", "text", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "User profiles and credentials"
+    },
+    "/patients/{patientId}": {
+      "schema": { "$ref": "#/entities/Patient" },
+      "description": "Patient records and clinical data"
+    },
+    "/radi_assessments/{assessmentId}": {
+      "schema": { "$ref": "#/entities/RadiAssessment" },
+      "description": "RaDI dysphagia risk triage logs"
+    },
+    "/daily_logs/{logId}": {
+      "schema": { "$ref": "#/entities/DailyFeedingLog" },
+      "description": "Daily meal consistency and dysphagia symptom observations"
+    },
+    "/clinical_photos/{photoId}": {
+      "schema": { "$ref": "#/entities/ClinicalPhoto" },
+      "description": "Clinical meal and consistency photo records"
+    },
+    "/patient_chats/{chatId}": {
+      "schema": { "$ref": "#/entities/ChatMessage" },
+      "description": "Multiprofessional chat messages per patient"
+    }
+  }
+}
