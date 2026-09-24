@@ -123,6 +123,25 @@ export default function App() {
     localStorage.setItem('health_deglut_users_list', JSON.stringify(usersList));
   }, [usersList]);
 
+  // Theme state (Dark mode by default, persisted)
+  const [darkMode, setDarkMode] = useState<boolean>(() => {
+    const saved = localStorage.getItem('health_deglut_theme');
+    return saved !== null ? saved === 'dark' : true;
+  });
+
+  useEffect(() => {
+    localStorage.setItem('health_deglut_theme', darkMode ? 'dark' : 'light');
+    if (darkMode) {
+      document.documentElement.classList.remove('theme-light');
+      document.documentElement.classList.add('theme-dark');
+      document.body.classList.remove('theme-light');
+    } else {
+      document.documentElement.classList.remove('theme-dark');
+      document.documentElement.classList.add('theme-light');
+      document.body.classList.add('theme-light');
+    }
+  }, [darkMode]);
+
   // Handlers
   const handleSaveAssessment = (newAssessment: RadiAssessment) => {
     setAssessments([newAssessment, ...assessments]);
@@ -202,10 +221,12 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-[#181513] text-[#f4efe8] flex flex-col font-sans selection:bg-[#c8a88a] selection:text-[#181513]">
+    <div className={`min-h-screen flex flex-col font-sans transition-colors duration-150 ${darkMode ? 'bg-[#181513] text-[#f4efe8]' : 'bg-[#f7f4ef] text-[#1c1714] theme-light'} selection:bg-[#c8a88a] selection:text-[#181513]`}>
       {/* Top Header */}
       <Header
         user={currentUser}
+        darkMode={darkMode}
+        setDarkMode={setDarkMode}
         onLogout={() => setCurrentUser(null)}
         patientsCount={patients.length}
       />

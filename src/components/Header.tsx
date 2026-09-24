@@ -104,10 +104,21 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Dark / Light Toggle */}
           <button
             onClick={() => setDarkMode && setDarkMode(!darkMode)}
-            className="p-2 rounded-lg bg-[#27211d] hover:bg-[#342b26] text-[#a69a8f] hover:text-[#c8a88a] border border-[#3f342d] transition-colors"
-            title={darkMode ? 'Mudar para tema claro' : 'Mudar para tema escuro'}
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#27211d] hover:bg-[#342b26] text-[#a69a8f] hover:text-[#c8a88a] border border-[#3f342d] transition-all cursor-pointer shadow-sm group"
+            title={darkMode ? 'Mudar para Modo Claro' : 'Mudar para Modo Escuro'}
+            aria-label={darkMode ? 'Mudar para Modo Claro' : 'Mudar para Modo Escuro'}
           >
-            {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            {darkMode ? (
+              <>
+                <Sun className="w-4 h-4 text-amber-400 group-hover:rotate-45 transition-transform" />
+                <span className="text-[11px] font-medium hidden sm:inline text-[#c8a88a]">Claro</span>
+              </>
+            ) : (
+              <>
+                <Moon className="w-4 h-4 text-indigo-600 group-hover:-rotate-12 transition-transform" />
+                <span className="text-[11px] font-medium hidden sm:inline text-[#1c1714]">Escuro</span>
+              </>
+            )}
           </button>
 
           {/* Logout */}

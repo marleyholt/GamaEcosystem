@@ -1,1 +1,92 @@
 @import "tailwindcss";
+
+/* -------------------------------------------------------------
+   LIGHT THEME STYLING OVERRIDES (Clinical Clean Alabaster & Warm Ivory)
+   ------------------------------------------------------------- */
+
+html.theme-light,
+body.theme-light,
+.theme-light {
+  color-scheme: light;
+  background-color: #f7f4ef !important;
+  color: #1c1714 !important;
+}
+
+/* Base Surfaces & Backgrounds */
+.theme-light .bg-\[\#181513\] { background-color: #f7f4ef !important; }
+.theme-light .bg-\[\#1a1614\] { background-color: #ffffff !important; }
+.theme-light .bg-\[\#1c1815\] { background-color: #ffffff !important; }
+.theme-light .bg-\[\#1c1815\]\/95 { background-color: rgba(255, 255, 255, 0.95) !important; }
+.theme-light .bg-\[\#181513\]\/90 { background-color: rgba(247, 244, 239, 0.92) !important; }
+.theme-light .bg-\[\#181513\]\/80 { background-color: rgba(247, 244, 239, 0.85) !important; }
+.theme-light .bg-\[\#181513\]\/60 { background-color: rgba(247, 244, 239, 0.70) !important; }
+.theme-light .bg-\[\#221d1a\] { background-color: #ffffff !important; }
+.theme-light .bg-\[\#221d1a\]\/80 { background-color: rgba(255, 255, 255, 0.9) !important; }
+.theme-light .bg-\[\#221d1a\]\/50 { background-color: rgba(242, 236, 228, 0.6) !important; }
+.theme-light .bg-\[\#27211d\] { background-color: #f1ebd7 !important; }
+.theme-light .bg-\[\#27211d\]\/50 { background-color: rgba(241, 235, 215, 0.5) !important; }
+.theme-light .bg-\[\#2e2621\] { background-color: #ebe4d8 !important; }
+.theme-light .bg-\[\#342b26\] { background-color: #e5ddd0 !important; }
+.theme-light .bg-\[\#3a312c\] { background-color: #e0d7c8 !important; }
+.theme-light .bg-\[\#151210\] { background-color: #f3ede4 !important; }
+.theme-light .bg-\[\#120f0d\] { background-color: #ede5da !important; }
+.theme-light .bg-\[\#0f0c0a\] { background-color: #e7dfd3 !important; }
+
+/* Interactive Hovers */
+.theme-light .hover\:bg-\[\#221d1a\]:hover { background-color: #f4eee6 !important; }
+.theme-light .hover\:bg-\[\#27211d\]:hover { background-color: #ede5d8 !important; }
+.theme-light .hover\:bg-\[\#2c2522\]:hover { background-color: #f3ece3 !important; }
+.theme-light .hover\:bg-\[\#342b26\]:hover { background-color: #e5ddd0 !important; }
+.theme-light .hover\:bg-\[\#3d332d\]:hover { background-color: #dfd6c7 !important; }
+.theme-light .hover\:bg-\[\#2e2621\]:hover { background-color: #e8e0d3 !important; }
+.theme-light .hover\:bg-\[\#251f1b\]:hover { background-color: #f2ebe1 !important; }
+
+/* Borders & Dividers */
+.theme-light .border-\[\#342b26\] { border-color: #e5ddd0 !important; }
+.theme-light .border-\[\#3a312c\] { border-color: #e0d7c8 !important; }
+.theme-light .border-\[\#3f342d\] { border-color: #dcd2c3 !important; }
+.theme-light .border-\[\#483a31\] { border-color: #d5c9b8 !important; }
+.theme-light .border-\[\#5a4a3f\] { border-color: #c9bbab !important; }
+.theme-light .border-\[\#2c2520\] { border-color: #eae3d7 !important; }
+.theme-light .border-\[\#27211d\] { border-color: #ebe3d6 !important; }
+.theme-light .border-\[\#c8a88a\]\/30 { border-color: rgba(162, 115, 71, 0.25) !important; }
+.theme-light .border-\[\#c8a88a\]\/40 { border-color: rgba(162, 115, 71, 0.35) !important; }
+.theme-light .border-\[\#c8a88a\]\/20 { border-color: rgba(162, 115, 71, 0.18) !important; }
+
+/* Typography & Contrast */
+.theme-light .text-\[\#f4efe8\] { color: #1c1714 !important; }
+.theme-light .text-\[\#a69a8f\] { color: #5f5348 !important; }
+.theme-light .text-\[\#c8a88a\] { color: #8e5c30 !important; }
+.theme-light .hover\:text-\[\#f4efe8\]:hover { color: #0d0a09 !important; }
+.theme-light .hover\:text-\[\#c8a88a\]:hover { color: #764821 !important; }
+.theme-light .placeholder-\[\#a69a8f\]::placeholder { color: #8f8275 !important; }
+
+/* Inputs, Textareas & Selects in Light Theme */
+.theme-light input:not([type="checkbox"]):not([type="radio"]),
+.theme-light textarea,
+.theme-light select {
+  background-color: #ffffff !important;
+  border-color: #d8cec0 !important;
+  color: #1c1714 !important;
+}
+
+.theme-light input:focus,
+.theme-light textarea:focus,
+.theme-light select:focus {
+  border-color: #8e5c30 !important;
+  box-shadow: 0 0 0 1px #8e5c30 !important;
+}
+
+/* Modals & Popovers Backdrop */
+.theme-light .fixed.inset-0.bg-black\/70,
+.theme-light .fixed.inset-0.bg-black\/60,
+.theme-light .fixed.inset-0.bg-black\/50 {
+  background-color: rgba(28, 23, 20, 0.5) !important;
+  backdrop-filter: blur(4px);
+}
+
+/* Card Subtle Elevation in Light Theme */
+.theme-light .rounded-xl.border,
+.theme-light .rounded-2xl.border {
+  box-shadow: 0 2px 8px -2px rgba(90, 70, 50, 0.06), 0 1px 3px -1px rgba(90, 70, 50, 0.04);
+}

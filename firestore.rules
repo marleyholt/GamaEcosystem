@@ -39,6 +39,13 @@ service cloud.firestore {
       allow delete: if isSignedIn();
     }
 
+    // Patient Medical Records (PEP)
+    match /patient_medical_records/{recordId} {
+      allow read: if isSignedIn();
+      allow create, update: if isSignedIn();
+      allow delete: if isSignedIn();
+    }
+
     // Clinical Meal Photos
     match /clinical_photos/{photoId} {
       allow read: if isSignedIn();
