@@ -18,7 +18,7 @@ interface ReportData {
 /**
  * Desenha o Papel Timbrado Oficial GAMA Fonoaudiologia
  * Faixa marrom lateral esquerda, cabeçalho institucional e rodapé com WhatsApp, E-mail e Instagram
- * Suporta logomarca personalizada via upload ou monograma oficial g°
+ * Suporta logomarca personalizada via upload ou monograma oficial g° em escala nobre proporcional
  */
 export function drawOfficialGamaLetterhead(
   doc: jsPDF, 
@@ -34,16 +34,15 @@ export function drawOfficialGamaLetterhead(
   doc.setFillColor(122, 89, 55); // #7a5937
   doc.rect(0, 0, 7, pageHeight, 'F');
 
-  // 2. Cabeçalho Oficial GAMA FONOAUDIOLOGIA / Logomarca
-  const logoX = pageWidth - 36;
-  const logoY = 12;
+  // 2. Cabeçalho Oficial GAMA FONOAUDIOLOGIA / Logomarca em Proporção Fiel
+  const logoX = pageWidth - 42;
+  const logoY = 10;
 
   if (config.logoUrl && config.logoUrl.startsWith('data:image')) {
     try {
-      // Adiciona imagem customizada via base64
-      doc.addImage(config.logoUrl, 'PNG', logoX - 4, logoY, 26, 11);
+      // Adiciona imagem customizada proporcional via base64
+      doc.addImage(config.logoUrl, 'PNG', logoX - 4, logoY, 34, 16);
     } catch {
-      // Fallback em caso de erro no decode da imagem
       renderDefaultMonogram(doc, logoX, logoY);
     }
   } else {
@@ -53,7 +52,7 @@ export function drawOfficialGamaLetterhead(
   // Linha separadora do cabeçalho
   doc.setDrawColor(220, 215, 210);
   doc.setLineWidth(0.3);
-  doc.line(14, 26, pageWidth - 12, 26);
+  doc.line(14, 29, pageWidth - 12, 29);
 
   // 3. Rodapé Oficial Mandatório com Contatos Efetivos (Terapeuta ou Clínica RT)
   const footerY = pageHeight - 14;
@@ -92,21 +91,22 @@ export function drawOfficialGamaLetterhead(
 }
 
 function renderDefaultMonogram(doc: jsPDF, logoX: number, logoY: number) {
+  // Monograma nobre ampliado
   doc.setDrawColor(122, 89, 55);
-  doc.setLineWidth(0.6);
-  doc.circle(logoX + 4, logoY + 4, 3.8);
+  doc.setLineWidth(0.8);
+  doc.circle(logoX + 7, logoY + 5, 5);
   doc.setFillColor(122, 89, 55);
-  doc.circle(logoX + 7, logoY + 1.2, 0.9, 'F');
+  doc.circle(logoX + 11.2, logoY + 1.2, 1.3, 'F');
 
-  doc.setTextColor(40, 35, 30);
+  doc.setTextColor(43, 36, 32);
   doc.setFont('times', 'bold');
-  doc.setFontSize(13);
-  doc.text('GAMA', logoX + 4, logoY + 12, { align: 'center' });
+  doc.setFontSize(16);
+  doc.text('GAMA', logoX + 7, logoY + 14, { align: 'center' });
 
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(6);
-  doc.setTextColor(110, 100, 95);
-  doc.text('FONOAUDIOLOGIA', logoX + 4, logoY + 15, { align: 'center' });
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(6.5);
+  doc.setTextColor(122, 89, 55);
+  doc.text('FONOAUDIOLOGIA', logoX + 7, logoY + 17.5, { align: 'center' });
 }
 
 export function generateOfficialReportPDF(data: ReportData) {
@@ -131,31 +131,31 @@ export function generateOfficialReportPDF(data: ReportData) {
   doc.setTextColor(122, 89, 55);
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(13);
-  doc.text('LAUDO CLÍNICO & EVOLUÇÃO FONOAUDIOLÓGICA', 14, 34);
+  doc.text('LAUDO CLÍNICO & EVOLUÇÃO FONOAUDIOLÓGICA', 14, 36);
 
   doc.setFontSize(8);
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(100, 95, 90);
-  doc.text(`Emissão: ${data.reportDate} • Fonoaudióloga: ${profile.name} (${profile.crfa})`, 14, 39);
+  doc.text(`Emissão: ${data.reportDate} • Fonoaudióloga: ${profile.name} (${profile.crfa})`, 14, 41);
 
   // Bloco de Identificação do Paciente
   doc.setFillColor(248, 246, 242);
-  doc.rect(14, 43, pageWidth - 26, 24, 'F');
+  doc.rect(14, 45, pageWidth - 26, 24, 'F');
   doc.setDrawColor(215, 205, 195);
-  doc.rect(14, 43, pageWidth - 26, 24, 'S');
+  doc.rect(14, 45, pageWidth - 26, 24, 'S');
 
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(8.5);
   doc.setTextColor(40, 35, 30);
-  doc.text(`Paciente: ${data.patient.name}`, 17, 49);
+  doc.text(`Paciente: ${data.patient.name}`, 17, 51);
 
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(8);
-  doc.text(`Data de Nascimento: ${data.patient.birthDate} | Sexo: ${data.patient.gender || 'Não informado'}`, 17, 54);
-  doc.text(`Diagnóstico: ${data.patient.mainDiagnosis || data.patient.diagnosis}`, 17, 59);
-  doc.text(`Responsável: ${data.patient.guardianName} • Contato: ${data.patient.phone || data.patient.guardianPhone}`, 17, 64);
+  doc.text(`Data de Nascimento: ${data.patient.birthDate} | Sexo: ${data.patient.gender || 'Não informado'}`, 17, 56);
+  doc.text(`Diagnóstico: ${data.patient.mainDiagnosis || data.patient.diagnosis}`, 17, 61);
+  doc.text(`Responsável: ${data.patient.guardianName} • Contato: ${data.patient.phone || data.patient.guardianPhone}`, 17, 66);
 
-  let y = 74;
+  let y = 76;
 
   // Avaliação de Deglutição (RaDI)
   if (data.assessment) {
