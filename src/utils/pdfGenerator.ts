@@ -1,6 +1,6 @@
 import jsPDF from 'jspdf';
 import { Patient, RadiAssessment, DailyFeedingLog } from '../types';
-import { ClinicConfig, DEFAULT_CLINIC_CONFIG } from '../types/clinicConfig';
+import { ClinicConfig, DEFAULT_CLINIC_CONFIG, Therapist, getEffectiveTherapistProfile } from '../types/clinicConfig';
 
 interface ReportData {
   patient: Patient;
@@ -11,52 +11,51 @@ interface ReportData {
   reportDate: string;
   clinicNotes?: string;
   clinicConfig?: ClinicConfig;
+  therapist?: Therapist | null;
   showSignature?: boolean;
 }
 
 /**
  * Desenha o Papel Timbrado Oficial GAMA Fonoaudiologia
  * Faixa marrom lateral esquerda, cabeçalho institucional e rodapé com WhatsApp, E-mail e Instagram
+ * Suporta logomarca personalizada via upload ou monograma oficial g°
  */
 export function drawOfficialGamaLetterhead(
   doc: jsPDF, 
   config: ClinicConfig = DEFAULT_CLINIC_CONFIG,
+  therapist?: Therapist | null,
   options?: { pageNumber?: number; totalPages?: number; showSignature?: boolean }
 ) {
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
+  const profile = getEffectiveTherapistProfile(therapist, config);
 
   // 1. Faixa Lateral Marrom Esquerda Oficial (#7a5937)
   doc.setFillColor(122, 89, 55); // #7a5937
   doc.rect(0, 0, 7, pageHeight, 'F');
 
-  // 2. Cabeçalho Oficial GAMA FONOAUDIOLOGIA
-  // Monograma estilizado g°
-  const logoX = pageWidth - 32;
-  const logoY = 14;
+  // 2. Cabeçalho Oficial GAMA FONOAUDIOLOGIA / Logomarca
+  const logoX = pageWidth - 36;
+  const logoY = 12;
 
-  doc.setDrawColor(122, 89, 55);
-  doc.setLineWidth(0.6);
-  doc.circle(logoX + 4, logoY + 4, 4);
-  doc.setFillColor(122, 89, 55);
-  doc.circle(logoX + 7.5, logoY + 1, 1, 'F');
-
-  doc.setTextColor(40, 35, 30);
-  doc.setFont('times', 'bold');
-  doc.setFontSize(14);
-  doc.text('GAMA', logoX + 4, logoY + 13, { align: 'center' });
-
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(6.5);
-  doc.setTextColor(110, 100, 95);
-  doc.text('FONOAUDIOLOGIA', logoX + 4, logoY + 16, { align: 'center' });
+  if (config.logoUrl && config.logoUrl.startsWith('data:image')) {
+    try {
+      // Adiciona imagem customizada via base64
+      doc.addImage(config.logoUrl, 'PNG', logoX - 4, logoY, 26, 11);
+    } catch {
+      // Fallback em caso de erro no decode da imagem
+      renderDefaultMonogram(doc, logoX, logoY);
+    }
+  } else {
+    renderDefaultMonogram(doc, logoX, logoY);
+  }
 
   // Linha separadora do cabeçalho
   doc.setDrawColor(220, 215, 210);
   doc.setLineWidth(0.3);
-  doc.line(14, 25, pageWidth - 12, 25);
+  doc.line(14, 26, pageWidth - 12, 26);
 
-  // 3. Rodapé Oficial Mandatório com Contatos Oficiais
+  // 3. Rodapé Oficial Mandatório com Contatos Efetivos (Terapeuta ou Clínica RT)
   const footerY = pageHeight - 14;
   doc.line(14, footerY - 4, pageWidth - 12, footerY - 4);
 
@@ -64,8 +63,7 @@ export function drawOfficialGamaLetterhead(
   doc.setTextColor(80, 75, 70);
   doc.setFont('helvetica', 'normal');
 
-  // Contatos exatos do PDF da cliente
-  const contactText = `(21) 98988-7981   •   gamafono@gamafono.com.br   •   @gama_fonoaudiologia`;
+  const contactText = `${profile.phone}   •   ${profile.email}   •   ${profile.instagram}`;
   doc.text(contactText, 14, footerY);
 
   if (options?.pageNumber) {
@@ -81,16 +79,34 @@ export function drawOfficialGamaLetterhead(
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(8.5);
     doc.setTextColor(30, 30, 30);
-    doc.text(config.technicalResponsible, pageWidth - 14, sigY, { align: 'right' });
+    doc.text(profile.name, pageWidth - 14, sigY, { align: 'right' });
 
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(7.5);
     doc.setTextColor(80, 80, 80);
-    doc.text(`${config.roleTitle} • ${config.crfa}`, pageWidth - 14, sigY + 3.5, { align: 'right' });
-    if (config.cpf) {
-      doc.text(`CPF: ${config.cpf}`, pageWidth - 14, sigY + 7, { align: 'right' });
+    doc.text(`${profile.roleTitle} • ${profile.crfa}`, pageWidth - 14, sigY + 3.5, { align: 'right' });
+    if (profile.cpf) {
+      doc.text(`CPF: ${profile.cpf}`, pageWidth - 14, sigY + 7, { align: 'right' });
     }
   }
+}
+
+function renderDefaultMonogram(doc: jsPDF, logoX: number, logoY: number) {
+  doc.setDrawColor(122, 89, 55);
+  doc.setLineWidth(0.6);
+  doc.circle(logoX + 4, logoY + 4, 3.8);
+  doc.setFillColor(122, 89, 55);
+  doc.circle(logoX + 7, logoY + 1.2, 0.9, 'F');
+
+  doc.setTextColor(40, 35, 30);
+  doc.setFont('times', 'bold');
+  doc.setFontSize(13);
+  doc.text('GAMA', logoX + 4, logoY + 12, { align: 'center' });
+
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(6);
+  doc.setTextColor(110, 100, 95);
+  doc.text('FONOAUDIOLOGIA', logoX + 4, logoY + 15, { align: 'center' });
 }
 
 export function generateOfficialReportPDF(data: ReportData) {
@@ -102,9 +118,10 @@ export function generateOfficialReportPDF(data: ReportData) {
 
   const config = data.clinicConfig || DEFAULT_CLINIC_CONFIG;
   const pageWidth = doc.internal.pageSize.getWidth();
+  const profile = getEffectiveTherapistProfile(data.therapist, config);
 
-  // Aplica Papel Timbrado Oficial Obrigatório
-  drawOfficialGamaLetterhead(doc, config, {
+  // Aplica Papel Timbrado Oficial Obrigatório com Fallback de Terapeuta
+  drawOfficialGamaLetterhead(doc, config, data.therapist, {
     pageNumber: 1,
     totalPages: 1,
     showSignature: data.showSignature ?? config.includeSignatureOnPrint
@@ -114,31 +131,31 @@ export function generateOfficialReportPDF(data: ReportData) {
   doc.setTextColor(122, 89, 55);
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(13);
-  doc.text('LAUDO CLÍNICO & EVOLUÇÃO FONOAUDIOLÓGICA', 14, 33);
+  doc.text('LAUDO CLÍNICO & EVOLUÇÃO FONOAUDIOLÓGICA', 14, 34);
 
   doc.setFontSize(8);
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(100, 95, 90);
-  doc.text(`Emissão: ${data.reportDate} • Responsável: ${config.technicalResponsible} (${config.crfa})`, 14, 38);
+  doc.text(`Emissão: ${data.reportDate} • Fonoaudióloga: ${profile.name} (${profile.crfa})`, 14, 39);
 
   // Bloco de Identificação do Paciente
   doc.setFillColor(248, 246, 242);
-  doc.rect(14, 42, pageWidth - 26, 24, 'F');
+  doc.rect(14, 43, pageWidth - 26, 24, 'F');
   doc.setDrawColor(215, 205, 195);
-  doc.rect(14, 42, pageWidth - 26, 24, 'S');
+  doc.rect(14, 43, pageWidth - 26, 24, 'S');
 
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(8.5);
   doc.setTextColor(40, 35, 30);
-  doc.text(`Paciente: ${data.patient.name}`, 17, 48);
+  doc.text(`Paciente: ${data.patient.name}`, 17, 49);
 
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(8);
-  doc.text(`Data de Nascimento: ${data.patient.birthDate} | Sexo: ${data.patient.gender || 'Não informado'}`, 17, 53);
-  doc.text(`Diagnóstico: ${data.patient.mainDiagnosis || data.patient.diagnosis}`, 17, 58);
-  doc.text(`Responsável: ${data.patient.guardianName} • Contato: ${data.patient.phone || data.patient.guardianPhone}`, 17, 63);
+  doc.text(`Data de Nascimento: ${data.patient.birthDate} | Sexo: ${data.patient.gender || 'Não informado'}`, 17, 54);
+  doc.text(`Diagnóstico: ${data.patient.mainDiagnosis || data.patient.diagnosis}`, 17, 59);
+  doc.text(`Responsável: ${data.patient.guardianName} • Contato: ${data.patient.phone || data.patient.guardianPhone}`, 17, 64);
 
-  let y = 73;
+  let y = 74;
 
   // Avaliação de Deglutição (RaDI)
   if (data.assessment) {
