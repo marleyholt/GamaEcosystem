@@ -44,16 +44,8 @@ export default function App() {
   // Navigation state
   const [currentTab, setCurrentTab] = useState<NavigationTab>('dashboard');
 
-  // Sidebar Layout States (Persisted in localStorage)
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(() => {
-    const saved = localStorage.getItem('health_deglut_sidebar_collapsed');
-    return saved !== null ? saved === 'true' : false;
-  });
-  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState<boolean>(false);
-
-  useEffect(() => {
-    localStorage.setItem('health_deglut_sidebar_collapsed', String(isSidebarCollapsed));
-  }, [isSidebarCollapsed]);
+  // Menu Lateral Drawer State (Apenas abre sob demanda ao clicar no botão Sanduíche)
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
 
   // Application Data States (persisted in localStorage for durability)
   const [patients, setPatients] = useState<Patient[]>(() => {
@@ -240,36 +232,28 @@ export default function App() {
   }
 
   return (
-    <div className={`min-h-screen flex font-sans transition-colors duration-150 ${darkMode ? 'bg-[#181513] text-[#f4efe8]' : 'bg-[#f7f4ef] text-[#1c1714] theme-light'} selection:bg-[#c8a88a] selection:text-[#181513]`}>
-      {/* Sidebar Navigation */}
+    <div className={`min-h-screen flex flex-col font-sans transition-colors duration-150 ${darkMode ? 'bg-[#181513] text-[#f4efe8]' : 'bg-[#f7f4ef] text-[#1c1714] theme-light'} selection:bg-[#c8a88a] selection:text-[#181513]`}>
+      {/* Top Header com Botão Sanduíche */}
+      <Header
+        user={currentUser}
+        darkMode={darkMode}
+        setDarkMode={setDarkMode}
+        onLogout={() => setCurrentUser(null)}
+        patientsCount={patients.length}
+        onOpenMenu={() => setIsMenuOpen(true)}
+      />
+
+      {/* Menu Lateral Drawer (Abre apenas sob demanda ao clicar no botão Sanduíche) */}
       <Navigation
         currentTab={currentTab}
         onSelectTab={setCurrentTab}
         userRole={currentUser.role}
-        isCollapsed={isSidebarCollapsed}
-        onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-        isMobileOpen={isMobileSidebarOpen}
-        onCloseMobile={() => setIsMobileSidebarOpen(false)}
+        isOpen={isMenuOpen}
+        onClose={() => setIsMenuOpen(false)}
       />
 
-      {/* Main Body Column (Adjusted by Sidebar Width on Desktop) */}
-      <div className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ease-in-out ${
-        isSidebarCollapsed ? 'lg:pl-20' : 'lg:pl-64'
-      }`}>
-        {/* Top Header with Sandwich Toggle */}
-        <Header
-          user={currentUser}
-          darkMode={darkMode}
-          setDarkMode={setDarkMode}
-          onLogout={() => setCurrentUser(null)}
-          patientsCount={patients.length}
-          isSidebarCollapsed={isSidebarCollapsed}
-          onToggleSidebar={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-          onOpenMobileSidebar={() => setIsMobileSidebarOpen(true)}
-        />
-
-        {/* Main Content Area */}
-        <main className="flex-1 w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+      {/* Main Content Area (100% da largura, sem barra lateral permanente ocupando espaço) */}
+      <main className="flex-1 w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
           {(currentTab === 'dashboard' || currentTab === 'resumo') && (
             <DashboardView
               patients={patients}
@@ -410,14 +394,13 @@ export default function App() {
         </main>
 
         {/* Footer */}
-        <footer className="border-t border-[#2a221d] py-4 px-6 text-center text-xs text-[#85796f] flex flex-col sm:flex-row items-center justify-between gap-2 w-full">
+        <footer className="border-t border-[#2a221d] py-4 px-6 text-center text-xs text-[#85796f] flex flex-col sm:flex-row items-center justify-between gap-2 max-w-7xl w-full mx-auto">
           <p>GamaEcosystem - Health Deglut © 2026. Todos os direitos reservados.</p>
           <p className="flex items-center gap-1.5 text-[11px] text-[#a69a8f]">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             Conformidade LGPD Ativa • Criptografia AES-GCM • Banco de Dados Seguro
           </p>
         </footer>
-      </div>
     </div>
   );
 }
