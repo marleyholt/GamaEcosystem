@@ -7,18 +7,16 @@ Status possíveis: [PENDENTE], [EM PLANEJAMENTO], [EM EXECUÇÃO], [CONCLUÍDO].
 
 ## 📌 Topo da Fila (Prioridade Máxima Atual)
 
-1. **[CONCLUÍDO] Fluxo de Primeiro Acesso & Criação de Senha Forte com Firebase Auth (Cuidadores e Fonoaudiólogas)**
-   - **Integração Real com Firebase Auth & Firestore:**
-     - Provisionamento do banco `gamaecosystem` no projeto `finlhub`.
-     - Implementação das regras de segurança (`firestore.rules`) e blueprint intermediário (`firebase-blueprint.json`).
-     - Módulo de inicialização e teste de conexão do SDK Firebase (`src/lib/firebase.ts`).
-   - **Mecânica do Primeiro Acesso:**
-     - O e-mail cadastrado na ficha do cuidador e no cadastro da fonoaudióloga funciona como chave mestre de login.
-     - Ao digitar o e-mail cadastrado, o sistema identifica se é o primeiro acesso e abre o formulário de **"Criar Senha de Primeiro Acesso"**.
-     - Validador interativo em tempo real de **5 critérios de Senha Forte**: Mínimo de 8 caracteres, letra maiúscula, letra minúscula, número e caractere especial (!@#$), além de confirmação de senha.
-     - Registro seguro da credencial no Firebase Auth com fallback local para operação offline ou sem rede.
-     - Redirecionamento automático para a área correspondente do usuário conforme seu papel (Cuidador, Fonoaudióloga ou Administradora).
-     - Nos acessos subsequentes, o sistema direciona direto para a digitação da senha já cadastrada, com opção de redefinição de senha.
+1. **[CONCLUÍDO] Tela de Login Direto, Primeiro Acesso e Matriz de Permissões de Janelas por Usuário na Central de Configurações**
+   - **Reestruturação Completa da Tela de Autenticação (`AuthModal.tsx`):**
+     - Remoção definitiva da aba de perfis de demonstração do topo.
+     - Duas abas diretas: **"Login (Já tenho senha)"** (com e-mail, senha, visualizador de senha e botão funcional **"Esqueci minha senha"**) e **"Primeiro Acesso (Criar Senha)"** (com os 5 critérios em tempo real de senha forte e confirmação).
+     - Integração com Firebase Authentication para verificação de credenciais.
+   - **Gestão de Usuários na Central de Configurações (`ConfigurationView.tsx` & `AdminUsersView.tsx`):**
+     - A gestão de usuários foi movida para dentro da **Central de Configurações** (como a 5ª sub-aba: *Gestão de Usuários & Telas*), limpando o menu principal.
+     - **Tabela / Matriz de Janelas e Modais:** Catálogo completo de todas as 10 telas do sistema (*Visão Geral, Prontuário 4 Módulos, RaDI, Registro Diário, Linha do Tempo, Chat, Pacientes, Laudos, Segurança, Configurações*).
+     - Seletor de usuário à esquerda e botões de ação imediata **"Permitir"** (Visível) ou **"Ocultar"** (Oculto) para cada tela individual, além de botões **"Marcar Todas"** e **"Desmarcar Todas"**.
+     - O menu lateral drawer passa a respeitar rigorosamente a matriz: módulos desmarcados ficam 100% invisíveis para aquele usuário.
 
 ---
 
@@ -39,6 +37,7 @@ Status possíveis: [PENDENTE], [EM PLANEJAMENTO], [EM EXECUÇÃO], [CONCLUÍDO].
 
 ## ✅ Histórico de Itens Concluídos
 
+- **[CONCLUÍDO] 2026-09-28: Tela de Login Direto, Primeiro Acesso e Matriz de Permissões de Janelas por Usuário na Central de Configurações**
 - **[CONCLUÍDO] 2026-09-28: Fluxo de Primeiro Acesso & Criação de Senha Forte com Firebase Auth**
 - **[CONCLUÍDO] 2026-09-28: Substituição Integral da Evolução Fonoaudiológica (Modelo Oficial 4 Páginas) com Eficiência & Gráficos**
 - **[CONCLUÍDO] 2026-09-28: Expansão da Logomarca e E-mail de Acesso de Terapeutas**
