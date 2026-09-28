@@ -8,6 +8,7 @@ export interface UserProfile {
   approved: boolean;
   crfaNumber?: string;
   patientId?: string;
+  allowedTabs?: NavigationTab[]; // Controle granular de permissões e visibilidade de janelas
   createdAt: string;
 }
 
