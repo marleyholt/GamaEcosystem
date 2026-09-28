@@ -17,9 +17,13 @@ export interface ClinicConfig {
 
 export interface Caregiver {
   id: string;
-  name: string;
-  phone: string;
-  email?: string;
+  name: string; // Nome Completo
+  cpf: string; // CPF do Cuidador
+  email: string; // E-mail (MANDATÓRIO: será usado para o acesso/login ao sistema)
+  address: string; // Endereço completo
+  phone: string; // Telefone principal / WhatsApp
+  secondaryPhone?: string; // Segunda opção de número para contato (OPCIONAL)
+  registrationNumber?: string; // Número de registro do conselho/órgão (OPCIONAL)
   kinshipOrRole: string; // Ex: Mãe, Pai, Cuidador Formal, Enfermeiro
   assignedPatientIds: string[];
   notes?: string;
@@ -90,8 +94,12 @@ export const INITIAL_CAREGIVERS: Caregiver[] = [
   {
     id: 'cg_1',
     name: 'Maria Helena Rocha',
-    phone: '(21) 98765-4321',
+    cpf: '234.567.890-12',
     email: 'mhelena.rocha@gmail.com',
+    address: 'Rua das Laranjeiras, 450, Apto 302 - Laranjeiras, Rio de Janeiro - RJ',
+    phone: '(21) 98765-4321',
+    secondaryPhone: '(21) 2556-9900',
+    registrationNumber: '',
     kinshipOrRole: 'Esposa / Cuidadora Principal',
     assignedPatientIds: ['pat_1'],
     notes: 'Acompanha todas as sessões e preparo de dietas IDDSI'
@@ -99,8 +107,12 @@ export const INITIAL_CAREGIVERS: Caregiver[] = [
   {
     id: 'cg_2',
     name: 'Carlos Alberto Mendes',
-    phone: '(21) 99123-8877',
+    cpf: '345.678.901-23',
     email: 'carlos.mendes@cuidado.com',
+    address: 'Av. Nossa Senhora de Copacabana, 890 - Copacabana, Rio de Janeiro - RJ',
+    phone: '(21) 99123-8877',
+    secondaryPhone: '(21) 98844-3322',
+    registrationNumber: 'COREN-RJ 145892-TE',
     kinshipOrRole: 'Cuidador Profissional (Diurno)',
     assignedPatientIds: ['pat_2'],
     notes: 'Responsável pela administração hídrica e postural'
