@@ -75,9 +75,24 @@ export const AdminUsersView: React.FC<AdminUsersViewProps> = ({
 
   const selectedUser = users.find(u => u.id === selectedUserId) || users[0];
 
+  // Identificação do Usuário MASTER (Adriane Gama): Acesso perpétuo e irrevogável
+  const isSelectedUserMaster = Boolean(
+    selectedUser && (
+      selectedUser.role === 'admin' ||
+      selectedUser.email.toLowerCase().includes('adriane') ||
+      selectedUser.email.toLowerCase().includes('gamafono') ||
+      selectedUser.email.toLowerCase().includes('leaog') ||
+      selectedUser.name.toLowerCase().includes('adriane gama')
+    )
+  );
+
   // Alternar permissão de um módulo para o usuário selecionado
   const togglePermission = (tabId: NavigationTab) => {
     if (!selectedUser) return;
+    if (isSelectedUserMaster) {
+      alert('Adriane Gama é a Responsável Técnica e Usuária MASTER do sistema. Seu acesso a todas as janelas e configurações é perpétuo e irrevogável.');
+      return;
+    }
     const currentList = userPermissions[selectedUser.id] || [];
     const exists = currentList.includes(tabId);
     const updated = exists 
@@ -98,6 +113,10 @@ export const AdminUsersView: React.FC<AdminUsersViewProps> = ({
   // Marcar / Desmarcar todos os módulos
   const toggleAll = (enableAll: boolean) => {
     if (!selectedUser) return;
+    if (isSelectedUserMaster && !enableAll) {
+      alert('O usuário MASTER sempre possui acesso a 100% dos módulos do sistema.');
+      return;
+    }
     const updated = enableAll ? ALL_SYSTEM_MODULES.map(m => m.id) : [];
     setUserPermissions(prev => ({
       ...prev,
@@ -225,6 +244,11 @@ export const AdminUsersView: React.FC<AdminUsersViewProps> = ({
                     <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#2c2420] text-[#c8a88a] border border-[#443831] uppercase font-bold">
                       {selectedUser.role}
                     </span>
+                    {isSelectedUserMaster && (
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-950/70 text-amber-300 border border-amber-700/50 uppercase font-bold">
+                        Usuária MASTER • Acesso Total Permanente
+                      </span>
+                    )}
                   </div>
                   <p className="text-xs text-[#a69a8f] mt-0.5">{selectedUser.email}</p>
                 </div>
@@ -237,13 +261,15 @@ export const AdminUsersView: React.FC<AdminUsersViewProps> = ({
                   >
                     Marcar Todas
                   </button>
-                  <button
-                    type="button"
-                    onClick={() => toggleAll(false)}
-                    className="px-2.5 py-1 rounded-lg bg-[#27211d] hover:bg-[#342b26] text-[11px] text-[#a69a8f] border border-[#3e342e] transition-colors cursor-pointer"
-                  >
-                    Desmarcar Todas
-                  </button>
+                  {!isSelectedUserMaster && (
+                    <button
+                      type="button"
+                      onClick={() => toggleAll(false)}
+                      className="px-2.5 py-1 rounded-lg bg-[#27211d] hover:bg-[#342b26] text-[11px] text-[#a69a8f] border border-[#3e342e] transition-colors cursor-pointer"
+                    >
+                      Desmarcar Todas
+                    </button>
+                  )}
                 </div>
               </div>
 
@@ -287,17 +313,23 @@ export const AdminUsersView: React.FC<AdminUsersViewProps> = ({
                             )}
                           </td>
                           <td className="py-3 px-2 text-right">
-                            <button
-                              type="button"
-                              onClick={() => togglePermission(mod.id)}
-                              className={`px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                                isAllowed
-                                  ? 'bg-rose-950/50 hover:bg-rose-900/60 text-rose-300 border border-rose-800/40'
-                                  : 'bg-emerald-950/60 hover:bg-emerald-900/60 text-emerald-300 border border-emerald-800/40'
-                              }`}
-                            >
-                              {isAllowed ? 'Ocultar' : 'Permitir'}
-                            </button>
+                            {isSelectedUserMaster ? (
+                              <span className="text-[11px] font-semibold text-amber-400/90 italic">
+                                Irrevogável (Master)
+                              </span>
+                            ) : (
+                              <button
+                                type="button"
+                                onClick={() => togglePermission(mod.id)}
+                                className={`px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                                  isAllowed
+                                    ? 'bg-rose-950/50 hover:bg-rose-900/60 text-rose-300 border border-rose-800/40'
+                                    : 'bg-emerald-950/60 hover:bg-emerald-900/60 text-emerald-300 border border-emerald-800/40'
+                                }`}
+                              >
+                                {isAllowed ? 'Ocultar' : 'Permitir'}
+                              </button>
+                            )}
                           </td>
                         </tr>
                       );
