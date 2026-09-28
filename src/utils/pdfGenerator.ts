@@ -1,14 +1,96 @@
 import jsPDF from 'jspdf';
 import { Patient, RadiAssessment, DailyFeedingLog } from '../types';
+import { ClinicConfig, DEFAULT_CLINIC_CONFIG } from '../types/clinicConfig';
 
 interface ReportData {
   patient: Patient;
   assessment?: RadiAssessment;
   recentLogs?: DailyFeedingLog[];
-  evaluatorName: string;
+  evaluatorName?: string;
   evaluatorCrfa?: string;
   reportDate: string;
   clinicNotes?: string;
+  clinicConfig?: ClinicConfig;
+  showSignature?: boolean;
+}
+
+/**
+ * Desenha o Papel Timbrado Oficial GAMA Fonoaudiologia
+ * Faixa marrom lateral esquerda, cabeçalho institucional e rodapé com WhatsApp, E-mail e Instagram
+ */
+export function drawOfficialGamaLetterhead(
+  doc: jsPDF, 
+  config: ClinicConfig = DEFAULT_CLINIC_CONFIG,
+  options?: { pageNumber?: number; totalPages?: number; showSignature?: boolean }
+) {
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+
+  // 1. Faixa Lateral Marrom Esquerda Oficial (#7a5937)
+  doc.setFillColor(122, 89, 55); // #7a5937
+  doc.rect(0, 0, 7, pageHeight, 'F');
+
+  // 2. Cabeçalho Oficial GAMA FONOAUDIOLOGIA
+  // Monograma estilizado g°
+  const logoX = pageWidth - 32;
+  const logoY = 14;
+
+  doc.setDrawColor(122, 89, 55);
+  doc.setLineWidth(0.6);
+  doc.circle(logoX + 4, logoY + 4, 4);
+  doc.setFillColor(122, 89, 55);
+  doc.circle(logoX + 7.5, logoY + 1, 1, 'F');
+
+  doc.setTextColor(40, 35, 30);
+  doc.setFont('times', 'bold');
+  doc.setFontSize(14);
+  doc.text('GAMA', logoX + 4, logoY + 13, { align: 'center' });
+
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(6.5);
+  doc.setTextColor(110, 100, 95);
+  doc.text('FONOAUDIOLOGIA', logoX + 4, logoY + 16, { align: 'center' });
+
+  // Linha separadora do cabeçalho
+  doc.setDrawColor(220, 215, 210);
+  doc.setLineWidth(0.3);
+  doc.line(14, 25, pageWidth - 12, 25);
+
+  // 3. Rodapé Oficial Mandatório com Contatos Oficiais
+  const footerY = pageHeight - 14;
+  doc.line(14, footerY - 4, pageWidth - 12, footerY - 4);
+
+  doc.setFontSize(7.5);
+  doc.setTextColor(80, 75, 70);
+  doc.setFont('helvetica', 'normal');
+
+  // Contatos exatos do PDF da cliente
+  const contactText = `(21) 98988-7981   •   gamafono@gamafono.com.br   •   @gama_fonoaudiologia`;
+  doc.text(contactText, 14, footerY);
+
+  if (options?.pageNumber) {
+    const pageStr = options.totalPages 
+      ? `Pág. ${options.pageNumber} de ${options.totalPages}` 
+      : `Pág. ${options.pageNumber}`;
+    doc.text(pageStr, pageWidth - 14, footerY, { align: 'right' });
+  }
+
+  // 4. Bloco de Assinatura se solicitado
+  if (options?.showSignature) {
+    const sigY = footerY - 14;
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8.5);
+    doc.setTextColor(30, 30, 30);
+    doc.text(config.technicalResponsible, pageWidth - 14, sigY, { align: 'right' });
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(7.5);
+    doc.setTextColor(80, 80, 80);
+    doc.text(`${config.roleTitle} • ${config.crfa}`, pageWidth - 14, sigY + 3.5, { align: 'right' });
+    if (config.cpf) {
+      doc.text(`CPF: ${config.cpf}`, pageWidth - 14, sigY + 7, { align: 'right' });
+    }
+  }
 }
 
 export function generateOfficialReportPDF(data: ReportData) {
@@ -18,178 +100,106 @@ export function generateOfficialReportPDF(data: ReportData) {
     format: 'a4',
   });
 
+  const config = data.clinicConfig || DEFAULT_CLINIC_CONFIG;
   const pageWidth = doc.internal.pageSize.getWidth();
-  const pageHeight = doc.internal.pageSize.getHeight();
 
-  // Helper to draw background watermark and borders
-  const drawPageDecoration = () => {
-    // Elegant Border
-    doc.setDrawColor(200, 168, 138); // Warm Gold/Beige #c8a88a
-    doc.setLineWidth(0.8);
-    doc.rect(8, 8, pageWidth - 16, pageHeight - 16);
+  // Aplica Papel Timbrado Oficial Obrigatório
+  drawOfficialGamaLetterhead(doc, config, {
+    pageNumber: 1,
+    totalPages: 1,
+    showSignature: data.showSignature ?? config.includeSignatureOnPrint
+  });
 
-    doc.setDrawColor(230, 220, 210);
-    doc.setLineWidth(0.3);
-    doc.rect(9.5, 9.5, pageWidth - 19, pageHeight - 19);
-
-    // Diagonal Watermark
-    doc.saveGraphicsState();
-    doc.setTextColor(220, 210, 200);
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(28);
-
-    // Center diagonal watermark
-    const text = 'GamaEcosystem - Health Deglut • AUTENTICADO';
-    doc.text(text, pageWidth / 2, pageHeight / 2, {
-      align: 'center',
-      angle: 45,
-    });
-    doc.restoreGraphicsState();
-  };
-
-  drawPageDecoration();
-
-  // Header Banner
-  doc.setFillColor(34, 29, 26); // #221d1a
-  doc.rect(10, 10, pageWidth - 20, 28, 'F');
-
-  // Title & Subtitle
-  doc.setTextColor(200, 168, 138); // #c8a88a
+  // Título do Laudo
+  doc.setTextColor(122, 89, 55);
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(16);
-  doc.text('GamaEcosystem - Health Deglut', 16, 20);
+  doc.setFontSize(13);
+  doc.text('LAUDO CLÍNICO & EVOLUÇÃO FONOAUDIOLÓGICA', 14, 33);
 
-  doc.setTextColor(235, 230, 225);
+  doc.setFontSize(8);
   doc.setFont('helvetica', 'normal');
-  doc.setFontSize(9);
-  doc.text('Excelência, Humanização e Inovação em Fonoaudiologia e Cuidados com Disfagia', 16, 26);
-  doc.text(`Laudo Clínico & Evolução Terapêutica • Emissão: ${data.reportDate}`, 16, 32);
+  doc.setTextColor(100, 95, 90);
+  doc.text(`Emissão: ${data.reportDate} • Responsável: ${config.technicalResponsible} (${config.crfa})`, 14, 38);
 
-  // Patient Identification Card
-  let y = 46;
-  doc.setFillColor(248, 245, 242);
-  doc.roundedRect(12, y, pageWidth - 24, 38, 2, 2, 'F');
+  // Bloco de Identificação do Paciente
+  doc.setFillColor(248, 246, 242);
+  doc.rect(14, 42, pageWidth - 26, 24, 'F');
+  doc.setDrawColor(215, 205, 195);
+  doc.rect(14, 42, pageWidth - 26, 24, 'S');
 
-  doc.setTextColor(50, 40, 35);
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(11);
-  doc.text(`Paciente: ${data.patient.name}`, 16, y + 7);
-
-  doc.setFont('helvetica', 'normal');
   doc.setFontSize(8.5);
-  const genderTxt = data.patient.gender ? `   |   Sexo: ${data.patient.gender}` : '';
-  doc.text(`CPF: ${data.patient.cpf || 'Não informado'}   |   Nasc: ${data.patient.birthDate || 'N/I'}${genderTxt}   |   Status: ${data.patient.status.toUpperCase()}`, 16, y + 13);
-  doc.text(`Diagnóstico Principal: ${data.patient.mainDiagnosis || data.patient.diagnosis}`, 16, y + 19);
-  doc.text(`Responsável: ${data.patient.guardianName || 'O Próprio'}   |   Recibo em nome de: ${data.patient.receiptName || data.patient.guardianName || data.patient.name}`, 16, y + 25);
-  const cepTxt = data.patient.cep ? ` - CEP: ${data.patient.cep}` : '';
-  const phonesTxt = [data.patient.phone, data.patient.secondaryPhone].filter(Boolean).join(' / ') || data.patient.guardianPhone || '-';
-  doc.text(`Endereço: ${data.patient.address || 'Não informado'}${cepTxt}   |   Tel: ${phonesTxt}`, 16, y + 31);
+  doc.setTextColor(40, 35, 30);
+  doc.text(`Paciente: ${data.patient.name}`, 17, 48);
 
-  y += 45;
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(8);
+  doc.text(`Data de Nascimento: ${data.patient.birthDate} | Sexo: ${data.patient.gender || 'Não informado'}`, 17, 53);
+  doc.text(`Diagnóstico: ${data.patient.mainDiagnosis || data.patient.diagnosis}`, 17, 58);
+  doc.text(`Responsável: ${data.patient.guardianName} • Contato: ${data.patient.phone || data.patient.guardianPhone}`, 17, 63);
 
-  // RaDI Assessment Section
+  let y = 73;
+
+  // Avaliação de Deglutição (RaDI)
   if (data.assessment) {
-    doc.setFillColor(44, 37, 34);
-    doc.rect(12, y, pageWidth - 24, 7, 'F');
-    doc.setTextColor(255, 255, 255);
+    doc.setFillColor(242, 238, 232);
+    doc.rect(14, y - 4, pageWidth - 26, 7, 'F');
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(10);
-    doc.text('1. RASTREIO E TRIAGEM DE RISCO PARA DISFAGIA (RaDI)', 16, y + 5);
-
-    y += 11;
-    doc.setTextColor(30, 30, 30);
-    doc.setFont('helvetica', 'normal');
     doc.setFontSize(9);
-    doc.text(`Data do Rastreio: ${data.assessment.date}   |   Avaliador: ${data.assessment.evaluatorName}`, 16, y);
+    doc.setTextColor(122, 89, 55);
+    doc.text('AVALIAÇÃO DE RISCO DE DISFAGIA (RaDI)', 17, y + 1);
+    y += 10;
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8.5);
+    doc.setTextColor(40, 40, 40);
+    doc.text(`Classificação de Risco: ${data.assessment.riskLevel} (Pontuação: ${data.assessment.score}/10)`, 17, y);
     y += 6;
 
-    // Score & Risk Badge
-    doc.setFont('helvetica', 'bold');
-    doc.text(`Pontuação Obtida: ${data.assessment.score} / 9`, 16, y);
-
-    const isHigh = data.assessment.riskLevel === 'Alto Risco';
-    const isMod = data.assessment.riskLevel === 'Risco Moderado';
-    doc.setTextColor(isHigh ? 180 : isMod ? 170 : 20, isHigh ? 20 : isMod ? 100 : 120, 20);
-    doc.text(`Classificação: ${data.assessment.riskLevel.toUpperCase()}`, 70, y);
-
-    y += 7;
-    doc.setTextColor(40, 40, 40);
-    doc.setFont('helvetica', 'bold');
-    doc.text('Condutas Fonoaudiológicas Recomendadas:', 16, y);
-    y += 5;
-    doc.setFont('helvetica', 'normal');
-    const recLines = doc.splitTextToSize(data.assessment.clinicalRecommendations, pageWidth - 32);
-    doc.text(recLines, 16, y);
-    y += (recLines.length * 4.5) + 6;
+    if (data.assessment.clinicalRecommendations) {
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
+      const recLines = doc.splitTextToSize(`Condutas Recomendadas: ${data.assessment.clinicalRecommendations}`, pageWidth - 32);
+      doc.text(recLines, 17, y);
+      y += (recLines.length * 4.5) + 4;
+    }
   }
 
-  // Feeding & IDDSI Logs Section
+  // Registros Diários e Consistências IDDSI
   if (data.recentLogs && data.recentLogs.length > 0) {
-    doc.setFillColor(44, 37, 34);
-    doc.rect(12, y, pageWidth - 24, 7, 'F');
-    doc.setTextColor(255, 255, 255);
+    doc.setFillColor(242, 238, 232);
+    doc.rect(14, y - 4, pageWidth - 26, 7, 'F');
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(10);
-    doc.text('2. EVOLUÇÃO DE INGESTAS ORAIS E PADRÃO IDDSI', 16, y + 5);
+    doc.setFontSize(9);
+    doc.setTextColor(122, 89, 55);
+    doc.text('ACOMPANHAMENTO DE DIETA & CONSISTÊNCIAS (IDDSI)', 17, y + 1);
+    y += 9;
 
-    y += 12;
-    data.recentLogs.slice(0, 2).forEach((log, idx) => {
-      doc.setTextColor(30, 30, 30);
+    data.recentLogs.slice(0, 3).forEach((log, idx) => {
       doc.setFont('helvetica', 'bold');
-      doc.setFontSize(9);
-      doc.text(`Registro ${idx + 1} (${log.date}) - Responsável: ${log.caregiverName}`, 16, y);
-      y += 5;
+      doc.setFontSize(8);
+      doc.setTextColor(50, 45, 40);
+      doc.text(`Sessão ${idx + 1} (${log.date}) - Responsável: ${log.caregiverName}`, 17, y);
+      y += 4.5;
 
       doc.setFont('helvetica', 'normal');
-      doc.text(`• Consistência de Alimentos: ${log.foodConsistency}`, 18, y);
-      y += 4.5;
-      doc.text(`• Consistência de Líquidos: ${log.liquidConsistency}`, 18, y);
-      y += 4.5;
+      doc.text(`• Alimentos: ${log.foodConsistency} | Líquidos: ${log.liquidConsistency}`, 19, y);
+      y += 4;
       if (log.liquidBrandDose) {
-        doc.text(`• Especificação de Espessante: ${log.liquidBrandDose}`, 18, y);
-        y += 4.5;
-      }
-      if (log.symptoms.length > 0) {
-        doc.text(`• Sinais/Sintomas observados: ${log.symptoms.join(', ')}`, 18, y);
-        y += 4.5;
+        doc.text(`• Espessante: ${log.liquidBrandDose}`, 19, y);
+        y += 4;
       }
       if (log.observations) {
-        const obsLines = doc.splitTextToSize(`• Observações: ${log.observations}`, pageWidth - 36);
-        doc.text(obsLines, 18, y);
-        y += (obsLines.length * 4) + 3;
+        const obs = doc.splitTextToSize(`• Obs: ${log.observations}`, pageWidth - 36);
+        doc.text(obs, 19, y);
+        y += (obs.length * 4) + 2;
       }
     });
   }
 
-  // LGPD & Cryptographic Seal Footer
-  const footerY = pageHeight - 38;
-  doc.setDrawColor(200, 168, 138);
-  doc.setLineWidth(0.4);
-  doc.line(14, footerY - 4, pageWidth - 14, footerY - 4);
-
-  doc.setFontSize(7.5);
-  doc.setTextColor(100, 95, 90);
-  doc.setFont('helvetica', 'italic');
-  doc.text('Conformidade LGPD: Dados clínicos sensíveis criptografados e protegidos nos termos da Lei 13.709/2018.', 16, footerY);
-  doc.text(`Assinatura Digital & Carimbo de Integridade: SHA256-${data.assessment?.verificationHash || 'HD-AUTH-2026-VAL'}`, 16, footerY + 4);
-  doc.text(`Documento gerado em conformidade com as diretrizes do Conselho Federal de Fonoaudiologia.`, 16, footerY + 8);
-
-  // Professional Signature Block
-  const sigX = pageWidth - 80;
-  doc.setDrawColor(80, 80, 80);
-  doc.setLineWidth(0.3);
-  doc.line(sigX, footerY + 16, pageWidth - 18, footerY + 16);
-
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(8.5);
-  doc.setTextColor(40, 40, 40);
-  doc.text(data.evaluatorName, sigX + 30, footerY + 20, { align: 'center' });
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(7.5);
-  doc.text(data.evaluatorCrfa || 'Fonoaudióloga Clínica', sigX + 30, footerY + 24, { align: 'center' });
-
-  // Save the document
-  const fileName = `Laudo_HealthDeglut_${data.patient.name.replace(/\s+/g, '_')}_${data.reportDate.replace(/\//g, '-')}.pdf`;
+  // Salva o documento no padrão oficial
+  const safeName = data.patient.name.replace(/\s+/g, '_');
+  const fileName = `GAMA_Laudo_${safeName}_${data.reportDate.replace(/\//g, '-')}.pdf`;
   doc.save(fileName);
   return fileName;
 }
