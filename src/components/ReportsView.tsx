@@ -179,13 +179,18 @@ export const ReportsView: React.FC<ReportsViewProps> = ({
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 border-t border-[#e3d3c2]">
               <div><span className="text-[#8a684b]">CPF:</span> <strong className="text-[#3d2919]">{maskCPF(activePatient.cpf)}</strong></div>
-              <div><span className="text-[#8a684b]">Nascimento:</span> <strong className="text-[#3d2919]">{activePatient.birthDate || '-'}</strong></div>
-              <div><span className="text-[#8a684b]">Responsável:</span> <strong className="text-[#3d2919]">{activePatient.guardianName || '-'}</strong></div>
-              <div><span className="text-[#8a684b]">Telefone:</span> <strong className="text-[#3d2919]">{activePatient.guardianPhone || '-'}</strong></div>
+              <div><span className="text-[#8a684b]">Nascimento:</span> <strong className="text-[#3d2919]">{activePatient.birthDate || '-'}</strong> ({activePatient.gender || 'Feminino'})</div>
+              <div><span className="text-[#8a684b]">Responsável:</span> <strong className="text-[#3d2919]">{activePatient.guardianName || 'O Próprio'}</strong></div>
+              <div><span className="text-[#8a684b]">Recibo em nome:</span> <strong className="text-[#3d2919]">{activePatient.receiptName || activePatient.guardianName || activePatient.name}</strong></div>
             </div>
 
-            <div className="pt-1">
-              <span className="text-[#8a684b]">Diagnóstico Clínico / Base:</span> <strong className="text-[#3d2919]">{activePatient.diagnosis}</strong>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 border-t border-[#e3d3c2]">
+              <div><span className="text-[#8a684b]">Endereço & CEP:</span> <strong className="text-[#3d2919]">{activePatient.address || '-'} {activePatient.cep ? `(CEP: ${activePatient.cep})` : ''}</strong></div>
+              <div><span className="text-[#8a684b]">Telefones:</span> <strong className="text-[#3d2919]">{[activePatient.phone, activePatient.secondaryPhone].filter(Boolean).join(' / ') || activePatient.guardianPhone || '-'}</strong></div>
+            </div>
+
+            <div className="pt-1 border-t border-[#e3d3c2]">
+              <span className="text-[#8a684b]">Diagnóstico Principal:</span> <strong className="text-[#3d2919]">{activePatient.mainDiagnosis || activePatient.diagnosis}</strong>
             </div>
           </div>
 
