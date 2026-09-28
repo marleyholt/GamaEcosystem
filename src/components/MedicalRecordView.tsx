@@ -34,8 +34,15 @@ import {
   Award,
   ChevronDown,
   Check,
-  RotateCcw
+  RotateCcw,
+  TrendingUp,
+  FileCheck
 } from 'lucide-react';
+
+import { OfficialEvolutionData } from '../types/clinicalEvolution';
+import { OfficialEvolutionForm } from './OfficialEvolutionForm';
+import { EvolutionCharts } from './EvolutionCharts';
+import { ClinicConfig, DEFAULT_CLINIC_CONFIG, Therapist } from '../types/clinicConfig';
 
 interface MedicalRecordViewProps {
   selectedPatient: Patient | null;
@@ -46,9 +53,13 @@ interface MedicalRecordViewProps {
   onUpdateMedicalRecord: (record: PatientMedicalRecord) => void;
   radiAssessments?: RadiAssessment[];
   dailyLogs?: DailyFeedingLog[];
+  officialEvolutions?: OfficialEvolutionData[];
+  onSaveOfficialEvolution?: (evolution: OfficialEvolutionData) => void;
+  clinicConfig?: ClinicConfig;
+  therapists?: Therapist[];
 }
 
-type TabType = 'resumo' | 'anamnese' | 'metas' | 'plano' | 'evolucoes' | 'avaliacoes';
+type TabType = 'resumo' | 'anamnese' | 'metas' | 'plano' | 'evolucoes' | 'avaliacoes' | 'graficos_evolucao';
 
 export const MedicalRecordView: React.FC<MedicalRecordViewProps> = ({
   selectedPatient,
@@ -58,9 +69,13 @@ export const MedicalRecordView: React.FC<MedicalRecordViewProps> = ({
   medicalRecords,
   onUpdateMedicalRecord,
   radiAssessments = [],
-  dailyLogs = []
+  dailyLogs = [],
+  officialEvolutions = [],
+  onSaveOfficialEvolution,
+  clinicConfig = DEFAULT_CLINIC_CONFIG,
+  therapists = []
 }) => {
-  const [activeTab, setActiveTab] = useState<TabType>('resumo');
+  const [activeTab, setActiveTab] = useState<TabType>('evolucoes');
   const [isAddingSession, setIsAddingSession] = useState(false);
   const [isEditingPlan, setIsEditingPlan] = useState(false);
   const [isEditingOfa, setIsEditingOfa] = useState(false);
@@ -293,9 +308,10 @@ export const MedicalRecordView: React.FC<MedicalRecordViewProps> = ({
     onUpdateMedicalRecord(updated);
   };
 
-  // Associated RaDI and Daily Logs for this patient
+  // Associated RaDI, Daily Logs and Official Evolutions for this patient
   const patientRadis = radiAssessments.filter(r => r.patientId === selectedPatient.id);
   const patientLogs = dailyLogs.filter(l => l.patientId === selectedPatient.id);
+  const patientOfficialEvolutions = officialEvolutions.filter(e => e.patientId === selectedPatient.id);
 
   const routeLabels: Record<string, { label: string; color: string }> = {
     VO_exclusiva: { label: 'Via Oral Exclusiva', color: 'bg-emerald-950/40 text-emerald-400 border-emerald-800/60' },
@@ -393,10 +409,10 @@ export const MedicalRecordView: React.FC<MedicalRecordViewProps> = ({
 
             <button
               onClick={() => setIsAddingSession(true)}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#c8a88a] hover:bg-[#b89574] text-[#181513] text-xs font-bold transition-all shadow-md"
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#c8a88a] hover:bg-[#b89574] text-[#181513] text-xs font-bold transition-all shadow-md cursor-pointer"
             >
               <PlusCircle className="w-4 h-4" />
-              <span>Evoluir Sessão (SOAP)</span>
+              <span>Nova Evolução Oficial (4 Módulos)</span>
             </button>
           </div>
         </div>
@@ -404,8 +420,9 @@ export const MedicalRecordView: React.FC<MedicalRecordViewProps> = ({
         {/* Sub-Navigation Tabs */}
         <div className="mt-6 pt-4 border-t border-[#342b26] flex items-center gap-1.5 overflow-x-auto scrollbar-none">
           {[
+            { id: 'evolucoes' as TabType, label: `Evoluções Fonoaudiológicas (${patientOfficialEvolutions.length || currentRecord.sessions.length})`, icon: Clock },
+            { id: 'graficos_evolucao' as TabType, label: 'Curva & Gráficos de Evolução', icon: TrendingUp },
             { id: 'resumo' as TabType, label: 'Visão Geral & FOIS', icon: Activity },
-            { id: 'evolucoes' as TabType, label: `Sessões Clínicas (${currentRecord.sessions.length})`, icon: Clock },
             { id: 'anamnese' as TabType, label: 'Avaliação OFA & Deglutição', icon: Stethoscope },
             { id: 'metas' as TabType, label: `Metas Terapêuticas (${currentRecord.objectives.length})`, icon: Target },
             { id: 'plano' as TabType, label: 'Plano de Tratamento (PTS)', icon: Utensils },
@@ -592,40 +609,151 @@ export const MedicalRecordView: React.FC<MedicalRecordViewProps> = ({
         </div>
       )}
 
-      {/* TAB CONTENT: 2. SESSOES CLINICAS (SOAP) */}
+      {/* TAB CONTENT: 2. SESSOES CLINICAS (MODELO OFICIAL 4 PAGINAS & HISTORICO INTEGRADO) */}
       {activeTab === 'evolucoes' && (
         <div className="space-y-6">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h3 className="text-lg font-bold font-serif text-[#f4efe8]">
-                Evoluções Clínicas de Sessão (Registro SOAP)
+              <h3 className="text-lg font-bold font-serif text-[#f4efe8] flex items-center gap-2">
+                <FileCheck className="w-5 h-5 text-[#c8a88a]" />
+                Evoluções Fonoaudiológicas Oficiais (GAMA 4 Módulos)
               </h3>
               <p className="text-xs text-[#a69a8f]">
-                Registro cronológico detalhado com carimbo digital, condutas e avaliação de sintomas
+                Prontuário completo com nível de consciência, oxigenoterapia, vias alternativas, IDDSI, FOIS, PARD e terapias complementares.
               </p>
             </div>
 
             <button
               onClick={() => setIsAddingSession(true)}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#c8a88a] hover:bg-[#b89574] text-[#181513] text-xs font-bold transition-all shadow-md"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#c8a88a] hover:bg-[#b89574] text-[#181513] text-xs font-bold transition-all shadow-md cursor-pointer self-start sm:self-auto"
             >
               <PlusCircle className="w-4 h-4" />
-              <span>Nova Sessão</span>
+              <span>Nova Evolução Oficial (4 Páginas)</span>
             </button>
           </div>
 
-          {currentRecord.sessions.length === 0 ? (
+          {/* Listagem Prioritária das Evoluções Oficiais de 4 Páginas */}
+          {patientOfficialEvolutions.length > 0 ? (
+            <div className="space-y-4">
+              {patientOfficialEvolutions.slice().reverse().map((evo, idx) => (
+                <div
+                  key={evo.id}
+                  className="bg-[#221d1a] border border-[#3a312c] rounded-2xl p-5 sm:p-6 shadow-sm hover:border-[#4f4239] transition-all space-y-4"
+                >
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-[#332a24] gap-2">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-[#2c2420] text-[#c8a88a] font-bold flex items-center justify-center text-sm border border-[#42362f] shadow-inner">
+                        #{patientOfficialEvolutions.length - idx}
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-bold text-[#f4efe8]">
+                            Evolução de Atendimento Fonoaudiológico
+                          </span>
+                          <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-emerald-950/70 text-emerald-400 border border-emerald-800/40">
+                            Modelo Oficial 4 Páginas
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 text-xs text-[#a69a8f] mt-0.5">
+                          <Calendar className="w-3.5 h-3.5 text-[#c8a88a]" />
+                          <span>{new Date(evo.sessionDate).toLocaleDateString('pt-BR')}</span>
+                          <span>•</span>
+                          <span>Fonoaudióloga: <strong className="text-[#f4efe8]">{evo.therapistName}</strong> ({evo.therapistCrfa})</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-xs px-2.5 py-1 rounded-full bg-[#2a221e] text-amber-300 border border-amber-500/30 font-bold">
+                        FOIS Nível {evo.foisLevel}
+                      </span>
+                      <span className="text-xs px-2.5 py-1 rounded-full bg-[#2a221e] text-[#c8a88a] border border-[#42362f] font-mono">
+                        PARD {evo.pardLevel}
+                      </span>
+                      <span className="text-xs px-2.5 py-1 rounded-full bg-[#1a1614] text-[#a69a8f] border border-[#3e342e]">
+                        {evo.oralFeedingModality.replace('_', ' ')}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Resumo Clínico em 4 Colunas Rápidas */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+                    <div className="p-3 rounded-xl bg-[#1a1614] border border-[#2e2621]">
+                      <span className="text-[10px] text-[#c8a88a] font-bold uppercase tracking-wider block mb-1">
+                        1. Consciência & Respiração
+                      </span>
+                      <p className="text-[#f4efe8] font-medium capitalize">
+                        {evo.consciousness.join(', ') || 'Lúcido'}
+                      </p>
+                      <p className="text-[#a69a8f] text-[11px] mt-0.5">
+                        {evo.oxygenSupport.replace('_', ' ')} {evo.tqtType !== 'nenhuma' && `• TQT ${evo.tqtType}`}
+                      </p>
+                    </div>
+
+                    <div className="p-3 rounded-xl bg-[#1a1614] border border-[#2e2621]">
+                      <span className="text-[10px] text-[#c8a88a] font-bold uppercase tracking-wider block mb-1">
+                        2. Nutrição & Consistências
+                      </span>
+                      <p className="text-[#f4efe8] font-medium">
+                        Via: {evo.alternativeRoute === 'nenhuma' ? 'VO Exclusiva' : evo.alternativeRoute}
+                      </p>
+                      <p className="text-[#a69a8f] text-[11px] mt-0.5 truncate">
+                        Alimentos: {evo.iddsiFoods.map(f => f.replace('nivel_', 'N')).join(', ')}
+                      </p>
+                    </div>
+
+                    <div className="p-3 rounded-xl bg-[#1a1614] border border-[#2e2621]">
+                      <span className="text-[10px] text-[#c8a88a] font-bold uppercase tracking-wider block mb-1">
+                        3. Líquidos & Espessante
+                      </span>
+                      <p className="text-[#f4efe8] font-medium">
+                        {evo.thickenerUsed ? `Espessante: ${evo.thickenerBrand || 'Sim'}` : 'Líquidos Livres'}
+                      </p>
+                      <p className="text-[#a69a8f] text-[11px] mt-0.5 truncate">
+                        {evo.thickenerDose || 'Sem espessamento'}
+                      </p>
+                    </div>
+
+                    <div className="p-3 rounded-xl bg-[#1a1614] border border-[#2e2621]">
+                      <span className="text-[10px] text-[#c8a88a] font-bold uppercase tracking-wider block mb-1">
+                        4. Terapias & Frequência
+                      </span>
+                      <p className="text-[#f4efe8] font-medium">
+                        {evo.treatmentFrequency || '2x por semana'}
+                      </p>
+                      <p className="text-[#a69a8f] text-[11px] mt-0.5">
+                        {evo.therapies.filter(t => t.applied).length} recurso(s) aplicados
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Síntese da Conduta Clínica */}
+                  <div className="p-4 rounded-xl bg-[#1a1614] border border-[#2e2621] text-xs">
+                    <span className="text-[10px] uppercase font-bold text-[#c8a88a] tracking-wider block mb-1">
+                      Conduta Clínica da Sessão
+                    </span>
+                    <p className="text-[#d8cec4] leading-relaxed whitespace-pre-line">
+                      {evo.sessionConductSummary || evo.clinicalSummary}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : currentRecord.sessions.length === 0 ? (
             <div className="bg-[#221d1a] border border-[#3a312c] rounded-2xl p-8 text-center">
               <Clock className="w-10 h-10 text-[#a69a8f] mx-auto mb-3 opacity-50" />
-              <p className="text-sm text-[#a69a8f] mb-4">Nenhuma sessão clínica registrada ainda para este paciente.</p>
+              <p className="text-sm text-[#a69a8f] mb-4">Nenhuma evolução registrada para este paciente ainda.</p>
               <button
                 onClick={() => setIsAddingSession(true)}
-                className="px-4 py-2 rounded-xl bg-[#c8a88a] text-[#181513] font-bold text-xs"
+                className="px-5 py-2.5 rounded-xl bg-[#c8a88a] text-[#181513] font-bold text-xs shadow-md cursor-pointer"
               >
-                Registrar Primeira Sessão
+                Registrar Primeira Evolução (Modelo 4 Páginas)
               </button>
             </div>
-          ) : (
+          ) : null}
+
+          {/* Sessões SOAP Legadas (se existirem) */}
+          {currentRecord.sessions.length > 0 && patientOfficialEvolutions.length === 0 && (
             <div className="space-y-4">
               {currentRecord.sessions.map((sess) => (
                 <div
@@ -654,64 +782,29 @@ export const MedicalRecordView: React.FC<MedicalRecordViewProps> = ({
                       <span className="text-xs px-2.5 py-1 rounded-full bg-[#2a221e] text-[#c8a88a] border border-[#42362f]">
                         FOIS Nível {sess.currentFois}
                       </span>
-                      <span className="text-[10px] px-2 py-0.5 rounded font-mono bg-emerald-950/40 text-emerald-400 border border-emerald-800/40 flex items-center gap-1">
-                        <ShieldCheck className="w-3 h-3" />
-                        {sess.verificationSeal}
-                      </span>
                     </div>
                   </div>
 
-                  {/* SOAP Breakdown */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
                     <div className="p-3.5 rounded-xl bg-[#1a1614] border border-[#2e2621]">
-                      <div className="flex items-center gap-1.5 text-[#c8a88a] font-bold mb-1 uppercase tracking-wider text-[10px]">
-                        <span className="w-4 h-4 rounded bg-[#c8a88a]/20 text-[#c8a88a] flex items-center justify-center font-bold">S</span>
-                        Subjetivo (Relato do Paciente / Cuidador)
-                      </div>
-                      <p className="text-[#d6c7b7] leading-relaxed">{sess.subjective}</p>
+                      <span className="text-[#c8a88a] font-bold uppercase text-[10px] block mb-1">Subjetivo</span>
+                      <p className="text-[#d6c7b7]">{sess.subjective}</p>
                     </div>
-
                     <div className="p-3.5 rounded-xl bg-[#1a1614] border border-[#2e2621]">
-                      <div className="flex items-center gap-1.5 text-blue-400 font-bold mb-1 uppercase tracking-wider text-[10px]">
-                        <span className="w-4 h-4 rounded bg-blue-950/40 text-blue-400 flex items-center justify-center font-bold">O</span>
-                        Objetivo (Procedimentos & Testes Realizados)
-                      </div>
-                      <p className="text-[#d6c7b7] leading-relaxed">{sess.objective}</p>
-                    </div>
-
-                    <div className="p-3.5 rounded-xl bg-[#1a1614] border border-[#2e2621]">
-                      <div className="flex items-center gap-1.5 text-amber-400 font-bold mb-1 uppercase tracking-wider text-[10px]">
-                        <span className="w-4 h-4 rounded bg-amber-950/40 text-amber-400 flex items-center justify-center font-bold">A</span>
-                        Avaliação / Parecer Clínico
-                      </div>
-                      <p className="text-[#d6c7b7] leading-relaxed">{sess.assessment}</p>
-                    </div>
-
-                    <div className="p-3.5 rounded-xl bg-[#1a1614] border border-[#2e2621]">
-                      <div className="flex items-center gap-1.5 text-emerald-400 font-bold mb-1 uppercase tracking-wider text-[10px]">
-                        <span className="w-4 h-4 rounded bg-emerald-950/40 text-emerald-400 flex items-center justify-center font-bold">P</span>
-                        Plano & Condutas Estabelecidas
-                      </div>
-                      <p className="text-[#d6c7b7] leading-relaxed">{sess.plan}</p>
+                      <span className="text-blue-400 font-bold uppercase text-[10px] block mb-1">Objetivo</span>
+                      <p className="text-[#d6c7b7]">{sess.objective}</p>
                     </div>
                   </div>
-
-                  {/* Observed Symptoms Badges */}
-                  {sess.symptomsObserved && sess.symptomsObserved.length > 0 && (
-                    <div className="mt-3 pt-3 border-t border-[#2e2621] flex items-center gap-2 flex-wrap">
-                      <span className="text-[11px] text-[#a69a8f]">Sinais observados na sessão:</span>
-                      {sess.symptomsObserved.map(sym => (
-                        <span key={sym} className="text-[10px] px-2 py-0.5 rounded-md bg-[#2d221c] text-[#c8a88a] border border-[#42362f]">
-                          {sym.replace('_', ' ')}
-                        </span>
-                      ))}
-                    </div>
-                  )}
                 </div>
               ))}
             </div>
           )}
         </div>
+      )}
+
+      {/* TAB CONTENT: 2.1 CURVA & GRÁFICOS DE EVOLUÇÃO (INDEXAÇÃO ANALÍTICA) */}
+      {activeTab === 'graficos_evolucao' && (
+        <EvolutionCharts evolutions={patientOfficialEvolutions} />
       )}
 
       {/* TAB CONTENT: 3. AVALIAÇÃO OFA & DEGLUTIÇÃO */}
@@ -1225,127 +1318,36 @@ export const MedicalRecordView: React.FC<MedicalRecordViewProps> = ({
         </div>
       )}
 
-      {/* MODAL: NOVA EVOLUÇÃO DE SESSÃO (SOAP) */}
+      {/* MODAL / CONTAINER: NOVA EVOLUÇÃO OFICIAL (4 PÁGINAS GAMA) */}
       {isAddingSession && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-[#221d1a] border border-[#3a312c] rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-[#332a24]">
-              <div>
-                <h3 className="text-lg font-bold font-serif text-[#f4efe8]">
-                  Evoluir Sessão Fonoaudiológica #{currentRecord.sessions.length + 1}
-                </h3>
-                <p className="text-xs text-[#a69a8f]">
-                  Paciente: {selectedPatient.name} • Modelo SOAP Fonoaudiológico
-                </p>
-              </div>
-
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+          <div className="bg-[#181513] border border-[#3e342e] rounded-3xl w-full max-w-5xl max-h-[95vh] overflow-y-auto p-4 sm:p-8 shadow-2xl space-y-6">
+            <div className="flex items-center justify-between pb-3 border-b border-[#342b26]">
+              <span className="text-xs font-bold text-[#c8a88a] uppercase tracking-wider">
+                Prontuário Fonoaudiológico Oficial • 4 Módulos
+              </span>
               <button
                 onClick={() => setIsAddingSession(false)}
-                className="p-1.5 rounded-lg bg-[#2c2420] text-[#a69a8f] hover:text-[#f4efe8]"
+                className="p-1.5 rounded-xl bg-[#27211d] text-[#a69a8f] hover:text-[#f4efe8] transition-colors"
+                title="Fechar formulário"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleSaveSession} className="space-y-4 text-xs">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-[#a69a8f] mb-1 font-semibold">Data da Sessão</label>
-                  <input
-                    type="date"
-                    required
-                    value={newSession.date}
-                    onChange={e => setNewSession({ ...newSession, date: e.target.value })}
-                    className="w-full bg-[#1a1614] border border-[#3f342d] rounded-lg p-2.5 text-[#f4efe8]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-[#a69a8f] mb-1 font-semibold">Nível FOIS nesta Sessão</label>
-                  <select
-                    value={newSession.currentFois}
-                    onChange={e => setNewSession({ ...newSession, currentFois: Number(e.target.value) })}
-                    className="w-full bg-[#1a1614] border border-[#3f342d] rounded-lg p-2.5 text-[#f4efe8]"
-                  >
-                    {FOIS_SCALE.map(s => (
-                      <option key={s.level} value={s.level}>{s.label}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-[#c8a88a] mb-1 font-bold">
-                  S - Subjetivo (Relato do Paciente / Cuidador sobre alimentação)
-                </label>
-                <textarea
-                  required
-                  rows={2}
-                  placeholder="Ex: Cuidador informa que paciente aceitou bem o almoço pastoso, sem queixa de dor ao engolir..."
-                  value={newSession.subjective}
-                  onChange={e => setNewSession({ ...newSession, subjective: e.target.value })}
-                  className="w-full bg-[#1a1614] border border-[#3f342d] rounded-lg p-2.5 text-[#f4efe8]"
-                />
-              </div>
-
-              <div>
-                <label className="block text-blue-400 mb-1 font-bold">
-                  O - Objetivo (Exercícios executados, consistências testadas, ausculta)
-                </label>
-                <textarea
-                  required
-                  rows={2}
-                  placeholder="Ex: Realizado treino com 5ml de água gelada espessada nível 3. Ausculta cervical limpa pré e pós..."
-                  value={newSession.objective}
-                  onChange={e => setNewSession({ ...newSession, objective: e.target.value })}
-                  className="w-full bg-[#1a1614] border border-[#3f342d] rounded-lg p-2.5 text-[#f4efe8]"
-                />
-              </div>
-
-              <div>
-                <label className="block text-amber-400 mb-1 font-bold">
-                  A - Avaliação / Parecer Clínico (Resposta motora e proteção)
-                </label>
-                <textarea
-                  required
-                  rows={2}
-                  placeholder="Ex: Boa adesão à manobra de queixo para baixo, sem sinais de aspiração silente..."
-                  value={newSession.assessment}
-                  onChange={e => setNewSession({ ...newSession, assessment: e.target.value })}
-                  className="w-full bg-[#1a1614] border border-[#3f342d] rounded-lg p-2.5 text-[#f4efe8]"
-                />
-              </div>
-
-              <div>
-                <label className="block text-emerald-400 mb-1 font-bold">
-                  P - Plano / Condutas Estabelecidas
-                </label>
-                <textarea
-                  required
-                  rows={2}
-                  placeholder="Ex: Manter dieta pastosa IDDSI 5. Orientar família sobre postura a 90°. Próxima sessão na quinta-feira..."
-                  value={newSession.plan}
-                  onChange={e => setNewSession({ ...newSession, plan: e.target.value })}
-                  className="w-full bg-[#1a1614] border border-[#3f342d] rounded-lg p-2.5 text-[#f4efe8]"
-                />
-              </div>
-
-              <div className="flex justify-end gap-3 pt-3 border-t border-[#332a24]">
-                <button
-                  type="button"
-                  onClick={() => setIsAddingSession(false)}
-                  className="px-4 py-2 rounded-xl bg-[#2c2420] text-[#a69a8f] font-semibold"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 rounded-xl bg-[#c8a88a] hover:bg-[#b89574] text-[#181513] font-bold shadow-md"
-                >
-                  Assinar e Salvar Sessão
-                </button>
-              </div>
-            </form>
+            <OfficialEvolutionForm
+              patient={selectedPatient}
+              clinicConfig={clinicConfig}
+              currentTherapist={therapists[0] || null}
+              previousEvolutions={patientOfficialEvolutions}
+              onSaveEvolution={(evolution) => {
+                if (onSaveOfficialEvolution) {
+                  onSaveOfficialEvolution(evolution);
+                }
+                setIsAddingSession(false);
+              }}
+              onCancel={() => setIsAddingSession(false)}
+            />
           </div>
         </div>
       )}
