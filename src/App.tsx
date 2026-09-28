@@ -156,7 +156,15 @@ export default function App() {
   };
 
   const handleSavePatient = (newPatient: Patient) => {
-    setPatients([newPatient, ...patients]);
+    setPatients(prev => {
+      const idx = prev.findIndex(p => p.id === newPatient.id);
+      if (idx >= 0) {
+        const copy = [...prev];
+        copy[idx] = newPatient;
+        return copy;
+      }
+      return [newPatient, ...prev];
+    });
     setSelectedPatient(newPatient);
   };
 
