@@ -68,7 +68,7 @@ export function generateOfficialReportPDF(data: ReportData) {
   // Patient Identification Card
   let y = 46;
   doc.setFillColor(248, 245, 242);
-  doc.roundedRect(12, y, pageWidth - 24, 30, 2, 2, 'F');
+  doc.roundedRect(12, y, pageWidth - 24, 38, 2, 2, 'F');
 
   doc.setTextColor(50, 40, 35);
   doc.setFont('helvetica', 'bold');
@@ -76,12 +76,16 @@ export function generateOfficialReportPDF(data: ReportData) {
   doc.text(`Paciente: ${data.patient.name}`, 16, y + 7);
 
   doc.setFont('helvetica', 'normal');
-  doc.setFontSize(9);
-  doc.text(`CPF: ${data.patient.cpf}   |   Nascimento: ${data.patient.birthDate}   |   Status: ${data.patient.status.toUpperCase()}`, 16, y + 14);
-  doc.text(`Diagnóstico Médico: ${data.patient.diagnosis}`, 16, y + 20);
-  doc.text(`Responsável: ${data.patient.guardianName || 'Não informado'} (${data.patient.guardianPhone || '-'})`, 16, y + 26);
+  doc.setFontSize(8.5);
+  const genderTxt = data.patient.gender ? `   |   Sexo: ${data.patient.gender}` : '';
+  doc.text(`CPF: ${data.patient.cpf || 'Não informado'}   |   Nasc: ${data.patient.birthDate || 'N/I'}${genderTxt}   |   Status: ${data.patient.status.toUpperCase()}`, 16, y + 13);
+  doc.text(`Diagnóstico Principal: ${data.patient.mainDiagnosis || data.patient.diagnosis}`, 16, y + 19);
+  doc.text(`Responsável: ${data.patient.guardianName || 'O Próprio'}   |   Recibo em nome de: ${data.patient.receiptName || data.patient.guardianName || data.patient.name}`, 16, y + 25);
+  const cepTxt = data.patient.cep ? ` - CEP: ${data.patient.cep}` : '';
+  const phonesTxt = [data.patient.phone, data.patient.secondaryPhone].filter(Boolean).join(' / ') || data.patient.guardianPhone || '-';
+  doc.text(`Endereço: ${data.patient.address || 'Não informado'}${cepTxt}   |   Tel: ${phonesTxt}`, 16, y + 31);
 
-  y += 37;
+  y += 45;
 
   // RaDI Assessment Section
   if (data.assessment) {
