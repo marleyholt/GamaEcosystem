@@ -25,8 +25,10 @@ import {
   Upload,
   Image as ImageIcon,
   RotateCcw,
-  Sparkles,
-  Info
+  Info,
+  MapPin,
+  KeyRound,
+  FileBadge
 } from 'lucide-react';
 
 interface ConfigurationViewProps {
@@ -68,9 +70,14 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
     }
   }, [tempConfig.logoUrl]);
 
-  // Estados para novos cadastros
+  // Estados para novo cadastro robusto de Cuidador
   const [newCaregiverName, setNewCaregiverName] = useState('');
+  const [newCaregiverCpf, setNewCaregiverCpf] = useState('');
+  const [newCaregiverEmail, setNewCaregiverEmail] = useState('');
+  const [newCaregiverAddress, setNewCaregiverAddress] = useState('');
   const [newCaregiverPhone, setNewCaregiverPhone] = useState('');
+  const [newCaregiverSecondaryPhone, setNewCaregiverSecondaryPhone] = useState('');
+  const [newCaregiverRegNumber, setNewCaregiverRegNumber] = useState('');
   const [newCaregiverRole, setNewCaregiverRole] = useState('Cuidador Principal');
   const [newCaregiverPatientId, setNewCaregiverPatientId] = useState('');
 
@@ -125,17 +132,31 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
   };
 
   const handleAddCaregiver = () => {
-    if (!newCaregiverName.trim()) return;
+    if (!newCaregiverName.trim() || !newCaregiverEmail.trim()) {
+      alert('Nome e E-mail do cuidador são obrigatórios (o e-mail será usado para o login no sistema).');
+      return;
+    }
     const newCg: Caregiver = {
       id: `cg_${Date.now()}`,
       name: newCaregiverName.trim(),
+      cpf: newCaregiverCpf.trim(),
+      email: newCaregiverEmail.trim(),
+      address: newCaregiverAddress.trim(),
       phone: newCaregiverPhone.trim() || '(21) 90000-0000',
+      secondaryPhone: newCaregiverSecondaryPhone.trim() || undefined,
+      registrationNumber: newCaregiverRegNumber.trim() || undefined,
       kinshipOrRole: newCaregiverRole,
       assignedPatientIds: newCaregiverPatientId ? [newCaregiverPatientId] : []
     };
     onUpdateCaregivers([...caregivers, newCg]);
+    // Limpeza de campos
     setNewCaregiverName('');
+    setNewCaregiverCpf('');
+    setNewCaregiverEmail('');
+    setNewCaregiverAddress('');
     setNewCaregiverPhone('');
+    setNewCaregiverSecondaryPhone('');
+    setNewCaregiverRegNumber('');
     setNewCaregiverPatientId('');
   };
 
@@ -217,7 +238,7 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
           <span>Clínica & Responsável Técnica</span>
         </button>
 
-        {/* SUB-ABA RENOMEADA CONFORME SOLICITAÇÃO: Configuração de Marca */}
+        {/* SUB-ABA: Configuração de Marca */}
         <button
           onClick={() => setActiveTab('marca')}
           className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap ${
@@ -362,7 +383,7 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
         </form>
       )}
 
-      {/* Conteúdo da Tab 2: CONFIGURAÇÃO DE MARCA (Com Upload de Logo e Visualização em Tempo Real) */}
+      {/* Conteúdo da Tab 2: CONFIGURAÇÃO DE MARCA (Com Upload de Logo Proporcional) */}
       {activeTab === 'marca' && (
         <div className="space-y-6">
           {/* Card de Upload da Logomarca */}
@@ -374,7 +395,7 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
                   Upload da Logomarca Oficial
                 </h2>
                 <p className="text-xs text-[#a69a8f] mt-0.5">
-                  A logomarca enviada aqui será aplicada automaticamente em todos os relatórios/laudos e na <strong>barra do navegador (Favicon)</strong>.
+                  A logomarca enviada aqui será aplicada automaticamente em escala proporcional em todos os relatórios/laudos e na <strong>barra do navegador (Favicon)</strong>.
                 </p>
               </div>
 
@@ -410,29 +431,34 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
               </div>
             </div>
 
-            {/* Prévia da Logomarca carregada */}
-            <div className="flex items-center gap-4 p-4 rounded-xl bg-[#181513] border border-[#2e2621]">
-              <div className="w-20 h-20 rounded-lg bg-white/5 border border-dashed border-[#44362d] flex items-center justify-center p-2 overflow-hidden">
+            {/* Prévia da Logomarca carregada com escala proporcional ampliada */}
+            <div className="flex items-center gap-5 p-5 rounded-xl bg-[#181513] border border-[#2e2621]">
+              <div className="w-28 h-24 rounded-lg bg-white/5 border border-dashed border-[#44362d] flex items-center justify-center p-2 overflow-hidden">
                 {tempConfig.logoUrl ? (
                   <img src={tempConfig.logoUrl} alt="Logo" className="max-h-full max-w-full object-contain" />
                 ) : (
-                  <div className="relative w-10 h-10 rounded-full border-2 border-[#7a5937] flex items-center justify-center font-serif text-[#7a5937] font-bold text-xl leading-none">
-                    g
-                    <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-[#7a5937]" />
+                  <div className="flex flex-col items-center">
+                    <div className="relative mb-1">
+                      <div className="w-10 h-10 rounded-full border-2 border-[#7a5937] flex items-center justify-center font-serif text-[#7a5937] font-bold text-xl leading-none">
+                        g
+                      </div>
+                      <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-[#7a5937]" />
+                    </div>
+                    <span className="text-[10px] font-serif font-black tracking-widest text-[#f4efe8]">GAMA</span>
                   </div>
                 )}
               </div>
 
-              <div className="space-y-1 text-xs">
+              <div className="space-y-1.5 text-xs">
                 <p className="font-semibold text-[#f4efe8]">
-                  {tempConfig.logoUrl ? 'Logomarca Customizada Ativa' : 'Logomarca Oficial Padrão (Monograma GAMA g°)'}
+                  {tempConfig.logoUrl ? 'Logomarca Customizada Ativa (Proporção Ampliada)' : 'Logomarca Oficial Padrão (Monograma GAMA g° Nobre)'}
                 </p>
-                <p className="text-[#a69a8f] text-[11px]">
-                  Formatos recomendados: PNG transparente ou SVG. Resolução ideal: 400x120px ou superior.
+                <p className="text-[#a69a8f] text-[11px] leading-relaxed">
+                  Agora calibrada para preencher harmoniosamente o canto superior direito do papel timbrado, espelhando fielmente o PDF da clínica.
                 </p>
-                <div className="flex items-center gap-2 pt-1 text-[11px] text-emerald-400">
+                <div className="flex items-center gap-2 pt-1 text-[11px] text-emerald-400 font-medium">
                   <CheckCircle className="w-3.5 h-3.5" />
-                  Sincronizado automaticamente com a aba do navegador
+                  Sincronizado automaticamente com o Favicon do navegador
                 </div>
               </div>
             </div>
@@ -519,7 +545,7 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
             </div>
           </div>
 
-          {/* Visualizador / Preview em Tempo Real do Papel Timbrado Oficial */}
+          {/* Visualizador / Preview em Tempo Real do Papel Timbrado Oficial com Logo Proporcional */}
           <div className="bg-[#14110f] p-4 sm:p-8 rounded-2xl border border-[#342b26] flex justify-center overflow-x-auto">
             <OfficialLetterhead
               config={tempConfig}
@@ -544,7 +570,7 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
                     <li><strong>WhatsApp:</strong> {effectiveProfile.phone}</li>
                     <li><strong>E-mail:</strong> {effectiveProfile.email}</li>
                     <li><strong>Instagram:</strong> {effectiveProfile.instagram}</li>
-                    <li><strong>Logomarca:</strong> {tempConfig.logoUrl ? 'Logomarca Customizada Carregada' : 'Monograma Oficial GAMA g°'}</li>
+                    <li><strong>Logomarca:</strong> {tempConfig.logoUrl ? 'Logomarca Customizada Carregada' : 'Monograma Oficial GAMA g° em escala nobre proporcional'}</li>
                   </ul>
                 </div>
 
@@ -557,22 +583,27 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
         </div>
       )}
 
-      {/* Conteúdo da Tab 3: Cuidadores Cadastrados */}
+      {/* Conteúdo da Tab 3: CUIDADORES CADASTRADOS (CADASTRO ROBUSTO COMPLETO) */}
       {activeTab === 'cuidadores' && (
         <div className="space-y-6">
-          {/* Formulário de Adicionar Cuidador */}
+          {/* Formulário de Adicionar Cuidador Robusto */}
           <div className="bg-[#1f1a17] border border-[#382e27] rounded-2xl p-5 sm:p-6 space-y-4">
-            <h2 className="text-base font-bold font-serif text-[#f4efe8] flex items-center gap-2">
-              <Plus className="w-4 h-4 text-[#c8a88a]" />
-              Cadastrar Novo Cuidador / Responsável
-            </h2>
+            <div className="border-b border-[#382e27] pb-3">
+              <h2 className="text-base font-bold font-serif text-[#f4efe8] flex items-center gap-2">
+                <Plus className="w-4 h-4 text-[#c8a88a]" />
+                Ficha de Cadastro do Cuidador / Responsável
+              </h2>
+              <p className="text-xs text-[#a69a8f] mt-0.5">
+                O e-mail cadastrado aqui será a chave de credencial de acesso do cuidador ao aplicativo.
+              </p>
+            </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               <div>
-                <label className="block text-xs font-medium text-[#c8a88a] mb-1">Nome Completo</label>
+                <label className="block text-xs font-medium text-[#c8a88a] mb-1">Nome Completo *</label>
                 <input
                   type="text"
-                  placeholder="Ex: Maria das Graças"
+                  placeholder="Ex: Maria Helena Rocha"
                   value={newCaregiverName}
                   onChange={e => setNewCaregiverName(e.target.value)}
                   className="w-full bg-[#181513] border border-[#3e342e] rounded-xl px-3 py-2 text-xs text-[#f4efe8] outline-none focus:border-[#c8a88a]"
@@ -580,12 +611,89 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-[#c8a88a] mb-1">Telefone / WhatsApp</label>
+                <label className="block text-xs font-medium text-[#c8a88a] mb-1">CPF *</label>
+                <input
+                  type="text"
+                  placeholder="000.000.000-00"
+                  value={newCaregiverCpf}
+                  onChange={e => {
+                    const raw = e.target.value.replace(/\D/g, '').slice(0, 11);
+                    const formatted = raw
+                      .replace(/(\d{3})(\d)/, '$1.$2')
+                      .replace(/(\d{3})(\d)/, '$1.$2')
+                      .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+                    setNewCaregiverCpf(formatted);
+                  }}
+                  className="w-full bg-[#181513] border border-[#3e342e] rounded-xl px-3 py-2 text-xs text-[#f4efe8] outline-none focus:border-[#c8a88a]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-[#c8a88a] mb-1 flex items-center gap-1">
+                  <KeyRound className="w-3.5 h-3.5 text-amber-400" />
+                  E-mail (Usado para o Acesso) *
+                </label>
+                <input
+                  type="email"
+                  placeholder="cuidador@email.com"
+                  value={newCaregiverEmail}
+                  onChange={e => setNewCaregiverEmail(e.target.value)}
+                  className="w-full bg-[#181513] border border-[#3e342e] rounded-xl px-3 py-2 text-xs text-[#f4efe8] outline-none focus:border-[#c8a88a]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-[#c8a88a] mb-1">Telefone Principal / WhatsApp *</label>
                 <input
                   type="text"
                   placeholder="(21) 98888-7777"
                   value={newCaregiverPhone}
-                  onChange={e => setNewCaregiverPhone(e.target.value)}
+                  onChange={e => {
+                    const raw = e.target.value.replace(/\D/g, '').slice(0, 11);
+                    const formatted = raw.length > 10
+                      ? raw.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3')
+                      : raw.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
+                    setNewCaregiverPhone(formatted);
+                  }}
+                  className="w-full bg-[#181513] border border-[#3e342e] rounded-xl px-3 py-2 text-xs text-[#f4efe8] outline-none focus:border-[#c8a88a]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-[#a69a8f] mb-1">Segunda opção de contato (Opcional)</label>
+                <input
+                  type="text"
+                  placeholder="(21) 2555-0000"
+                  value={newCaregiverSecondaryPhone}
+                  onChange={e => setNewCaregiverSecondaryPhone(e.target.value)}
+                  className="w-full bg-[#181513] border border-[#3e342e] rounded-xl px-3 py-2 text-xs text-[#f4efe8] outline-none focus:border-[#c8a88a]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-[#a69a8f] mb-1 flex items-center gap-1">
+                  <FileBadge className="w-3.5 h-3.5 text-[#c8a88a]" />
+                  Nº de Registro Profissional (Opcional)
+                </label>
+                <input
+                  type="text"
+                  placeholder="Ex: COREN-RJ 12345-TE"
+                  value={newCaregiverRegNumber}
+                  onChange={e => setNewCaregiverRegNumber(e.target.value)}
+                  className="w-full bg-[#181513] border border-[#3e342e] rounded-xl px-3 py-2 text-xs text-[#f4efe8] outline-none focus:border-[#c8a88a]"
+                />
+              </div>
+
+              <div className="lg:col-span-2">
+                <label className="block text-xs font-medium text-[#c8a88a] mb-1 flex items-center gap-1">
+                  <MapPin className="w-3.5 h-3.5 text-[#c8a88a]" />
+                  Endereço Completo
+                </label>
+                <input
+                  type="text"
+                  placeholder="Rua, Número, Bairro, Cidade - UF"
+                  value={newCaregiverAddress}
+                  onChange={e => setNewCaregiverAddress(e.target.value)}
                   className="w-full bg-[#181513] border border-[#3e342e] rounded-xl px-3 py-2 text-xs text-[#f4efe8] outline-none focus:border-[#c8a88a]"
                 />
               </div>
@@ -626,33 +734,65 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
               <button
                 type="button"
                 onClick={handleAddCaregiver}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#c8a88a] hover:bg-[#d6bca3] text-[#181513] font-bold text-xs shadow-sm transition-all cursor-pointer"
+                className="flex items-center gap-2 px-5 py-2 rounded-xl bg-[#c8a88a] hover:bg-[#d6bca3] text-[#181513] font-bold text-xs shadow-sm transition-all cursor-pointer"
               >
                 <Plus className="w-4 h-4" />
-                Adicionar Cuidador
+                Cadastrar Cuidador
               </button>
             </div>
           </div>
 
-          {/* Listagem de Cuidadores */}
+          {/* Listagem de Cuidadores com Dados Robustos */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {caregivers.map(cg => {
               const assignedPat = patients.find(p => cg.assignedPatientIds.includes(p.id));
               return (
-                <div key={cg.id} className="bg-[#1f1a17] border border-[#382e27] p-4 rounded-xl flex items-start justify-between gap-3 shadow-xs">
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
+                <div key={cg.id} className="bg-[#1f1a17] border border-[#382e27] p-5 rounded-xl flex items-start justify-between gap-3 shadow-xs">
+                  <div className="space-y-2 flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
                       <span className="text-sm font-bold text-[#f4efe8]">{cg.name}</span>
                       <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#27211d] text-[#c8a88a] border border-[#3e342e] font-semibold">
                         {cg.kinshipOrRole}
                       </span>
+                      {cg.registrationNumber && (
+                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-950/70 text-amber-300 border border-amber-800/40 font-mono">
+                          {cg.registrationNumber}
+                        </span>
+                      )}
                     </div>
-                    <p className="text-xs text-[#a69a8f] flex items-center gap-1.5">
-                      <Phone className="w-3.5 h-3.5 text-[#c8a88a]" />
-                      {cg.phone}
-                    </p>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-3 gap-y-1 text-xs text-[#a69a8f]">
+                      <p className="flex items-center gap-1.5 truncate">
+                        <KeyRound className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                        <span className="truncate">Login: <strong className="text-[#f4efe8]">{cg.email}</strong></span>
+                      </p>
+                      {cg.cpf && (
+                        <p className="flex items-center gap-1.5">
+                          <span className="text-[10px] font-mono text-[#c8a88a]">CPF:</span>
+                          <span className="font-mono text-[#d8cec4]">{cg.cpf}</span>
+                        </p>
+                      )}
+                      <p className="flex items-center gap-1.5">
+                        <Phone className="w-3.5 h-3.5 text-[#c8a88a] shrink-0" />
+                        <span>{cg.phone}</span>
+                      </p>
+                      {cg.secondaryPhone && (
+                        <p className="flex items-center gap-1.5">
+                          <Phone className="w-3.5 h-3.5 text-[#88786d] shrink-0" />
+                          <span className="text-[#a69a8f]">{cg.secondaryPhone}</span>
+                        </p>
+                      )}
+                    </div>
+
+                    {cg.address && (
+                      <p className="text-[11px] text-[#88786d] flex items-center gap-1.5 truncate pt-0.5">
+                        <MapPin className="w-3 h-3 text-[#c8a88a] shrink-0" />
+                        <span className="truncate">{cg.address}</span>
+                      </p>
+                    )}
+
                     {assignedPat && (
-                      <p className="text-[11px] text-[#c8a88a] font-medium pt-1">
+                      <p className="text-[11px] text-[#c8a88a] font-medium pt-1 border-t border-[#2e2621]">
                         Paciente vinculado: <span className="text-[#f4efe8] underline">{assignedPat.name}</span>
                       </p>
                     )}
@@ -660,7 +800,7 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
 
                   <button
                     onClick={() => handleDeleteCaregiver(cg.id)}
-                    className="p-1.5 rounded-lg text-rose-400 hover:bg-rose-950/40 hover:text-rose-300 transition-colors"
+                    className="p-1.5 rounded-lg text-rose-400 hover:bg-rose-950/40 hover:text-rose-300 transition-colors shrink-0"
                     title="Excluir cuidador"
                   >
                     <Trash2 className="w-4 h-4" />
