@@ -49,7 +49,21 @@ export default function App() {
   // Authentication State
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(() => {
     const saved = localStorage.getItem('health_deglut_user');
-    return saved ? JSON.parse(saved) : INITIAL_USERS[0];
+    let user: UserProfile = saved ? JSON.parse(saved) : INITIAL_USERS[0];
+    // Se for a Adriane Gama ou admin, assegura acesso MASTER irrestrito a todos os módulos
+    const isAdriane = 
+      user.name.toLowerCase().includes('adriane gama') ||
+      user.email.toLowerCase().includes('adriane') ||
+      user.email.toLowerCase().includes('gamafono') ||
+      user.role === 'admin';
+    if (isAdriane) {
+      user = {
+        ...user,
+        role: 'admin',
+        allowedTabs: ['resumo', 'prontuario', 'radi', 'registro', 'historico', 'chat', 'pacientes', 'relatorios', 'seguranca', 'configuracao']
+      };
+    }
+    return user;
   });
 
   // Navigation state
@@ -97,7 +111,21 @@ export default function App() {
 
   const [usersList, setUsersList] = useState<UserProfile[]>(() => {
     const saved = localStorage.getItem('health_deglut_users_list');
-    return saved ? JSON.parse(saved) : INITIAL_USERS;
+    const rawList: UserProfile[] = saved ? JSON.parse(saved) : INITIAL_USERS;
+    return rawList.map(u => {
+      const isAdriane = 
+        u.name.toLowerCase().includes('adriane gama') ||
+        u.email.toLowerCase().includes('adriane') ||
+        u.email.toLowerCase().includes('gamafono');
+      if (isAdriane) {
+        return {
+          ...u,
+          role: 'admin',
+          allowedTabs: ['resumo', 'prontuario', 'radi', 'registro', 'historico', 'chat', 'pacientes', 'relatorios', 'seguranca', 'configuracao']
+        };
+      }
+      return u;
+    });
   });
 
   // Clinic Configuration States (Persisted in localStorage)
@@ -300,6 +328,8 @@ export default function App() {
         currentTab={currentTab}
         onSelectTab={setCurrentTab}
         userRole={currentUser.role}
+        userEmail={currentUser.email}
+        userName={currentUser.name}
         allowedTabs={currentUser.allowedTabs}
         isOpen={isMenuOpen}
         onClose={() => setIsMenuOpen(false)}
