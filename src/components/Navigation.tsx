@@ -42,6 +42,7 @@ interface NavigationProps {
   onSelectTab: (tab: NavigationTab) => void;
   isAdmin?: boolean;
   userRole?: UserRole;
+  allowedTabs?: NavigationTab[];
   isOpen: boolean;
   onClose: () => void;
 }
@@ -51,6 +52,7 @@ export const Navigation: React.FC<NavigationProps> = ({
   onSelectTab,
   isAdmin,
   userRole = 'fonoaudiologo',
+  allowedTabs,
   isOpen,
   onClose,
 }) => {
@@ -72,7 +74,13 @@ export const Navigation: React.FC<NavigationProps> = ({
     }));
   };
 
-  const navStructure: NavGroupItem[] = [
+  // Filtragem de tabs permitidas para o usuário conectado
+  const isModuleAllowed = (tabId: NavigationTab) => {
+    if (!allowedTabs || allowedTabs.length === 0) return true; // Se não configurado, exibe padrão
+    return allowedTabs.includes(tabId);
+  };
+
+  const rawNavStructure: NavGroupItem[] = [
     {
       id: 'resumo',
       label: 'Visão Geral',
@@ -106,11 +114,28 @@ export const Navigation: React.FC<NavigationProps> = ({
       icon: Settings,
       subItems: [
         { id: 'configuracao' as NavigationTab, label: 'Central de Configurações', icon: Settings },
-        { id: 'seguranca', label: 'Segurança & LGPD', icon: ShieldCheck },
-        ...(showAdmin ? [{ id: 'admin' as NavigationTab, label: 'Gestão de Usuários', icon: UserCog }] : [])
+        { id: 'seguranca', label: 'Segurança & LGPD', icon: ShieldCheck }
       ]
     }
   ];
+
+  // Aplica filtro de visibilidade configurado pelo administrador na matriz de telas
+  const navStructure = rawNavStructure
+    .map(group => {
+      if (group.directTab) {
+        return isModuleAllowed(group.directTab) ? group : null;
+      }
+      if (group.subItems) {
+        const filteredSubs = group.subItems.filter(sub => isModuleAllowed(sub.id));
+        if (filteredSubs.length === 0) return null;
+        return {
+          ...group,
+          subItems: filteredSubs
+        };
+      }
+      return group;
+    })
+    .filter((g): g is NavGroupItem => g !== null);
 
   const isTabActive = (tabId?: NavigationTab) => {
     if (!tabId) return false;
