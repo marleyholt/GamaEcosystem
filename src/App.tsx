@@ -300,6 +300,7 @@ export default function App() {
         currentTab={currentTab}
         onSelectTab={setCurrentTab}
         userRole={currentUser.role}
+        allowedTabs={currentUser.allowedTabs}
         isOpen={isMenuOpen}
         onClose={() => setIsMenuOpen(false)}
       />
@@ -435,6 +436,12 @@ export default function App() {
               onApproveUser={handleApproveUser}
               onRejectUser={handleRejectUser}
               onChangeRole={handleChangeRole}
+              onUpdateUserPermissions={(userId, allowedTabs) => {
+                setUsersList(prev => prev.map(u => u.id === userId ? { ...u, allowedTabs } : u));
+                if (currentUser && currentUser.id === userId) {
+                  setCurrentUser({ ...currentUser, allowedTabs });
+                }
+              }}
             />
           )}
 
@@ -447,6 +454,16 @@ export default function App() {
               therapists={therapists}
               onUpdateTherapists={setTherapists}
               patients={patients}
+              users={usersList}
+              onApproveUser={handleApproveUser}
+              onRejectUser={handleRejectUser}
+              onChangeRole={handleChangeRole}
+              onUpdateUserPermissions={(userId, allowedTabs) => {
+                setUsersList(prev => prev.map(u => u.id === userId ? { ...u, allowedTabs } : u));
+                if (currentUser && currentUser.id === userId) {
+                  setCurrentUser({ ...currentUser, allowedTabs });
+                }
+              }}
             />
           )}
         </main>
