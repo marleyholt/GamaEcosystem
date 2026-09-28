@@ -11,19 +11,25 @@ export interface UserProfile {
 }
 
 export type PatientStatus = 'ativo' | 'inativo' | 'alta';
+export type Gender = 'Masculino' | 'Feminino' | 'Outro';
 
 export interface Patient {
   id: string;
-  name: string;
-  cpf: string;
-  birthDate: string;
-  phone: string;
-  email: string;
-  address: string;
-  diagnosis: string;
+  name: string; // Paciente
+  birthDate: string; // Data de Nascimento
+  gender?: Gender; // Sexo: ( ) Masculino ( ) Feminino
+  mainDiagnosis: string; // Diagnóstico Principal
+  diagnosis: string; // Diagnóstico complementar/geral (retrocompatibilidade)
+  guardianName: string; // Responsável pelo paciente
+  receiptName: string; // Recibo em nome de
+  cpf: string; // CPF (pagador / paciente)
+  email: string; // E-mail
+  address: string; // Endereço
+  cep: string; // CEP
+  phone: string; // Telefone principal
+  secondaryPhone?: string; // Telefone secundário / Telefones para contato
   medicalHistory: string;
   currentMedications: string;
-  guardianName: string;
   guardianPhone: string;
   guardianEmail: string;
   fonoaudiologistId: string;
