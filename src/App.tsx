@@ -277,6 +277,8 @@ export default function App() {
       <AuthModal
         onLoginSuccess={(user) => setCurrentUser(user)}
         availableUsers={usersList}
+        caregivers={caregivers}
+        therapists={therapists}
       />
     );
   }
