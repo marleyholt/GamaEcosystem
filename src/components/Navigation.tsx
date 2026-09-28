@@ -267,18 +267,18 @@ export const Navigation: React.FC<NavigationProps> = ({
                         <button
                           key={sub.id}
                           onClick={() => handleSelectTab(sub.id)}
-                          className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-xs transition-all text-left ${
+                          className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-xs transition-all text-left cursor-pointer ${
                             active
                               ? 'bg-[#c8a88a] text-[#181513] font-bold shadow-sm'
                               : 'text-[#c2b6ab] hover:text-[#f4efe8] hover:bg-[#25201c]'
                           }`}
                         >
-                          <div className="flex items-center gap-2.5 truncate">
+                          <div className="flex items-center gap-2.5 min-w-0 pr-1">
                             <SubIcon className={`w-4 h-4 shrink-0 ${active ? 'text-[#181513]' : 'text-[#c8a88a]'}`} />
-                            <span className="truncate">{sub.label}</span>
+                            <span className="leading-snug break-words">{sub.label}</span>
                           </div>
                           {sub.badge && (
-                            <span className={`text-[9px] px-1.5 py-0.5 rounded-md font-semibold uppercase tracking-wider ${
+                            <span className={`text-[9px] px-1.5 py-0.5 rounded-md font-semibold uppercase tracking-wider shrink-0 ml-1 ${
                               active ? 'bg-[#181513] text-[#c8a88a]' : 'bg-[#332a24] text-[#c8a88a]'
                             }`}>
                               {sub.badge}
