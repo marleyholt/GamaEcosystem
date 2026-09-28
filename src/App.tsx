@@ -42,6 +42,8 @@ import {
   INITIAL_CAREGIVERS, 
   INITIAL_THERAPISTS 
 } from './types/clinicConfig';
+import { OfficialEvolutionData } from './types/clinicalEvolution';
+import { INITIAL_OFFICIAL_EVOLUTIONS } from './data/mockEvolutions';
 
 export default function App() {
   // Authentication State
@@ -113,6 +115,16 @@ export default function App() {
     const saved = localStorage.getItem('health_deglut_therapists');
     return saved ? JSON.parse(saved) : INITIAL_THERAPISTS;
   });
+
+  const [officialEvolutions, setOfficialEvolutions] = useState<OfficialEvolutionData[]>(() => {
+    const saved = localStorage.getItem('health_deglut_official_evolutions');
+    return saved ? JSON.parse(saved) : INITIAL_OFFICIAL_EVOLUTIONS;
+  });
+
+  // Sync to localStorage
+  useEffect(() => {
+    localStorage.setItem('health_deglut_official_evolutions', JSON.stringify(officialEvolutions));
+  }, [officialEvolutions]);
 
   // Sync to localStorage
   useEffect(() => {
@@ -314,6 +326,20 @@ export default function App() {
               onUpdateMedicalRecord={handleUpdateMedicalRecord}
               radiAssessments={assessments}
               dailyLogs={dailyLogs}
+              officialEvolutions={officialEvolutions}
+              onSaveOfficialEvolution={(newEvo) => {
+                setOfficialEvolutions(prev => [newEvo, ...prev]);
+                // Também atualiza o FOIS atual no prontuário do paciente
+                setMedicalRecords(prev => prev.map(rec => {
+                  if (rec.patientId === newEvo.patientId) {
+                    return { ...rec, currentFois: newEvo.foisLevel, updatedAt: new Date().toISOString() };
+                  }
+                  return rec;
+                }));
+                alert('Evolução Fonoaudiológica Oficial (4 Módulos) salva e indexada com sucesso!');
+              }}
+              clinicConfig={clinicConfig}
+              therapists={therapists}
             />
           )}
 
