@@ -236,67 +236,67 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
         )}
       </div>
 
-      {/* Tabs de Navegação Interna da Configuração */}
-      <div className="flex items-center gap-2 border-b border-[#382e27] pb-2 overflow-x-auto scrollbar-none">
+      {/* Tabs de Navegação Interna da Configuração com quebra automática de linha (flex-wrap) */}
+      <div className="flex flex-wrap items-center gap-2 border-b border-[#382e27] pb-3">
         <button
           onClick={() => setActiveTab('geral')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap ${
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
             activeTab === 'geral'
               ? 'bg-[#c8a88a] text-[#181513] shadow-md font-bold'
               : 'text-[#a69a8f] hover:text-[#f4efe8] hover:bg-[#25201c]'
           }`}
         >
-          <Building2 className="w-4 h-4" />
+          <Building2 className="w-4 h-4 shrink-0" />
           <span>Clínica & Responsável Técnica</span>
         </button>
 
         {/* SUB-ABA: Configuração de Marca */}
         <button
           onClick={() => setActiveTab('marca')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap ${
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
             activeTab === 'marca'
               ? 'bg-[#c8a88a] text-[#181513] shadow-md font-bold'
               : 'text-[#a69a8f] hover:text-[#f4efe8] hover:bg-[#25201c]'
           }`}
         >
-          <FileCheck2 className="w-4 h-4" />
+          <FileCheck2 className="w-4 h-4 shrink-0" />
           <span>Configuração de Marca</span>
         </button>
 
         <button
           onClick={() => setActiveTab('cuidadores')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap ${
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
             activeTab === 'cuidadores'
               ? 'bg-[#c8a88a] text-[#181513] shadow-md font-bold'
               : 'text-[#a69a8f] hover:text-[#f4efe8] hover:bg-[#25201c]'
           }`}
         >
-          <Users className="w-4 h-4" />
+          <Users className="w-4 h-4 shrink-0" />
           <span>Cuidadores Cadastrados ({caregivers.length})</span>
         </button>
 
         <button
           onClick={() => setActiveTab('terapeutas')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap cursor-pointer ${
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
             activeTab === 'terapeutas'
               ? 'bg-[#c8a88a] text-[#181513] shadow-md font-bold'
               : 'text-[#a69a8f] hover:text-[#f4efe8] hover:bg-[#25201c]'
           }`}
         >
-          <UserCheck className="w-4 h-4" />
+          <UserCheck className="w-4 h-4 shrink-0" />
           <span>Fonoaudiólogas & Equipe ({therapists.length})</span>
         </button>
 
         {/* SUB-ABA: Gestão de Usuários & Matriz de Janelas */}
         <button
           onClick={() => setActiveTab('usuarios')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap cursor-pointer ${
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
             activeTab === 'usuarios'
               ? 'bg-[#c8a88a] text-[#181513] shadow-md font-bold'
               : 'text-[#a69a8f] hover:text-[#f4efe8] hover:bg-[#25201c]'
           }`}
         >
-          <UserCog className="w-4 h-4" />
+          <UserCog className="w-4 h-4 shrink-0" />
           <span>Gestão de Usuários & Telas ({users.length})</span>
         </button>
       </div>
