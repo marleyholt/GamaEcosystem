@@ -123,6 +123,7 @@ export type NavigationTab =
   | 'relatorios' 
   | 'seguranca' 
   | 'admin'
+  | 'configuracao'
   | 'dashboard'
   | 'medical_records'
   | 'feeding_log'
@@ -130,7 +131,8 @@ export type NavigationTab =
   | 'patients'
   | 'reports'
   | 'security'
-  | 'admin_users';
+  | 'admin_users'
+  | 'settings';
 
 export type FeedingRoute = 'VO_exclusiva' | 'SNE' | 'GTT' | 'VO_mista';
 
