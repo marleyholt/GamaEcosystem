@@ -8,8 +8,8 @@ export interface ClinicConfig {
   phoneWhatsapp: string; // (21) 98988-7981
   email: string; // gamafono@gamafono.com.br
   instagram: string; // @gama_fonoaudiologia
-  addressLine?: string; // Endereço físico ou atendimento domiciliar
-  logoUrl?: string; // Data URL ou caminho da logo
+  addressLine?: string; // Endereço físico ou polo de atendimento
+  logoUrl?: string; // Base64 ou URL da logomarca oficial customizada
   signatureUrl?: string; // Rubrica / Assinatura digitalizada
   useLetterheadByDefault: boolean; // Obrigatório em todo documento
   includeSignatureOnPrint: boolean; // Permitir modelo com ou sem rubrica
@@ -30,9 +30,13 @@ export interface Therapist {
   name: string;
   crfa: string;
   cpf?: string;
-  phone: string;
-  email: string;
-  specialty: string; // Ex: Disfagia, Motricidade Orofacial, Linguagem
+  phone?: string;
+  email?: string;
+  roleTitle?: string;
+  specialty?: string; // Ex: Disfagia, Motricidade Orofacial, Linguagem
+  instagram?: string;
+  addressLine?: string;
+  signatureUrl?: string;
   active: boolean;
 }
 
@@ -50,6 +54,37 @@ export const DEFAULT_CLINIC_CONFIG: ClinicConfig = {
   useLetterheadByDefault: true,
   includeSignatureOnPrint: false // Modelo padrão: papel timbrado sem rubrica conforme solicitação
 };
+
+/**
+ * Função utilitária de Herança / Fallback:
+ * Retorna os dados combinados da Terapeuta com fallback automático para os dados da Clínica & Responsável Técnica.
+ */
+export function getEffectiveTherapistProfile(
+  therapist?: Therapist | null,
+  clinic: ClinicConfig = DEFAULT_CLINIC_CONFIG
+): {
+  name: string;
+  roleTitle: string;
+  crfa: string;
+  cpf: string;
+  phone: string;
+  email: string;
+  instagram: string;
+  addressLine: string;
+  signatureUrl?: string;
+} {
+  return {
+    name: therapist?.name?.trim() || clinic.technicalResponsible,
+    roleTitle: therapist?.roleTitle?.trim() || clinic.roleTitle || 'Fonoaudióloga',
+    crfa: therapist?.crfa?.trim() || clinic.crfa,
+    cpf: therapist?.cpf?.trim() || clinic.cpf,
+    phone: therapist?.phone?.trim() || clinic.phoneWhatsapp,
+    email: therapist?.email?.trim() || clinic.email,
+    instagram: therapist?.instagram?.trim() || clinic.instagram,
+    addressLine: therapist?.addressLine?.trim() || clinic.addressLine || '',
+    signatureUrl: therapist?.signatureUrl?.trim() || clinic.signatureUrl
+  };
+}
 
 export const INITIAL_CAREGIVERS: Caregiver[] = [
   {
@@ -76,10 +111,12 @@ export const INITIAL_THERAPISTS: Therapist[] = [
   {
     id: 'th_1',
     name: 'Adriane Gama',
+    roleTitle: 'Fonoaudióloga',
     crfa: 'CREFONO 9531-RJ',
     cpf: '071151437-22',
     phone: '(21) 98988-7981',
     email: 'gamafono@gamafono.com.br',
+    instagram: '@gama_fonoaudiologia',
     specialty: 'Disfagia & Reabilitação Orofaríngea',
     active: true
   }
