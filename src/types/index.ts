@@ -45,6 +45,8 @@ export interface Patient {
 
 export type RiskLevel = 'Baixo Risco' | 'Risco Moderado' | 'Alto Risco';
 
+export * from './clinicalEvolution';
+
 export interface RadiAssessment {
   id: string;
   patientId: string;
