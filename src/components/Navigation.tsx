@@ -42,6 +42,8 @@ interface NavigationProps {
   onSelectTab: (tab: NavigationTab) => void;
   isAdmin?: boolean;
   userRole?: UserRole;
+  userEmail?: string;
+  userName?: string;
   allowedTabs?: NavigationTab[];
   isOpen: boolean;
   onClose: () => void;
@@ -52,17 +54,27 @@ export const Navigation: React.FC<NavigationProps> = ({
   onSelectTab,
   isAdmin,
   userRole = 'fonoaudiologo',
+  userEmail = '',
+  userName = '',
   allowedTabs,
   isOpen,
   onClose,
 }) => {
   const showAdmin = isAdmin !== undefined ? isAdmin : (userRole === 'admin' || userRole === 'fonoaudiologo');
 
+  // Adriane Gama é a Responsável Técnica / Usuária MASTER Suprema: sempre tem acesso irrestrito a tudo
+  const isMasterUser = 
+    userRole === 'admin' ||
+    userEmail.toLowerCase().includes('adriane') ||
+    userEmail.toLowerCase().includes('gamafono') ||
+    userEmail.toLowerCase().includes('leaog') ||
+    userName.toLowerCase().includes('adriane gama');
+
   // Estado que controla quais submenus estão abertos ou fechados
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
     clinico: true,
     gestao: true,
-    sistema: false
+    sistema: true
   });
 
   const toggleGroup = (groupId: string, e: React.MouseEvent) => {
@@ -76,6 +88,8 @@ export const Navigation: React.FC<NavigationProps> = ({
 
   // Filtragem de tabs permitidas para o usuário conectado
   const isModuleAllowed = (tabId: NavigationTab) => {
+    // USUÁRIO MASTER SEMPRE TEM ACESSO A TUDO
+    if (isMasterUser) return true;
     if (!allowedTabs || allowedTabs.length === 0) return true; // Se não configurado, exibe padrão
     return allowedTabs.includes(tabId);
   };
