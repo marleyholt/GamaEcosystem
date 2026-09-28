@@ -355,7 +355,11 @@ export const MedicalRecordView: React.FC<MedicalRecordViewProps> = ({
               <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[#a69a8f]">
                 <span>Idade: <strong className="text-[#f4efe8]">{calculateAge(selectedPatient.birthDate)}</strong></span>
                 <span>•</span>
-                <span>CPF: <strong className="text-[#f4efe8]">{selectedPatient.cpf}</strong></span>
+                <span>Sexo: <strong className="text-[#f4efe8]">{selectedPatient.gender || 'Feminino'}</strong></span>
+                <span>•</span>
+                <span>CPF: <strong className="text-[#f4efe8]">{selectedPatient.cpf || 'N/I'}</strong></span>
+                <span>•</span>
+                <span>Recibo p/: <strong className="text-[#c8a88a]">{selectedPatient.receiptName || selectedPatient.guardianName || selectedPatient.name}</strong></span>
                 <span>•</span>
                 <span>Fonoaudióloga: <strong className="text-[#c8a88a]">{selectedPatient.fonoaudiologistName || currentUser.name}</strong></span>
               </div>
