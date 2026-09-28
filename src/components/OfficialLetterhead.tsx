@@ -40,7 +40,7 @@ export const OfficialLetterhead: React.FC<LetterheadProps> = ({
       <div className="flex-1 flex flex-col pl-7 sm:pl-9 pr-6 sm:pr-8 pt-7 pb-6 relative z-0">
         {/* Cabeçalho Oficial GAMA FONOAUDIOLOGIA */}
         <header className="flex items-start justify-between border-b border-neutral-200 pb-5 mb-6">
-          <div>
+          <div className="max-w-[60%]">
             {documentType && (
               <span className="text-[10px] uppercase font-bold tracking-widest text-[#7a5937] block mb-0.5">
                 {documentType}
@@ -51,40 +51,39 @@ export const OfficialLetterhead: React.FC<LetterheadProps> = ({
                 {title}
               </h1>
             )}
-            <p className="text-xs text-neutral-500 font-sans mt-0.5">
+            <p className="text-xs text-neutral-500 font-sans mt-1">
               Responsável Técnica: <span className="font-semibold text-neutral-800">{profile.name}</span> • {profile.crfa}
             </p>
           </div>
 
-          {/* Logotipo Oficial GAMA (Se houver logo customizada via upload, renderiza ela; senão renderiza o monograma clássico) */}
-          <div className="flex flex-col items-end text-right select-none">
+          {/* Logotipo Oficial GAMA (Proporção Fiel ao Documento PDF Original) */}
+          <div className="flex flex-col items-center justify-center text-center select-none min-w-[130px]">
             {config.logoUrl ? (
-              <div className="flex flex-col items-end">
+              <div className="flex flex-col items-center">
                 <img 
                   src={config.logoUrl} 
                   alt={config.clinicName || 'Logomarca Oficial'} 
-                  className="max-h-14 max-w-[150px] object-contain mb-1" 
+                  className="h-16 sm:h-20 max-w-[180px] object-contain mb-1 drop-shadow-sm" 
                 />
-                <span className="text-[10px] font-bold tracking-wider text-neutral-700 uppercase">
-                  {config.clinicName}
-                </span>
               </div>
             ) : (
-              <>
-                <div className="flex items-center gap-1.5">
-                  {/* Símbolo do Monograma g° */}
-                  <div className="relative w-8 h-8 rounded-full border-2 border-[#7a5937] flex items-center justify-center font-serif text-[#7a5937] font-bold text-lg leading-none shadow-xs">
+              <div className="flex flex-col items-center">
+                {/* Símbolo Nobre do Monograma g° com proporção e detalhes fiéis */}
+                <div className="relative mb-1">
+                  <div className="w-11 h-11 rounded-full border-[2.5px] border-[#7a5937] flex items-center justify-center font-serif text-[#7a5937] font-bold text-2xl leading-none shadow-xs">
                     g
-                    <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-[#7a5937]" />
                   </div>
+                  {/* Pequena esfera superior do expoente do monograma */}
+                  <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-[#7a5937] border-2 border-white shadow-xs" />
                 </div>
-                <span className="text-sm font-black tracking-widest text-neutral-800 font-sans mt-1">
-                  {config.clinicName || 'GAMA'}
+                {/* Tipografia Clássica GAMA FONOAUDIOLOGIA */}
+                <span className="text-base sm:text-lg font-serif font-black tracking-[0.25em] text-[#2b2420] uppercase leading-none mt-1">
+                  {config.clinicName ? config.clinicName.replace(' FONOAUDIOLOGIA', '') : 'GAMA'}
                 </span>
-                <span className="text-[9px] font-semibold tracking-wider text-neutral-500 font-sans uppercase">
+                <span className="text-[8px] sm:text-[9px] font-sans font-semibold tracking-[0.3em] text-[#7a5937] uppercase leading-tight mt-0.5">
                   FONOAUDIOLOGIA
                 </span>
-              </>
+              </div>
             )}
           </div>
         </header>
