@@ -417,8 +417,8 @@ export const MedicalRecordView: React.FC<MedicalRecordViewProps> = ({
           </div>
         </div>
 
-        {/* Sub-Navigation Tabs */}
-        <div className="mt-6 pt-4 border-t border-[#342b26] flex items-center gap-1.5 overflow-x-auto scrollbar-none">
+        {/* Sub-Navigation Tabs com quebra automática de linha (flex-wrap) */}
+        <div className="mt-6 pt-4 border-t border-[#342b26] flex flex-wrap items-center gap-2">
           {[
             { id: 'evolucoes' as TabType, label: `Evoluções Fonoaudiológicas (${patientOfficialEvolutions.length || currentRecord.sessions.length})`, icon: Clock },
             { id: 'graficos_evolucao' as TabType, label: 'Curva & Gráficos de Evolução', icon: TrendingUp },
@@ -434,13 +434,13 @@ export const MedicalRecordView: React.FC<MedicalRecordViewProps> = ({
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-medium whitespace-nowrap transition-all ${
+                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-medium transition-all text-left cursor-pointer ${
                   isActive
                     ? 'bg-[#c8a88a] text-[#181513] font-bold shadow-sm'
-                    : 'bg-[#1e1916] text-[#a69a8f] hover:text-[#f4efe8] hover:bg-[#2a231f] border border-transparent'
+                    : 'bg-[#1e1916] text-[#a69a8f] hover:text-[#f4efe8] hover:bg-[#2a231f] border border-[#2e2621]'
                 }`}
               >
-                <Icon className="w-3.5 h-3.5" />
+                <Icon className="w-3.5 h-3.5 shrink-0" />
                 <span>{tab.label}</span>
               </button>
             );
