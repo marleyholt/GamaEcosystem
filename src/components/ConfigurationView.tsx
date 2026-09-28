@@ -876,7 +876,10 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-[#c8a88a] mb-1">E-mail Profissional (Em branco herda RT)</label>
+                <label className="block text-xs font-medium text-[#c8a88a] mb-1 flex items-center gap-1">
+                  <KeyRound className="w-3.5 h-3.5 text-amber-400" />
+                  E-mail de Acesso (Login) *
+                </label>
                 <input
                   type="email"
                   placeholder={tempConfig.email}
@@ -884,6 +887,7 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
                   onChange={e => setNewTherapistEmail(e.target.value)}
                   className="w-full bg-[#181513] border border-[#3e342e] rounded-xl px-3 py-2 text-xs text-[#f4efe8] outline-none focus:border-[#c8a88a]"
                 />
+                <span className="text-[10px] text-[#a69a8f] mt-0.5 block">Usado para primeiro acesso e criação de senha</span>
               </div>
 
               <div>
