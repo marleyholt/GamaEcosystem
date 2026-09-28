@@ -7,16 +7,13 @@ Status possíveis: [PENDENTE], [EM PLANEJAMENTO], [EM EXECUÇÃO], [CONCLUÍDO].
 
 ## 📌 Topo da Fila (Prioridade Máxima Atual)
 
-1. **[CONCLUÍDO] Tela de Login Direto, Primeiro Acesso e Matriz de Permissões de Janelas por Usuário na Central de Configurações**
-   - **Reestruturação Completa da Tela de Autenticação (`AuthModal.tsx`):**
-     - Remoção definitiva da aba de perfis de demonstração do topo.
-     - Duas abas diretas: **"Login (Já tenho senha)"** (com e-mail, senha, visualizador de senha e botão funcional **"Esqueci minha senha"**) e **"Primeiro Acesso (Criar Senha)"** (com os 5 critérios em tempo real de senha forte e confirmação).
-     - Integração com Firebase Authentication para verificação de credenciais.
-   - **Gestão de Usuários na Central de Configurações (`ConfigurationView.tsx` & `AdminUsersView.tsx`):**
-     - A gestão de usuários foi movida para dentro da **Central de Configurações** (como a 5ª sub-aba: *Gestão de Usuários & Telas*), limpando o menu principal.
-     - **Tabela / Matriz de Janelas e Modais:** Catálogo completo de todas as 10 telas do sistema (*Visão Geral, Prontuário 4 Módulos, RaDI, Registro Diário, Linha do Tempo, Chat, Pacientes, Laudos, Segurança, Configurações*).
-     - Seletor de usuário à esquerda e botões de ação imediata **"Permitir"** (Visível) ou **"Ocultar"** (Oculto) para cada tela individual, além de botões **"Marcar Todas"** e **"Desmarcar Todas"**.
-     - O menu lateral drawer passa a respeitar rigorosamente a matriz: módulos desmarcados ficam 100% invisíveis para aquele usuário.
+1. **[CONCLUÍDO] Quebra Automática de Linha (Flex-Wrap) nos Submenus e Abas de Todos os Modais**
+   - **Prevenção de Transbordamento:** Removido o travamento `whitespace-nowrap` rígido e barras horizontais cortadas nos submenus de:
+     - Prontuário Eletrônico PEP (`MedicalRecordView.tsx`): 7 abas com quebra responsiva de linha fluida.
+     - Central de Configurações (`ConfigurationView.tsx`): 5 sub-abas institucionais com `flex-wrap` e espaçamento equilibrado.
+     - Formulário Oficial de Evolução 4 Módulos (`OfficialEvolutionForm.tsx`): 4 páginas de navegação responsivas que se adaptam a qualquer largura de tela.
+     - Menu Lateral Retrátil Drawer (`Navigation.tsx`): rótulos com quebra dinâmica sem truncamento indesejado.
+   - Todos os botões mantêm largura padronizada sem ultrapassar o container e permanecem 100% clicáveis em desktops, tablets e smartphones.
 
 ---
 
@@ -37,6 +34,7 @@ Status possíveis: [PENDENTE], [EM PLANEJAMENTO], [EM EXECUÇÃO], [CONCLUÍDO].
 
 ## ✅ Histórico de Itens Concluídos
 
+- **[CONCLUÍDO] 2026-09-28: Quebra Automática de Linha (Flex-Wrap) nos Submenus e Abas de Todos os Modais**
 - **[CONCLUÍDO] 2026-09-28: Tela de Login Direto, Primeiro Acesso e Matriz de Permissões de Janelas por Usuário na Central de Configurações**
 - **[CONCLUÍDO] 2026-09-28: Fluxo de Primeiro Acesso & Criação de Senha Forte com Firebase Auth**
 - **[CONCLUÍDO] 2026-09-28: Substituição Integral da Evolução Fonoaudiológica (Modelo Oficial 4 Páginas) com Eficiência & Gráficos**
