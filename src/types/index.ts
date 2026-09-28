@@ -7,6 +7,7 @@ export interface UserProfile {
   role: UserRole;
   approved: boolean;
   crfaNumber?: string;
+  patientId?: string;
   createdAt: string;
 }
 
