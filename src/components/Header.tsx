@@ -21,9 +21,7 @@ export interface HeaderProps {
   onOpenUserModal?: () => void;
   patientsCount?: number;
   pendingUsersCount?: number;
-  isSidebarCollapsed?: boolean;
-  onToggleSidebar?: () => void;
-  onOpenMobileSidebar?: () => void;
+  onOpenMenu: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -35,9 +33,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenUserModal,
   patientsCount,
   pendingUsersCount = 0,
-  isSidebarCollapsed = false,
-  onToggleSidebar,
-  onOpenMobileSidebar
+  onOpenMenu
 }) => {
   const activeUser = user || propCurrentUser || {
     id: 'user_fallback',
@@ -50,38 +46,21 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="sticky top-0 z-30 bg-[#1c1815]/95 backdrop-blur-md border-b border-[#342b26] px-3.5 py-2.5 sm:px-6 transition-all">
+    <header className="sticky top-0 z-30 bg-[#1c1815]/95 backdrop-blur-md border-b border-[#342b26] px-4 py-2.5 sm:px-6">
       <div className="w-full flex items-center justify-between">
-        {/* Left: Sandwich button & Brand info */}
+        {/* Left: Botão Sanduíche lá no topo que abre o menu lateral */}
         <div className="flex items-center gap-3">
-          {/* Sandwich Button for Mobile */}
           <button
-            onClick={onOpenMobileSidebar}
-            className="flex lg:hidden p-2 rounded-xl text-[#a69a8f] hover:text-[#f4efe8] hover:bg-[#27211d] border border-[#3e342e] transition-colors"
-            title="Abrir menu de navegação"
-            aria-label="Abrir menu de navegação"
+            onClick={onOpenMenu}
+            className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[#27211d] hover:bg-[#342b26] text-[#c8a88a] border border-[#3e342e] transition-all shadow-sm active:scale-95 group cursor-pointer"
+            title="Abrir menu de navegação lateral"
+            aria-label="Abrir menu de navegação lateral"
           >
-            <Menu className="w-5 h-5 text-[#c8a88a]" />
+            <Menu className="w-5 h-5 text-[#c8a88a] group-hover:scale-110 transition-transform" />
+            <span className="text-xs font-semibold text-[#f4efe8] hidden sm:inline">Menu</span>
           </button>
 
-          {/* Sandwich Button for Desktop */}
-          <button
-            onClick={onToggleSidebar}
-            className="hidden lg:flex p-2 rounded-xl text-[#a69a8f] hover:text-[#f4efe8] hover:bg-[#27211d] border border-[#3e342e] transition-colors"
-            title={isSidebarCollapsed ? 'Expandir barra lateral' : 'Recolher barra lateral'}
-            aria-label={isSidebarCollapsed ? 'Expandir barra lateral' : 'Recolher barra lateral'}
-          >
-            <Menu className="w-5 h-5 text-[#c8a88a]" />
-          </button>
-
-          <div className="hidden sm:block">
-            <span className="text-xs uppercase tracking-wider text-[#a69a8f] font-semibold">
-              GamaEcosystem
-            </span>
-            <h1 className="text-sm font-bold text-[#f4efe8] font-serif leading-tight">
-              Health Deglut • Fonoaudiologia Clínica
-            </h1>
-          </div>
+          <Logo size="sm" />
         </div>
 
         {/* Right: User Status & Actions */}
