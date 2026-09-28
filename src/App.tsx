@@ -31,8 +31,17 @@ import { ReportsView } from './components/ReportsView';
 import { LgpdSecurityView } from './components/LgpdSecurityView';
 import { AdminUsersView } from './components/AdminUsersView';
 import { MedicalRecordView } from './components/MedicalRecordView';
+import { ConfigurationView } from './components/ConfigurationView';
 import { AuthModal } from './components/AuthModal';
 import { generateOfficialReportPDF } from './utils/pdfGenerator';
+import { 
+  ClinicConfig, 
+  Caregiver, 
+  Therapist, 
+  DEFAULT_CLINIC_CONFIG, 
+  INITIAL_CAREGIVERS, 
+  INITIAL_THERAPISTS 
+} from './types/clinicConfig';
 
 export default function App() {
   // Authentication State
@@ -88,6 +97,35 @@ export default function App() {
     const saved = localStorage.getItem('health_deglut_users_list');
     return saved ? JSON.parse(saved) : INITIAL_USERS;
   });
+
+  // Clinic Configuration States (Persisted in localStorage)
+  const [clinicConfig, setClinicConfig] = useState<ClinicConfig>(() => {
+    const saved = localStorage.getItem('health_deglut_clinic_config');
+    return saved ? JSON.parse(saved) : DEFAULT_CLINIC_CONFIG;
+  });
+
+  const [caregivers, setCaregivers] = useState<Caregiver[]>(() => {
+    const saved = localStorage.getItem('health_deglut_caregivers');
+    return saved ? JSON.parse(saved) : INITIAL_CAREGIVERS;
+  });
+
+  const [therapists, setTherapists] = useState<Therapist[]>(() => {
+    const saved = localStorage.getItem('health_deglut_therapists');
+    return saved ? JSON.parse(saved) : INITIAL_THERAPISTS;
+  });
+
+  // Sync to localStorage
+  useEffect(() => {
+    localStorage.setItem('health_deglut_clinic_config', JSON.stringify(clinicConfig));
+  }, [clinicConfig]);
+
+  useEffect(() => {
+    localStorage.setItem('health_deglut_caregivers', JSON.stringify(caregivers));
+  }, [caregivers]);
+
+  useEffect(() => {
+    localStorage.setItem('health_deglut_therapists', JSON.stringify(therapists));
+  }, [therapists]);
 
   // Sync to localStorage
   useEffect(() => {
@@ -373,23 +411,15 @@ export default function App() {
           )}
 
           {(currentTab === 'configuracao' || currentTab === 'settings') && (
-            <div className="bg-[#1f1a17] border border-[#382e27] rounded-2xl p-6 sm:p-8 space-y-4">
-              <div className="flex items-center gap-3 border-b border-[#382e27] pb-4">
-                <div className="w-10 h-10 rounded-xl bg-[#c8a88a]/20 border border-[#c8a88a]/40 flex items-center justify-center text-[#c8a88a]">
-                  <span className="font-bold text-lg">⚙</span>
-                </div>
-                <div>
-                  <h2 className="text-xl font-bold font-serif text-[#f4efe8]">Central de Configurações</h2>
-                  <p className="text-xs text-[#a69a8f]">Parâmetros gerais de relatórios, cuidadores, terapeutas e personalização visual.</p>
-                </div>
-              </div>
-              <div className="p-5 rounded-xl bg-[#27211d] border border-[#3e342e] text-xs text-[#d8cec4] space-y-2">
-                <p className="font-semibold text-[#c8a88a]">Próxima etapa prioritária:</p>
-                <p className="text-[#a69a8f] leading-relaxed">
-                  Este módulo está cadastrado no topo da fila (Item 2) e será implementado com as abas de Cuidadores, Terapeutas (CRFa), Logomarca e Parâmetros de Laudos assim que você validar o menu lateral.
-                </p>
-              </div>
-            </div>
+            <ConfigurationView
+              clinicConfig={clinicConfig}
+              onUpdateClinicConfig={setClinicConfig}
+              caregivers={caregivers}
+              onUpdateCaregivers={setCaregivers}
+              therapists={therapists}
+              onUpdateTherapists={setTherapists}
+              patients={patients}
+            />
           )}
         </main>
 
