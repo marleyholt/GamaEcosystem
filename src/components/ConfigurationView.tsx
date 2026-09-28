@@ -6,8 +6,9 @@ import {
   DEFAULT_CLINIC_CONFIG,
   getEffectiveTherapistProfile
 } from '../types/clinicConfig';
-import { Patient } from '../types';
+import { Patient, UserProfile, UserRole, NavigationTab } from '../types';
 import { OfficialLetterhead } from './OfficialLetterhead';
+import { AdminUsersView } from './AdminUsersView';
 import { 
   Building2, 
   Users, 
@@ -28,7 +29,8 @@ import {
   Info,
   MapPin,
   KeyRound,
-  FileBadge
+  FileBadge,
+  UserCog
 } from 'lucide-react';
 
 interface ConfigurationViewProps {
@@ -39,6 +41,11 @@ interface ConfigurationViewProps {
   therapists: Therapist[];
   onUpdateTherapists: (therapists: Therapist[]) => void;
   patients: Patient[];
+  users?: UserProfile[];
+  onApproveUser?: (userId: string) => void;
+  onRejectUser?: (userId: string) => void;
+  onChangeRole?: (userId: string, role: UserRole) => void;
+  onUpdateUserPermissions?: (userId: string, allowedTabs: NavigationTab[]) => void;
 }
 
 export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
@@ -48,9 +55,14 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
   onUpdateCaregivers,
   therapists,
   onUpdateTherapists,
-  patients
+  patients,
+  users = [],
+  onApproveUser = () => {},
+  onRejectUser = () => {},
+  onChangeRole = () => {},
+  onUpdateUserPermissions
 }) => {
-  const [activeTab, setActiveTab] = useState<'geral' | 'marca' | 'cuidadores' | 'terapeutas'>('geral');
+  const [activeTab, setActiveTab] = useState<'geral' | 'marca' | 'cuidadores' | 'terapeutas' | 'usuarios'>('geral');
   const [tempConfig, setTempConfig] = useState<ClinicConfig>(clinicConfig);
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [previewTherapistId, setPreviewTherapistId] = useState<string>(''); // Vazio = Usar dados da Clínica & RT
@@ -265,7 +277,7 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
 
         <button
           onClick={() => setActiveTab('terapeutas')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap ${
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap cursor-pointer ${
             activeTab === 'terapeutas'
               ? 'bg-[#c8a88a] text-[#181513] shadow-md font-bold'
               : 'text-[#a69a8f] hover:text-[#f4efe8] hover:bg-[#25201c]'
@@ -273,6 +285,19 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
         >
           <UserCheck className="w-4 h-4" />
           <span>Fonoaudiólogas & Equipe ({therapists.length})</span>
+        </button>
+
+        {/* SUB-ABA: Gestão de Usuários & Matriz de Janelas */}
+        <button
+          onClick={() => setActiveTab('usuarios')}
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap cursor-pointer ${
+            activeTab === 'usuarios'
+              ? 'bg-[#c8a88a] text-[#181513] shadow-md font-bold'
+              : 'text-[#a69a8f] hover:text-[#f4efe8] hover:bg-[#25201c]'
+          }`}
+        >
+          <UserCog className="w-4 h-4" />
+          <span>Gestão de Usuários & Telas ({users.length})</span>
         </button>
       </div>
 
@@ -957,6 +982,19 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
               );
             })}
           </div>
+        </div>
+      )}
+
+      {/* Conteúdo da Tab 5: Gestão de Usuários & Matriz de Janelas / Modais */}
+      {activeTab === 'usuarios' && (
+        <div className="bg-[#1f1a17] border border-[#382e27] rounded-2xl p-6 shadow-sm">
+          <AdminUsersView
+            users={users}
+            onApproveUser={onApproveUser}
+            onRejectUser={onRejectUser}
+            onChangeRole={onChangeRole}
+            onUpdateUserPermissions={onUpdateUserPermissions}
+          />
         </div>
       )}
     </div>
