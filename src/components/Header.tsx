@@ -8,7 +8,8 @@ import {
   LogOut, 
   ShieldCheck, 
   Database, 
-  UserCheck 
+  UserCheck,
+  Menu
 } from 'lucide-react';
 
 export interface HeaderProps {
@@ -20,6 +21,9 @@ export interface HeaderProps {
   onOpenUserModal?: () => void;
   patientsCount?: number;
   pendingUsersCount?: number;
+  isSidebarCollapsed?: boolean;
+  onToggleSidebar?: () => void;
+  onOpenMobileSidebar?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -30,7 +34,10 @@ export const Header: React.FC<HeaderProps> = ({
   onLogout,
   onOpenUserModal,
   patientsCount,
-  pendingUsersCount = 0
+  pendingUsersCount = 0,
+  isSidebarCollapsed = false,
+  onToggleSidebar,
+  onOpenMobileSidebar
 }) => {
   const activeUser = user || propCurrentUser || {
     id: 'user_fallback',
@@ -41,22 +48,52 @@ export const Header: React.FC<HeaderProps> = ({
     crfaNumber: 'CRFa 3-12894',
     createdAt: new Date().toISOString()
   };
+
   return (
-    <header className="sticky top-0 z-40 bg-[#1c1815]/95 backdrop-blur-md border-b border-[#342b26] px-4 py-2.5 sm:px-6">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
-        {/* Left: Branding */}
-        <Logo size="md" />
+    <header className="sticky top-0 z-30 bg-[#1c1815]/95 backdrop-blur-md border-b border-[#342b26] px-3.5 py-2.5 sm:px-6 transition-all">
+      <div className="w-full flex items-center justify-between">
+        {/* Left: Sandwich button & Brand info */}
+        <div className="flex items-center gap-3">
+          {/* Sandwich Button for Mobile */}
+          <button
+            onClick={onOpenMobileSidebar}
+            className="flex lg:hidden p-2 rounded-xl text-[#a69a8f] hover:text-[#f4efe8] hover:bg-[#27211d] border border-[#3e342e] transition-colors"
+            title="Abrir menu de navegação"
+            aria-label="Abrir menu de navegação"
+          >
+            <Menu className="w-5 h-5 text-[#c8a88a]" />
+          </button>
+
+          {/* Sandwich Button for Desktop */}
+          <button
+            onClick={onToggleSidebar}
+            className="hidden lg:flex p-2 rounded-xl text-[#a69a8f] hover:text-[#f4efe8] hover:bg-[#27211d] border border-[#3e342e] transition-colors"
+            title={isSidebarCollapsed ? 'Expandir barra lateral' : 'Recolher barra lateral'}
+            aria-label={isSidebarCollapsed ? 'Expandir barra lateral' : 'Recolher barra lateral'}
+          >
+            <Menu className="w-5 h-5 text-[#c8a88a]" />
+          </button>
+
+          <div className="hidden sm:block">
+            <span className="text-xs uppercase tracking-wider text-[#a69a8f] font-semibold">
+              GamaEcosystem
+            </span>
+            <h1 className="text-sm font-bold text-[#f4efe8] font-serif leading-tight">
+              Health Deglut • Fonoaudiologia Clínica
+            </h1>
+          </div>
+        </div>
 
         {/* Right: User Status & Actions */}
-        <div className="flex items-center gap-2.5 sm:gap-4">
+        <div className="flex items-center gap-2 sm:gap-3">
           {/* Security & LGPD Indicator */}
-          <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#27211d] border border-[#3f342d] text-xs text-[#c8a88a]">
+          <div className="hidden xl:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#27211d] border border-[#3f342d] text-xs text-[#c8a88a]">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
             <span className="font-mono text-[11px]">LGPD & Criptografia Ativa</span>
           </div>
 
           {/* Cloud Database Indicator */}
-          <div className="hidden lg:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#27211d] border border-[#3f342d] text-xs text-[#a69a8f]">
+          <div className="hidden 2xl:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#27211d] border border-[#3f342d] text-xs text-[#a69a8f]">
             <Database className="w-3.5 h-3.5 text-amber-400" />
             <span className="text-[11px]">Firebase / OCI MariaDB Ready</span>
           </div>
@@ -64,13 +101,13 @@ export const Header: React.FC<HeaderProps> = ({
           {/* User Badge */}
           <button
             onClick={onOpenUserModal}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#27211d] hover:bg-[#342b26] border border-[#3f342d] transition-all text-left"
+            className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl bg-[#27211d] hover:bg-[#342b26] border border-[#3f342d] transition-all text-left"
             title="Alterar perfil / Ver dados do usuário"
           >
             <div className="w-7 h-7 rounded-full bg-[#c8a88a] text-[#181513] font-bold flex items-center justify-center text-xs">
               {activeUser.name.charAt(0)}
             </div>
-            <div className="hidden sm:flex flex-col">
+            <div className="hidden md:flex flex-col">
               <span className="text-xs font-semibold text-[#f4efe8] leading-tight">
                 {activeUser.name}
               </span>
@@ -83,7 +120,7 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Pending Users Notification */}
           {pendingUsersCount > 0 && (
             <div
-              className="relative p-2 rounded-lg bg-[#27211d] text-amber-400 border border-amber-900/50 cursor-pointer"
+              className="relative p-2 rounded-xl bg-[#27211d] text-amber-400 border border-amber-900/50 cursor-pointer"
               title={`${pendingUsersCount} usuário(s) aguardando aprovação`}
             >
               <UserCheck className="w-4 h-4" />
@@ -95,7 +132,7 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* Notification Bell */}
           <button 
-            className="p-2 rounded-lg bg-[#27211d] hover:bg-[#342b26] text-[#a69a8f] hover:text-[#f4efe8] border border-[#3f342d] transition-colors"
+            className="p-2 rounded-xl bg-[#27211d] hover:bg-[#342b26] text-[#a69a8f] hover:text-[#f4efe8] border border-[#3f342d] transition-colors"
             title="Notificações clínicas"
           >
             <Bell className="w-4 h-4" />
@@ -104,7 +141,7 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Dark / Light Toggle */}
           <button
             onClick={() => setDarkMode && setDarkMode(!darkMode)}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#27211d] hover:bg-[#342b26] text-[#a69a8f] hover:text-[#c8a88a] border border-[#3f342d] transition-all cursor-pointer shadow-sm group"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-[#27211d] hover:bg-[#342b26] text-[#a69a8f] hover:text-[#c8a88a] border border-[#3f342d] transition-all cursor-pointer shadow-sm group"
             title={darkMode ? 'Mudar para Modo Claro' : 'Mudar para Modo Escuro'}
             aria-label={darkMode ? 'Mudar para Modo Claro' : 'Mudar para Modo Escuro'}
           >
@@ -124,7 +161,7 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Logout */}
           <button
             onClick={onLogout}
-            className="p-2 rounded-lg bg-[#27211d] hover:bg-rose-950/40 text-[#a69a8f] hover:text-rose-400 border border-[#3f342d] transition-colors"
+            className="p-2 rounded-xl bg-[#27211d] hover:bg-rose-950/40 text-[#a69a8f] hover:text-rose-400 border border-[#3f342d] transition-colors"
             title="Sair do sistema"
           >
             <LogOut className="w-4 h-4" />
