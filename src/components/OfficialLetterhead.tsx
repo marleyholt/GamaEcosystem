@@ -38,48 +38,48 @@ export const OfficialLetterhead: React.FC<LetterheadProps> = ({
 
       {/* Conteúdo da Folha com Margem da Faixa */}
       <div className="flex-1 flex flex-col pl-7 sm:pl-9 pr-6 sm:pr-8 pt-7 pb-6 relative z-0">
-        {/* Cabeçalho Oficial GAMA FONOAUDIOLOGIA - Área nobre expandida conforme demarcado */}
-        <header className="flex items-center justify-between border-b border-neutral-200 pb-4 mb-6 min-h-[105px]">
-          <div className="flex-1 pr-4">
+        {/* Cabeçalho Oficial GAMA FONOAUDIOLOGIA - Área nobre ampliada com o DOBRO do tamanho */}
+        <header className="flex items-center justify-between border-b border-neutral-200 pb-5 mb-6 min-h-[170px] sm:min-h-[190px]">
+          <div className="flex-1 pr-4 max-w-[45%]">
             {documentType && (
-              <span className="text-[10px] uppercase font-bold tracking-widest text-[#7a5937] block mb-1">
+              <span className="text-[10px] sm:text-xs uppercase font-bold tracking-widest text-[#7a5937] block mb-1">
                 {documentType}
               </span>
             )}
             {title && (
-              <h1 className="text-xl sm:text-2xl font-bold font-serif text-neutral-900 leading-tight">
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold font-serif text-neutral-900 leading-tight">
                 {title}
               </h1>
             )}
-            <p className="text-xs text-neutral-500 font-sans mt-1.5">
+            <p className="text-xs sm:text-sm text-neutral-500 font-sans mt-2">
               Responsável Técnica: <span className="font-semibold text-neutral-800">{profile.name}</span> • {profile.crfa}
             </p>
           </div>
 
-          {/* Área da Logomarca Ocupando Todo o Espaço do Retângulo Demarcado */}
-          <div className="w-56 sm:w-72 md:w-80 h-24 sm:h-28 flex items-center justify-end select-none">
+          {/* Área da Logomarca DOBRADA - Ocupando com Imponência Toda a Lateral Superior Direita */}
+          <div className="w-[50%] sm:w-[52%] max-w-[460px] h-36 sm:h-44 md:h-48 flex items-center justify-end select-none">
             {config.logoUrl ? (
               <img 
                 src={config.logoUrl} 
                 alt={config.clinicName || 'Logomarca Oficial'} 
-                className="w-full h-full max-h-28 object-contain object-right drop-shadow-xs" 
+                className="w-full h-full max-h-48 object-contain object-right drop-shadow-sm scale-110 sm:scale-125 origin-right" 
               />
             ) : (
-              <div className="flex items-center justify-end gap-3.5 h-full">
-                {/* Símbolo Nobre do Monograma g° com proporção e detalhes fiéis */}
+              <div className="flex items-center justify-end gap-5 h-full">
+                {/* Símbolo do Monograma g° com Dimensões Dobradas */}
                 <div className="relative">
-                  <div className="w-14 h-14 rounded-full border-[3px] border-[#7a5937] flex items-center justify-center font-serif text-[#7a5937] font-bold text-3xl leading-none shadow-xs">
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-[4px] border-[#7a5937] flex items-center justify-center font-serif text-[#7a5937] font-bold text-5xl sm:text-6xl leading-none shadow-sm">
                     g
                   </div>
-                  {/* Pequena esfera superior do expoente do monograma */}
-                  <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#7a5937] border-2 border-white shadow-xs" />
+                  {/* Pequena esfera superior do expoente do monograma dobrada */}
+                  <span className="absolute -top-1.5 -right-1.5 w-6 h-6 rounded-full bg-[#7a5937] border-3 border-white shadow-xs" />
                 </div>
-                {/* Tipografia Clássica GAMA FONOAUDIOLOGIA */}
+                {/* Tipografia Clássica GAMA FONOAUDIOLOGIA Dobrada */}
                 <div className="flex flex-col text-right">
-                  <span className="text-xl sm:text-2xl font-serif font-black tracking-[0.2em] text-[#2b2420] uppercase leading-none">
+                  <span className="text-3xl sm:text-4xl lg:text-5xl font-serif font-black tracking-[0.2em] text-[#2b2420] uppercase leading-none">
                     {config.clinicName ? config.clinicName.replace(' FONOAUDIOLOGIA', '') : 'GAMA'}
                   </span>
-                  <span className="text-[9px] sm:text-[10px] font-sans font-bold tracking-[0.3em] text-[#7a5937] uppercase leading-tight mt-1">
+                  <span className="text-xs sm:text-sm font-sans font-bold tracking-[0.35em] text-[#7a5937] uppercase leading-tight mt-2">
                     FONOAUDIOLOGIA
                   </span>
                 </div>
