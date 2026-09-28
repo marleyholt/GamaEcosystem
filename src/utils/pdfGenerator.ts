@@ -34,27 +34,27 @@ export function drawOfficialGamaLetterhead(
   doc.setFillColor(122, 89, 55); // #7a5937
   doc.rect(0, 0, 7, pageHeight, 'F');
 
-  // 2. Cabeçalho Oficial GAMA FONOAUDIOLOGIA / Logomarca em Proporção Fiel
-  const logoWidth = 52;
-  const logoHeight = 22;
+  // 2. Cabeçalho Oficial GAMA FONOAUDIOLOGIA / Logomarca com o DOBRO do Tamanho
+  const logoWidth = 72;
+  const logoHeight = 32;
   const logoX = pageWidth - logoWidth - 12;
-  const logoY = 7;
+  const logoY = 6;
 
   if (config.logoUrl && config.logoUrl.startsWith('data:image')) {
     try {
-      // Adiciona imagem customizada proporcional via base64 preenchendo o espaço superior nobre
+      // Adiciona imagem customizada proporcional via base64 com dimensões dobradas
       doc.addImage(config.logoUrl, 'PNG', logoX, logoY, logoWidth, logoHeight);
     } catch {
-      renderDefaultMonogram(doc, pageWidth - 42, 10);
+      renderDefaultMonogram(doc, pageWidth - 55, 8);
     }
   } else {
-    renderDefaultMonogram(doc, pageWidth - 42, 10);
+    renderDefaultMonogram(doc, pageWidth - 55, 8);
   }
 
-  // Linha separadora do cabeçalho
+  // Linha separadora do cabeçalho rebaixada para acomodar o dobro da logo
   doc.setDrawColor(220, 215, 210);
   doc.setLineWidth(0.3);
-  doc.line(14, 31, pageWidth - 12, 31);
+  doc.line(14, 40, pageWidth - 12, 40);
 
   // 3. Rodapé Oficial Mandatório com Contatos Efetivos (Terapeuta ou Clínica RT)
   const footerY = pageHeight - 14;
@@ -133,31 +133,31 @@ export function generateOfficialReportPDF(data: ReportData) {
   doc.setTextColor(122, 89, 55);
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(13);
-  doc.text('LAUDO CLÍNICO & EVOLUÇÃO FONOAUDIOLÓGICA', 14, 36);
+  doc.text('LAUDO CLÍNICO & EVOLUÇÃO FONOAUDIOLÓGICA', 14, 46);
 
   doc.setFontSize(8);
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(100, 95, 90);
-  doc.text(`Emissão: ${data.reportDate} • Fonoaudióloga: ${profile.name} (${profile.crfa})`, 14, 41);
+  doc.text(`Emissão: ${data.reportDate} • Fonoaudióloga: ${profile.name} (${profile.crfa})`, 14, 51);
 
   // Bloco de Identificação do Paciente
   doc.setFillColor(248, 246, 242);
-  doc.rect(14, 45, pageWidth - 26, 24, 'F');
+  doc.rect(14, 55, pageWidth - 26, 24, 'F');
   doc.setDrawColor(215, 205, 195);
-  doc.rect(14, 45, pageWidth - 26, 24, 'S');
+  doc.rect(14, 55, pageWidth - 26, 24, 'S');
 
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(8.5);
   doc.setTextColor(40, 35, 30);
-  doc.text(`Paciente: ${data.patient.name}`, 17, 51);
+  doc.text(`Paciente: ${data.patient.name}`, 17, 61);
 
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(8);
-  doc.text(`Data de Nascimento: ${data.patient.birthDate} | Sexo: ${data.patient.gender || 'Não informado'}`, 17, 56);
-  doc.text(`Diagnóstico: ${data.patient.mainDiagnosis || data.patient.diagnosis}`, 17, 61);
-  doc.text(`Responsável: ${data.patient.guardianName} • Contato: ${data.patient.phone || data.patient.guardianPhone}`, 17, 66);
+  doc.text(`Data de Nascimento: ${data.patient.birthDate} | Sexo: ${data.patient.gender || 'Não informado'}`, 17, 66);
+  doc.text(`Diagnóstico: ${data.patient.mainDiagnosis || data.patient.diagnosis}`, 17, 71);
+  doc.text(`Responsável: ${data.patient.guardianName} • Contato: ${data.patient.phone || data.patient.guardianPhone}`, 17, 76);
 
-  let y = 76;
+  let y = 86;
 
   // Avaliação de Deglutição (RaDI)
   if (data.assessment) {
