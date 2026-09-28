@@ -44,6 +44,17 @@ export default function App() {
   // Navigation state
   const [currentTab, setCurrentTab] = useState<NavigationTab>('dashboard');
 
+  // Sidebar Layout States (Persisted in localStorage)
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(() => {
+    const saved = localStorage.getItem('health_deglut_sidebar_collapsed');
+    return saved !== null ? saved === 'true' : false;
+  });
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState<boolean>(false);
+
+  useEffect(() => {
+    localStorage.setItem('health_deglut_sidebar_collapsed', String(isSidebarCollapsed));
+  }, [isSidebarCollapsed]);
+
   // Application Data States (persisted in localStorage for durability)
   const [patients, setPatients] = useState<Patient[]>(() => {
     const saved = localStorage.getItem('health_deglut_patients');
@@ -229,152 +240,184 @@ export default function App() {
   }
 
   return (
-    <div className={`min-h-screen flex flex-col font-sans transition-colors duration-150 ${darkMode ? 'bg-[#181513] text-[#f4efe8]' : 'bg-[#f7f4ef] text-[#1c1714] theme-light'} selection:bg-[#c8a88a] selection:text-[#181513]`}>
-      {/* Top Header */}
-      <Header
-        user={currentUser}
-        darkMode={darkMode}
-        setDarkMode={setDarkMode}
-        onLogout={() => setCurrentUser(null)}
-        patientsCount={patients.length}
-      />
-
-      {/* Navigation Tab Bar */}
+    <div className={`min-h-screen flex font-sans transition-colors duration-150 ${darkMode ? 'bg-[#181513] text-[#f4efe8]' : 'bg-[#f7f4ef] text-[#1c1714] theme-light'} selection:bg-[#c8a88a] selection:text-[#181513]`}>
+      {/* Sidebar Navigation */}
       <Navigation
         currentTab={currentTab}
         onSelectTab={setCurrentTab}
         userRole={currentUser.role}
+        isCollapsed={isSidebarCollapsed}
+        onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+        isMobileOpen={isMobileSidebarOpen}
+        onCloseMobile={() => setIsMobileSidebarOpen(false)}
       />
 
-      {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
-        {(currentTab === 'dashboard' || currentTab === 'resumo') && (
-          <DashboardView
-            patients={patients}
-            assessments={assessments}
-            dailyLogs={dailyLogs}
-            selectedPatient={selectedPatient}
-            onSelectPatient={setSelectedPatient}
-            onNavigate={setCurrentTab}
-            currentUser={currentUser}
-          />
-        )}
+      {/* Main Body Column (Adjusted by Sidebar Width on Desktop) */}
+      <div className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ease-in-out ${
+        isSidebarCollapsed ? 'lg:pl-20' : 'lg:pl-64'
+      }`}>
+        {/* Top Header with Sandwich Toggle */}
+        <Header
+          user={currentUser}
+          darkMode={darkMode}
+          setDarkMode={setDarkMode}
+          onLogout={() => setCurrentUser(null)}
+          patientsCount={patients.length}
+          isSidebarCollapsed={isSidebarCollapsed}
+          onToggleSidebar={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+          onOpenMobileSidebar={() => setIsMobileSidebarOpen(true)}
+        />
 
-        {(currentTab === 'prontuario' || currentTab === 'medical_records') && (
-          <MedicalRecordView
-            selectedPatient={selectedPatient}
-            patients={patients}
-            onSelectPatient={setSelectedPatient}
-            currentUser={currentUser}
-            medicalRecords={medicalRecords}
-            onUpdateMedicalRecord={handleUpdateMedicalRecord}
-            radiAssessments={assessments}
-            dailyLogs={dailyLogs}
-          />
-        )}
+        {/* Main Content Area */}
+        <main className="flex-1 w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+          {(currentTab === 'dashboard' || currentTab === 'resumo') && (
+            <DashboardView
+              patients={patients}
+              assessments={assessments}
+              dailyLogs={dailyLogs}
+              selectedPatient={selectedPatient}
+              onSelectPatient={setSelectedPatient}
+              onNavigate={setCurrentTab}
+              currentUser={currentUser}
+            />
+          )}
 
-        {currentTab === 'radi' && (
-          <RadiAssessmentView
-            patients={patients}
-            selectedPatient={selectedPatient}
-            onSelectPatient={setSelectedPatient}
-            currentUser={currentUser}
-            onSaveAssessment={handleSaveAssessment}
-            onGenerateReport={handleGenerateDirectReport}
-          />
-        )}
+          {(currentTab === 'prontuario' || currentTab === 'medical_records') && (
+            <MedicalRecordView
+              selectedPatient={selectedPatient}
+              patients={patients}
+              onSelectPatient={setSelectedPatient}
+              currentUser={currentUser}
+              medicalRecords={medicalRecords}
+              onUpdateMedicalRecord={handleUpdateMedicalRecord}
+              radiAssessments={assessments}
+              dailyLogs={dailyLogs}
+            />
+          )}
 
-        {(currentTab === 'feeding_log' || currentTab === 'registro') && (
-          <DailyFeedingLogView
-            patients={patients}
-            selectedPatient={selectedPatient}
-            onSelectPatient={setSelectedPatient}
-            currentUser={currentUser}
-            onSaveLog={handleSaveLog}
-            allPhotos={allPhotos}
-            onAddPhoto={handleAddPhoto}
-            onDeletePhoto={handleDeletePhoto}
-          />
-        )}
+          {currentTab === 'radi' && (
+            <RadiAssessmentView
+              patients={patients}
+              selectedPatient={selectedPatient}
+              onSelectPatient={setSelectedPatient}
+              currentUser={currentUser}
+              onSaveAssessment={handleSaveAssessment}
+              onGenerateReport={handleGenerateDirectReport}
+            />
+          )}
 
-        {(currentTab === 'patients' || currentTab === 'pacientes') && (
-          <PatientsManagementView
-            patients={patients}
-            selectedPatient={selectedPatient}
-            onSelectPatient={setSelectedPatient}
-            onSavePatient={handleSavePatient}
-            currentUser={currentUser}
-            professionals={usersList}
-            onNavigateToRaDI={(pat) => {
-              setSelectedPatient(pat);
-              setCurrentTab('radi');
-            }}
-            onNavigateToLog={(pat) => {
-              setSelectedPatient(pat);
-              setCurrentTab('feeding_log');
-            }}
-            onNavigateToPep={(pat) => {
-              setSelectedPatient(pat);
-              setCurrentTab('prontuario');
-            }}
-          />
-        )}
+          {(currentTab === 'feeding_log' || currentTab === 'registro') && (
+            <DailyFeedingLogView
+              patients={patients}
+              selectedPatient={selectedPatient}
+              onSelectPatient={setSelectedPatient}
+              currentUser={currentUser}
+              onSaveLog={handleSaveLog}
+              allPhotos={allPhotos}
+              onAddPhoto={handleAddPhoto}
+              onDeletePhoto={handleDeletePhoto}
+            />
+          )}
 
-        {(currentTab === 'history' || currentTab === 'historico') && (
-          <HistoryTimelineView
-            patients={patients}
-            selectedPatient={selectedPatient}
-            onSelectPatient={setSelectedPatient}
-            assessments={assessments}
-            dailyLogs={dailyLogs}
-            onGenerateReport={(assessment) => handleGenerateDirectReport(assessment)}
-          />
-        )}
+          {(currentTab === 'patients' || currentTab === 'pacientes') && (
+            <PatientsManagementView
+              patients={patients}
+              selectedPatient={selectedPatient}
+              onSelectPatient={setSelectedPatient}
+              onSavePatient={handleSavePatient}
+              currentUser={currentUser}
+              professionals={usersList}
+              onNavigateToRaDI={(pat) => {
+                setSelectedPatient(pat);
+                setCurrentTab('radi');
+              }}
+              onNavigateToLog={(pat) => {
+                setSelectedPatient(pat);
+                setCurrentTab('feeding_log');
+              }}
+              onNavigateToPep={(pat) => {
+                setSelectedPatient(pat);
+                setCurrentTab('prontuario');
+              }}
+            />
+          )}
 
-        {currentTab === 'chat' && (
-          <PatientChatView
-            patients={patients}
-            selectedPatient={selectedPatient}
-            onSelectPatient={setSelectedPatient}
-            currentUser={currentUser}
-            messages={chatMessages}
-            onSendMessage={handleSendMessage}
-          />
-        )}
+          {(currentTab === 'history' || currentTab === 'historico') && (
+            <HistoryTimelineView
+              patients={patients}
+              selectedPatient={selectedPatient}
+              onSelectPatient={setSelectedPatient}
+              assessments={assessments}
+              dailyLogs={dailyLogs}
+              onGenerateReport={(assessment) => handleGenerateDirectReport(assessment)}
+            />
+          )}
 
-        {(currentTab === 'reports' || currentTab === 'relatorios') && (
-          <ReportsView
-            patients={patients}
-            selectedPatient={selectedPatient}
-            onSelectPatient={setSelectedPatient}
-            assessments={assessments}
-            dailyLogs={dailyLogs}
-            currentUser={currentUser}
-          />
-        )}
+          {currentTab === 'chat' && (
+            <PatientChatView
+              patients={patients}
+              selectedPatient={selectedPatient}
+              onSelectPatient={setSelectedPatient}
+              currentUser={currentUser}
+              messages={chatMessages}
+              onSendMessage={handleSendMessage}
+            />
+          )}
 
-        {(currentTab === 'security' || currentTab === 'seguranca') && (
-          <LgpdSecurityView />
-        )}
+          {(currentTab === 'reports' || currentTab === 'relatorios') && (
+            <ReportsView
+              patients={patients}
+              selectedPatient={selectedPatient}
+              onSelectPatient={setSelectedPatient}
+              assessments={assessments}
+              dailyLogs={dailyLogs}
+              currentUser={currentUser}
+            />
+          )}
 
-        {(currentTab === 'admin_users' || currentTab === 'admin') && (
-          <AdminUsersView
-            users={usersList}
-            onApproveUser={handleApproveUser}
-            onRejectUser={handleRejectUser}
-            onChangeRole={handleChangeRole}
-          />
-        )}
-      </main>
+          {(currentTab === 'security' || currentTab === 'seguranca') && (
+            <LgpdSecurityView />
+          )}
 
-      {/* Footer */}
-      <footer className="border-t border-[#2a221d] py-4 px-6 text-center text-xs text-[#85796f] flex flex-col sm:flex-row items-center justify-between gap-2 max-w-7xl w-full mx-auto">
-        <p>GamaEcosystem - Health Deglut © 2026. Todos os direitos reservados.</p>
-        <p className="flex items-center gap-1.5 text-[11px] text-[#a69a8f]">
-          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-          Conformidade LGPD Ativa • Criptografia AES-GCM • Banco de Dados Seguro
-        </p>
-      </footer>
+          {(currentTab === 'admin_users' || currentTab === 'admin') && (
+            <AdminUsersView
+              users={usersList}
+              onApproveUser={handleApproveUser}
+              onRejectUser={handleRejectUser}
+              onChangeRole={handleChangeRole}
+            />
+          )}
+
+          {(currentTab === 'configuracao' || currentTab === 'settings') && (
+            <div className="bg-[#1f1a17] border border-[#382e27] rounded-2xl p-6 sm:p-8 space-y-4">
+              <div className="flex items-center gap-3 border-b border-[#382e27] pb-4">
+                <div className="w-10 h-10 rounded-xl bg-[#c8a88a]/20 border border-[#c8a88a]/40 flex items-center justify-center text-[#c8a88a]">
+                  <span className="font-bold text-lg">⚙</span>
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold font-serif text-[#f4efe8]">Central de Configurações</h2>
+                  <p className="text-xs text-[#a69a8f]">Parâmetros gerais de relatórios, cuidadores, terapeutas e personalização visual.</p>
+                </div>
+              </div>
+              <div className="p-5 rounded-xl bg-[#27211d] border border-[#3e342e] text-xs text-[#d8cec4] space-y-2">
+                <p className="font-semibold text-[#c8a88a]">Próxima etapa prioritária:</p>
+                <p className="text-[#a69a8f] leading-relaxed">
+                  Este módulo está cadastrado no topo da fila (Item 2) e será implementado com as abas de Cuidadores, Terapeutas (CRFa), Logomarca e Parâmetros de Laudos assim que você validar o menu lateral.
+                </p>
+              </div>
+            </div>
+          )}
+        </main>
+
+        {/* Footer */}
+        <footer className="border-t border-[#2a221d] py-4 px-6 text-center text-xs text-[#85796f] flex flex-col sm:flex-row items-center justify-between gap-2 w-full">
+          <p>GamaEcosystem - Health Deglut © 2026. Todos os direitos reservados.</p>
+          <p className="flex items-center gap-1.5 text-[11px] text-[#a69a8f]">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            Conformidade LGPD Ativa • Criptografia AES-GCM • Banco de Dados Seguro
+          </p>
+        </footer>
+      </div>
     </div>
   );
 }
