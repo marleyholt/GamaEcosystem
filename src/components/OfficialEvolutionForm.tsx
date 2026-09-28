@@ -339,17 +339,17 @@ export const OfficialEvolutionForm: React.FC<OfficialEvolutionFormProps> = ({
       ) : (
         /* Modo Formulário Clínico: 4 Páginas Fluidas com Navegação em Tabs */
         <div className="bg-[#1f1a17] border border-[#382e27] rounded-2xl overflow-hidden shadow-sm">
-          {/* Navegação entre as 4 Páginas do PDF */}
-          <div className="grid grid-cols-2 md:grid-cols-4 border-b border-[#382e27] bg-[#1a1613]">
+          {/* Navegação entre as 4 Páginas do PDF com quebra automática de linha responsiva */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 border-b border-[#382e27] bg-[#1a1613]">
             <button
               type="button"
               onClick={() => setActivePage(1)}
-              className={`p-4 text-left border-r border-[#382e27] transition-all cursor-pointer ${
-                activePage === 1 ? 'bg-[#27211d] border-b-2 border-b-[#c8a88a]' : 'hover:bg-[#221c18]'
+              className={`p-3.5 sm:p-4 text-left border-b sm:border-b-0 border-r border-[#382e27] transition-all cursor-pointer ${
+                activePage === 1 ? 'bg-[#27211d] border-l-4 sm:border-l-0 sm:border-b-2 border-[#c8a88a]' : 'hover:bg-[#221c18]'
               }`}
             >
               <span className="text-[10px] uppercase font-bold text-[#c8a88a] block">Página 1</span>
-              <span className="text-xs font-semibold text-[#f4efe8] block truncate">
+              <span className="text-xs font-semibold text-[#f4efe8] block leading-snug break-words">
                 Quadro, Consciência, Respiração & VO
               </span>
             </button>
@@ -357,12 +357,12 @@ export const OfficialEvolutionForm: React.FC<OfficialEvolutionFormProps> = ({
             <button
               type="button"
               onClick={() => setActivePage(2)}
-              className={`p-4 text-left border-r border-[#382e27] transition-all cursor-pointer ${
-                activePage === 2 ? 'bg-[#27211d] border-b-2 border-b-[#c8a88a]' : 'hover:bg-[#221c18]'
+              className={`p-3.5 sm:p-4 text-left border-b sm:border-b-0 border-r border-[#382e27] transition-all cursor-pointer ${
+                activePage === 2 ? 'bg-[#27211d] border-l-4 sm:border-l-0 sm:border-b-2 border-[#c8a88a]' : 'hover:bg-[#221c18]'
               }`}
             >
               <span className="text-[10px] uppercase font-bold text-[#c8a88a] block">Página 2</span>
-              <span className="text-xs font-semibold text-[#f4efe8] block truncate">
+              <span className="text-xs font-semibold text-[#f4efe8] block leading-snug break-words">
                 Vias Alternativas & IDDSI (Alimentos/Bebidas)
               </span>
             </button>
@@ -370,12 +370,12 @@ export const OfficialEvolutionForm: React.FC<OfficialEvolutionFormProps> = ({
             <button
               type="button"
               onClick={() => setActivePage(3)}
-              className={`p-4 text-left border-r border-[#382e27] transition-all cursor-pointer ${
-                activePage === 3 ? 'bg-[#27211d] border-b-2 border-b-[#c8a88a]' : 'hover:bg-[#221c18]'
+              className={`p-3.5 sm:p-4 text-left border-b sm:border-b-0 border-r border-[#382e27] transition-all cursor-pointer ${
+                activePage === 3 ? 'bg-[#27211d] border-l-4 sm:border-l-0 sm:border-b-2 border-[#c8a88a]' : 'hover:bg-[#221c18]'
               }`}
             >
               <span className="text-[10px] uppercase font-bold text-[#c8a88a] block">Página 3</span>
-              <span className="text-xs font-semibold text-[#f4efe8] block truncate">
+              <span className="text-xs font-semibold text-[#f4efe8] block leading-snug break-words">
                 Líquidos, Espessante, FOIS & PARD
               </span>
             </button>
@@ -383,12 +383,12 @@ export const OfficialEvolutionForm: React.FC<OfficialEvolutionFormProps> = ({
             <button
               type="button"
               onClick={() => setActivePage(4)}
-              className={`p-4 text-left transition-all cursor-pointer ${
-                activePage === 4 ? 'bg-[#27211d] border-b-2 border-b-[#c8a88a]' : 'hover:bg-[#221c18]'
+              className={`p-3.5 sm:p-4 text-left transition-all cursor-pointer ${
+                activePage === 4 ? 'bg-[#27211d] border-l-4 sm:border-l-0 sm:border-b-2 border-[#c8a88a]' : 'hover:bg-[#221c18]'
               }`}
             >
               <span className="text-[10px] uppercase font-bold text-[#c8a88a] block">Página 4</span>
-              <span className="text-xs font-semibold text-[#f4efe8] block truncate">
+              <span className="text-xs font-semibold text-[#f4efe8] block leading-snug break-words">
                 Terapias Complementares & Conduta
               </span>
             </button>
