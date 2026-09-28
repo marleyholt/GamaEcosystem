@@ -35,24 +35,26 @@ export function drawOfficialGamaLetterhead(
   doc.rect(0, 0, 7, pageHeight, 'F');
 
   // 2. Cabeçalho Oficial GAMA FONOAUDIOLOGIA / Logomarca em Proporção Fiel
-  const logoX = pageWidth - 42;
-  const logoY = 10;
+  const logoWidth = 52;
+  const logoHeight = 22;
+  const logoX = pageWidth - logoWidth - 12;
+  const logoY = 7;
 
   if (config.logoUrl && config.logoUrl.startsWith('data:image')) {
     try {
-      // Adiciona imagem customizada proporcional via base64
-      doc.addImage(config.logoUrl, 'PNG', logoX - 4, logoY, 34, 16);
+      // Adiciona imagem customizada proporcional via base64 preenchendo o espaço superior nobre
+      doc.addImage(config.logoUrl, 'PNG', logoX, logoY, logoWidth, logoHeight);
     } catch {
-      renderDefaultMonogram(doc, logoX, logoY);
+      renderDefaultMonogram(doc, pageWidth - 42, 10);
     }
   } else {
-    renderDefaultMonogram(doc, logoX, logoY);
+    renderDefaultMonogram(doc, pageWidth - 42, 10);
   }
 
   // Linha separadora do cabeçalho
   doc.setDrawColor(220, 215, 210);
   doc.setLineWidth(0.3);
-  doc.line(14, 29, pageWidth - 12, 29);
+  doc.line(14, 31, pageWidth - 12, 31);
 
   // 3. Rodapé Oficial Mandatório com Contatos Efetivos (Terapeuta ou Clínica RT)
   const footerY = pageHeight - 14;
