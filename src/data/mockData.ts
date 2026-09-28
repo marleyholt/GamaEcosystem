@@ -92,9 +92,10 @@ export const INITIAL_USERS: UserProfile[] = [
     id: 'user_adriane',
     name: 'Adriane Gama',
     email: 'adrianepaesdagama@gmail.com',
-    role: 'fonoaudiologo',
+    role: 'admin',
     approved: true,
-    crfaNumber: 'CRFa 3-12894',
+    crfaNumber: 'CREFONO 9531-RJ',
+    allowedTabs: ['resumo', 'prontuario', 'radi', 'registro', 'historico', 'chat', 'pacientes', 'relatorios', 'seguranca', 'configuracao'],
     createdAt: '2026-01-10T10:00:00Z'
   },
   {
