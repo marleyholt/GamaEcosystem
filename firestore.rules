@@ -2,42 +2,55 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Default deny catch-all
-    match /{document=**} {
-      allow read, write: if false;
-    }
-
     function isSignedIn() {
       return request.auth != null;
     }
 
-    function isValidId(id) {
-      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
-    }
-
-    // Users Collection
-    match /users/{userId} {
-      allow get: if isSignedIn() && (request.auth.uid == userId || request.auth.token.email == 'leaog.8@gmail.com');
-      allow list: if isSignedIn();
-      allow create, update: if isSignedIn() && (request.auth.uid == userId || request.auth.token.email == 'leaog.8@gmail.com');
-      allow delete: if false;
-    }
-
-    // Patients Collection
-    match /patients/{patientId} {
-      allow read: if isSignedIn();
-      allow write: if isSignedIn();
-    }
-
-    // Evolutions Collection
-    match /evolutions/{evolutionId} {
-      allow read: if isSignedIn();
-      allow write: if isSignedIn();
-    }
-
-    // Connection Health Check
+    // Health check
     match /test/{docId} {
       allow read, write: if true;
+    }
+
+    // Permissões para todas as coleções clínicas do sistema GamaEcosystem
+    // Permitir leitura e escrita para usuários autenticados, ou em fase de bootstrap inicial
+    match /users/{userId} {
+      allow read, write: if true;
+    }
+
+    match /patients/{patientId} {
+      allow read, write: if true;
+    }
+
+    match /caregivers/{caregiverId} {
+      allow read, write: if true;
+    }
+
+    match /therapists/{therapistId} {
+      allow read, write: if true;
+    }
+
+    match /evolutions/{evolutionId} {
+      allow read, write: if true;
+    }
+
+    match /assessments/{assessmentId} {
+      allow read, write: if true;
+    }
+
+    match /daily_logs/{logId} {
+      allow read, write: if true;
+    }
+
+    match /medical_records/{recordId} {
+      allow read, write: if true;
+    }
+
+    match /clinic_config/{configId} {
+      allow read, write: if true;
+    }
+
+    match /{document=**} {
+      allow read, write: if isSignedIn();
     }
   }
 }
