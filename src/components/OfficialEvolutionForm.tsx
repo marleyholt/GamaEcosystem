@@ -295,7 +295,7 @@ export const OfficialEvolutionForm: React.FC<OfficialEvolutionFormProps> = ({
             className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#27211d] hover:bg-[#342b26] text-[#f4efe8] border border-[#3e342e] text-xs font-semibold transition-all cursor-pointer"
           >
             <Printer className="w-4 h-4 text-[#c8a88a]" />
-            <span>{showPrintPreview ? 'Voltar ao Formulário' : 'Visualizar Timbrado'}</span>
+            <span>{showPrintPreview ? 'Voltar ao Formulário' : 'Visualizar Relatório'}</span>
           </button>
 
           <button
@@ -304,17 +304,22 @@ export const OfficialEvolutionForm: React.FC<OfficialEvolutionFormProps> = ({
             className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#2a221d] hover:bg-[#382f2a] text-[#c8a88a] border border-[#44362d] font-bold text-xs shadow-xs transition-all cursor-pointer"
           >
             <Save className="w-4 h-4" />
-            <span>Salvar Rascunho</span>
+            <span>Salvar Evolução</span>
           </button>
 
           <button
             type="button"
-            onClick={handleOpenSignatureModal}
+            onClick={() => {
+              if (!showPrintPreview) {
+                setShowPrintPreview(true);
+              }
+              handleOpenSignatureModal();
+            }}
             className="flex items-center gap-2 px-5 py-2 rounded-xl bg-[#c8a88a] hover:bg-[#d6bca3] text-[#181513] font-bold text-xs shadow-md transition-all cursor-pointer"
-            title="Salva e aplica a assinatura da Fonoaudióloga para liberar para o Responsável"
+            title="Confere o laudo e aplica a assinatura da Fonoaudióloga"
           >
             <ShieldCheck className="w-4 h-4" />
-            <span>Salvar & Assinar Sessão</span>
+            <span>Conferir & Assinar</span>
           </button>
         </div>
       </div>
