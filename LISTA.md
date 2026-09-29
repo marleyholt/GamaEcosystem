@@ -7,9 +7,10 @@ Status possíveis: [PENDENTE], [EM PLANEJAMENTO], [EM EXECUÇÃO], [CONCLUÍDO].
 
 ## 📌 Topo da Fila (Prioridade Máxima Atual)
 
-1. **[PENDENTE] Ajuste no Registro Diário Alimentar: Múltiplas Fotos por Refeição**
-   - Permitir a seleção e envio de mais de 1 foto por refeição (múltiplas fotos com visualização em galeria/carrossel para almoço, jantar, lanches, etc.).
-   - Upload de múltiplos arquivos de uma só vez ou fotos sequenciais para a mesma refeição.
+1. **[CONCLUÍDO] Ajuste no Registro Diário Alimentar: Múltiplas Fotos por Refeição**
+   - **Upload Múltiplo Simultâneo:** Agora o cuidador ou profissional pode selecionar e carregar várias fotos de uma só vez da galeria ou tirar fotos sequenciais com a câmera para a mesma refeição (almoço, jantar, café, lanches, etc.).
+   - **Galeria & Carrossel Interativo por Refeição:** As fotos são agrupadas automaticamente por refeição, com contador em badges, navegação em carrossel (anterior/próxima), visualização de miniaturas e ampliação em tela cheia (lightbox modal).
+   - **Filtro de Refeição:** Filtro rápido para inspecionar fotos de refeições específicas (ex: apenas almoço ou apenas café).
 
 2. **[PENDENTE] Blindagem & Segurança do Chat por Paciente com Contatos de Emergência**
    - Garantir que apenas os usuários com permissão expressa (a fonoaudióloga responsável atribuída e os cuidadores/familiares vinculados àquele paciente) tenham acesso ao chat.
@@ -22,6 +23,7 @@ Status possíveis: [PENDENTE], [EM PLANEJAMENTO], [EM EXECUÇÃO], [CONCLUÍDO].
 
 ## ✅ Histórico de Itens Concluídos
 
+- **[CONCLUÍDO] 2026-09-29: Registro Diário Alimentar com Suporte a Múltiplas Fotos por Refeição, Agrupamento em Carrossel, Miniaturas e Lightbox**
 - **[CONCLUÍDO] 2026-09-29: Remoção da Localização de Todos os Modais de Assinatura, Fluxo de Visualização Prévia do Relatório Antes de Assinar e Campo de Observações Gerais da Fonoaudióloga no Relatório Mensal**
 - **[CONCLUÍDO] 2026-09-29: Relatório de Acompanhamento Mensal Consolidado com Histórico Cronológico dos 4 Módulos, Gráficos de Curva Funcional e Assinatura Digital da Fonoaudióloga**
 - **[CONCLUÍDO] 2026-09-29: Ajuste do Usuário Master para Assinatura Flexível em Qualquer Papel em Modo de Testes**
