@@ -63,10 +63,18 @@ export function handleFirestoreError(error: unknown, operationType: OperationTyp
 // Test connection on startup per Firebase Skill
 export async function testConnection(): Promise<boolean> {
   try {
+    if (typeof navigator !== 'undefined' && !navigator.onLine) {
+      return false;
+    }
     await getDocFromServer(doc(db, 'test', 'connection'));
     return true;
-  } catch (error) {
-    console.warn('Firebase connection notice:', error);
+  } catch (error: any) {
+    if (
+      error?.code === 'unavailable' ||
+      (error instanceof Error && (error.message.includes('the client is offline') || error.message.includes('unavailable') || error.message.includes('Could not reach Cloud Firestore')))
+    ) {
+      return false;
+    }
     return false;
   }
 }
