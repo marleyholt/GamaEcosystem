@@ -44,6 +44,13 @@ import {
 } from './types/clinicConfig';
 import { OfficialEvolutionData } from './types/clinicalEvolution';
 import { INITIAL_OFFICIAL_EVOLUTIONS } from './data/mockEvolutions';
+import { 
+  syncDocToFirestore, 
+  removeDocFromFirestore, 
+  fetchCollectionFromFirestore, 
+  backupAllLocalToFirestore,
+  FirestoreCollections 
+} from './services/firestoreSync';
 
 export default function App() {
   // Authentication State
@@ -227,15 +234,66 @@ export default function App() {
     }
   }, [darkMode]);
 
+  // Auto-sincronização inicial e bidirecional com o Firestore
+  useEffect(() => {
+    // Carregar pacientes remotos se existirem no Firestore
+    fetchCollectionFromFirestore<Patient>(FirestoreCollections.PATIENTS).then(remotePatients => {
+      if (remotePatients && remotePatients.length > 0) {
+        setPatients(remotePatients);
+      } else {
+        // Primeira carga: sobe a base inicial para o Firestore
+        patients.forEach(p => syncDocToFirestore(FirestoreCollections.PATIENTS, p.id, p));
+      }
+    });
+
+    // Carregar terapeutas
+    fetchCollectionFromFirestore<Therapist>(FirestoreCollections.THERAPISTS).then(remoteTherapists => {
+      if (remoteTherapists && remoteTherapists.length > 0) {
+        setTherapists(remoteTherapists);
+      } else {
+        therapists.forEach(t => syncDocToFirestore(FirestoreCollections.THERAPISTS, t.id, t));
+      }
+    });
+
+    // Carregar cuidadores
+    fetchCollectionFromFirestore<Caregiver>(FirestoreCollections.CAREGIVERS).then(remoteCaregivers => {
+      if (remoteCaregivers && remoteCaregivers.length > 0) {
+        setCaregivers(remoteCaregivers);
+      } else {
+        caregivers.forEach(c => syncDocToFirestore(FirestoreCollections.CAREGIVERS, c.id, c));
+      }
+    });
+
+    // Carregar evoluções
+    fetchCollectionFromFirestore<OfficialEvolutionData>(FirestoreCollections.EVOLUTIONS).then(remoteEvolutions => {
+      if (remoteEvolutions && remoteEvolutions.length > 0) {
+        setOfficialEvolutions(remoteEvolutions);
+      } else {
+        officialEvolutions.forEach(e => syncDocToFirestore(FirestoreCollections.EVOLUTIONS, e.id, e));
+      }
+    });
+
+    // Carregar configuração da clínica
+    fetchCollectionFromFirestore<ClinicConfig>(FirestoreCollections.CLINIC_CONFIG).then(remoteConfig => {
+      if (remoteConfig && remoteConfig.length > 0) {
+        setClinicConfig(remoteConfig[0]);
+      } else {
+        syncDocToFirestore(FirestoreCollections.CLINIC_CONFIG, 'global_settings', clinicConfig);
+      }
+    });
+  }, []);
+
   // Handlers
   const handleSaveAssessment = (newAssessment: RadiAssessment) => {
     setAssessments([newAssessment, ...assessments]);
+    syncDocToFirestore(FirestoreCollections.ASSESSMENTS, newAssessment.id, newAssessment);
     alert('Avaliação RaDI registrada com sucesso no prontuário do paciente!');
     setCurrentTab('reports');
   };
 
   const handleSaveLog = (newLog: DailyFeedingLog) => {
     setDailyLogs([newLog, ...dailyLogs]);
+    syncDocToFirestore(FirestoreCollections.DAILY_LOGS, newLog.id, newLog);
     alert('Registro diário de alimentação e consistências salvo com sucesso!');
     setCurrentTab('history');
   };
@@ -251,6 +309,7 @@ export default function App() {
       return [newPatient, ...prev];
     });
     setSelectedPatient(newPatient);
+    syncDocToFirestore(FirestoreCollections.PATIENTS, newPatient.id, newPatient);
   };
 
   const handleAddPhoto = (photo: MealPhoto) => {
