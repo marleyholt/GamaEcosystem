@@ -18,6 +18,8 @@ import {
 import { Patient } from '../types';
 import { ClinicConfig, Therapist, getEffectiveTherapistProfile } from '../types/clinicConfig';
 import { OfficialLetterhead } from './OfficialLetterhead';
+import { SignaturePadModal } from './SignaturePadModal';
+import { createDigitalSignature } from '../utils/signatureAudit';
 import { 
   Save, 
   Printer, 
@@ -38,7 +40,8 @@ import {
   User,
   ArrowUpRight,
   TrendingUp,
-  Award
+  Award,
+  ShieldCheck
 } from 'lucide-react';
 
 interface OfficialEvolutionFormProps {
@@ -74,6 +77,7 @@ export const OfficialEvolutionForm: React.FC<OfficialEvolutionFormProps> = ({
     therapistId: currentTherapist?.id || 'rt_default',
     therapistName: profile.name,
     therapistCrfa: profile.crfa,
+    status: 'rascunho',
 
     // PÁGINA 1
     clinicalSummary: '',
@@ -200,6 +204,8 @@ export const OfficialEvolutionForm: React.FC<OfficialEvolutionFormProps> = ({
     setFormData(prev => ({ ...prev, therapies: updated }));
   };
 
+  const [showSignModal, setShowSignModal] = useState(false);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.clinicalSummary.trim() && !formData.sessionConductSummary.trim()) {
@@ -207,6 +213,42 @@ export const OfficialEvolutionForm: React.FC<OfficialEvolutionFormProps> = ({
       return;
     }
     onSaveEvolution(formData);
+  };
+
+  const handleOpenSignatureModal = () => {
+    if (!formData.clinicalSummary.trim() && !formData.sessionConductSummary.trim()) {
+      alert('Por favor, preencha a síntese clínica ou conduta da sessão antes de assinar.');
+      return;
+    }
+    setShowSignModal(true);
+  };
+
+  const handleConfirmTherapistSignature = async (signatureDataUrl: string) => {
+    try {
+      const sigInfo = await createDigitalSignature({
+        evolutionId: formData.id,
+        patientId: patient.id,
+        sessionDate: formData.sessionDate,
+        signerName: profile.name,
+        signerRole: 'fonoaudiologo',
+        signerDocument: profile.crfa,
+        signerEmail: profile.email,
+        signatureDataUrl
+      });
+
+      const signedEvolution: OfficialEvolutionData = {
+        ...formData,
+        therapistSignature: sigInfo,
+        status: 'aguardando_familiar'
+      };
+
+      setFormData(signedEvolution);
+      onSaveEvolution(signedEvolution);
+      setShowSignModal(false);
+    } catch (err) {
+      console.error('Erro ao assinar evolução:', err);
+      alert('Erro ao registrar assinatura digital da fonoaudióloga.');
+    }
   };
 
   return (
@@ -259,10 +301,20 @@ export const OfficialEvolutionForm: React.FC<OfficialEvolutionFormProps> = ({
           <button
             type="button"
             onClick={handleSubmit}
-            className="flex items-center gap-2 px-5 py-2 rounded-xl bg-[#c8a88a] hover:bg-[#d6bca3] text-[#181513] font-bold text-xs shadow-md transition-all cursor-pointer"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#2a221d] hover:bg-[#382f2a] text-[#c8a88a] border border-[#44362d] font-bold text-xs shadow-xs transition-all cursor-pointer"
           >
             <Save className="w-4 h-4" />
-            <span>Salvar Evolução</span>
+            <span>Salvar Rascunho</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={handleOpenSignatureModal}
+            className="flex items-center gap-2 px-5 py-2 rounded-xl bg-[#c8a88a] hover:bg-[#d6bca3] text-[#181513] font-bold text-xs shadow-md transition-all cursor-pointer"
+            title="Salva e aplica a assinatura da Fonoaudióloga para liberar para o Responsável"
+          >
+            <ShieldCheck className="w-4 h-4" />
+            <span>Salvar & Assinar Sessão</span>
           </button>
         </div>
       </div>
@@ -1145,6 +1197,22 @@ export const OfficialEvolutionForm: React.FC<OfficialEvolutionFormProps> = ({
             </div>
           </form>
         </div>
+      )}
+
+      {/* Modal Pad de Assinatura para a Terapeuta */}
+      {showSignModal && (
+        <SignaturePadModal
+          isOpen={showSignModal}
+          onClose={() => setShowSignModal(false)}
+          title="Assinatura da Fonoaudióloga"
+          subtitle={`Atendimento prestado ao paciente ${patient.name}`}
+          signerName={profile.name}
+          signerRole="fonoaudiologo"
+          signerDocument={profile.crfa}
+          signerEmail={profile.email}
+          defaultSignatureUrl={clinicConfig.signatureUrl}
+          onConfirmSignature={handleConfirmTherapistSignature}
+        />
       )}
     </div>
   );
