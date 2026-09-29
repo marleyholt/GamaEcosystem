@@ -186,13 +186,9 @@ export const SignaturePadModal: React.FC<SignaturePadModalProps> = ({
               <Clock className="w-3.5 h-3.5 text-[#c8a88a] shrink-0" />
               <span className="truncate"><strong>Data/Hora:</strong> {timestamp}</span>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 sm:col-span-2">
               <Globe className="w-3.5 h-3.5 text-[#c8a88a] shrink-0" />
-              <span className="truncate"><strong>IP:</strong> {currentIp}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <MapPin className="w-3.5 h-3.5 text-[#c8a88a] shrink-0" />
-              <span className="truncate"><strong>Local:</strong> {currentLocation}</span>
+              <span className="truncate"><strong>IP de Rede:</strong> {currentIp}</span>
             </div>
           </div>
           {signerDocument && (
