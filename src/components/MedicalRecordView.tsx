@@ -42,7 +42,9 @@ import {
 import { OfficialEvolutionData } from '../types/clinicalEvolution';
 import { OfficialEvolutionForm } from './OfficialEvolutionForm';
 import { EvolutionCharts } from './EvolutionCharts';
+import { EvolutionReviewAndSignModal } from './EvolutionReviewAndSignModal';
 import { ClinicConfig, DEFAULT_CLINIC_CONFIG, Therapist } from '../types/clinicConfig';
+import { Eye, FileDown } from 'lucide-react';
 
 interface MedicalRecordViewProps {
   selectedPatient: Patient | null;
@@ -81,6 +83,7 @@ export const MedicalRecordView: React.FC<MedicalRecordViewProps> = ({
   const [isEditingOfa, setIsEditingOfa] = useState(false);
   const [isAddingObjective, setIsAddingObjective] = useState(false);
   const [showPatientSelector, setShowPatientSelector] = useState(false);
+  const [reviewEvolution, setReviewEvolution] = useState<OfficialEvolutionData | null>(null);
 
   // New Session Form State (SOAP)
   const [newSession, setNewSession] = useState({
@@ -623,13 +626,15 @@ export const MedicalRecordView: React.FC<MedicalRecordViewProps> = ({
               </p>
             </div>
 
-            <button
-              onClick={() => setIsAddingSession(true)}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#c8a88a] hover:bg-[#b89574] text-[#181513] text-xs font-bold transition-all shadow-md cursor-pointer self-start sm:self-auto"
-            >
-              <PlusCircle className="w-4 h-4" />
-              <span>Nova Evolução Oficial (4 Páginas)</span>
-            </button>
+            {(currentUser.role === 'fonoaudiologo' || currentUser.role === 'admin') && (
+              <button
+                onClick={() => setIsAddingSession(true)}
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#c8a88a] hover:bg-[#b89574] text-[#181513] text-xs font-bold transition-all shadow-md cursor-pointer self-start sm:self-auto"
+              >
+                <PlusCircle className="w-4 h-4" />
+                <span>Nova Evolução Oficial (4 Páginas)</span>
+              </button>
+            )}
           </div>
 
           {/* Listagem Prioritária das Evoluções Oficiais de 4 Páginas */}
@@ -664,6 +669,23 @@ export const MedicalRecordView: React.FC<MedicalRecordViewProps> = ({
                     </div>
 
                     <div className="flex flex-wrap items-center gap-2">
+                      {evo.status === 'finalizado_assinado' ? (
+                        <span className="text-xs px-2.5 py-1 rounded-full bg-emerald-950/70 text-emerald-300 border border-emerald-700/50 font-bold flex items-center gap-1.5 shadow-xs">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                          100% Assinado (Fono + Familiar)
+                        </span>
+                      ) : evo.status === 'aguardando_familiar' ? (
+                        <span className="text-xs px-2.5 py-1 rounded-full bg-blue-950/70 text-blue-300 border border-blue-700/50 font-bold flex items-center gap-1.5 shadow-xs animate-pulse">
+                          <Clock className="w-3.5 h-3.5 text-blue-400" />
+                          Aguardando Familiar
+                        </span>
+                      ) : (
+                        <span className="text-xs px-2.5 py-1 rounded-full bg-amber-950/70 text-amber-300 border border-amber-700/50 font-bold flex items-center gap-1.5 shadow-xs">
+                          <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
+                          Rascunho / Assinatura Fono Pendente
+                        </span>
+                      )}
+
                       <span className="text-xs px-2.5 py-1 rounded-full bg-[#2a221e] text-amber-300 border border-amber-500/30 font-bold">
                         FOIS Nível {evo.foisLevel}
                       </span>
@@ -735,6 +757,46 @@ export const MedicalRecordView: React.FC<MedicalRecordViewProps> = ({
                     <p className="text-[#d8cec4] leading-relaxed whitespace-pre-line">
                       {evo.sessionConductSummary || evo.clinicalSummary}
                     </p>
+                  </div>
+
+                  {/* Barra de Ações & Assinaturas da Evolução */}
+                  <div className="pt-3 border-t border-[#332a24] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div className="flex flex-wrap items-center gap-2 text-xs">
+                      {evo.therapistSignature && (
+                        <span className="text-[11px] text-[#a69a8f] flex items-center gap-1">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                          Fono: <strong className="text-[#f4efe8]">{evo.therapistSignature.signerName}</strong>
+                        </span>
+                      )}
+                      {evo.responsibleSignature && (
+                        <span className="text-[11px] text-[#a69a8f] flex items-center gap-1">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                          Responsável: <strong className="text-[#f4efe8]">{evo.responsibleSignature.signerName}</strong>
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="flex items-center gap-2 self-end sm:self-center">
+                      <button
+                        type="button"
+                        onClick={() => setReviewEvolution(evo)}
+                        className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#2a221d] hover:bg-[#382f2a] text-[#c8a88a] border border-[#44362d] text-xs font-semibold transition-all cursor-pointer shadow-xs"
+                      >
+                        <Eye className="w-3.5 h-3.5" />
+                        <span>Visualizar & Assinar</span>
+                      </button>
+
+                      {evo.status === 'finalizado_assinado' && (
+                        <button
+                          type="button"
+                          onClick={() => setReviewEvolution(evo)}
+                          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#c8a88a] hover:bg-[#d6bca3] text-[#181513] text-xs font-bold transition-all cursor-pointer shadow-sm"
+                        >
+                          <FileDown className="w-3.5 h-3.5" />
+                          <span>Baixar PDF Oficial</span>
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
               ))}
@@ -1423,6 +1485,24 @@ export const MedicalRecordView: React.FC<MedicalRecordViewProps> = ({
             </form>
           </div>
         </div>
+      )}
+
+      {/* Modal Completo de Visualização, Conferência e Assinatura Digital Dupla */}
+      {reviewEvolution && (
+        <EvolutionReviewAndSignModal
+          isOpen={Boolean(reviewEvolution)}
+          onClose={() => setReviewEvolution(null)}
+          evolution={reviewEvolution}
+          patient={selectedPatient}
+          currentUser={currentUser}
+          clinicConfig={clinicConfig}
+          onSignSuccess={(updatedEvolution) => {
+            if (onSaveOfficialEvolution) {
+              onSaveOfficialEvolution(updatedEvolution);
+            }
+            setReviewEvolution(updatedEvolution);
+          }}
+        />
       )}
     </div>
   );
