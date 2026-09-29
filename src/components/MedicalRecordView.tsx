@@ -43,6 +43,7 @@ import { OfficialEvolutionData } from '../types/clinicalEvolution';
 import { OfficialEvolutionForm } from './OfficialEvolutionForm';
 import { EvolutionCharts } from './EvolutionCharts';
 import { EvolutionReviewAndSignModal } from './EvolutionReviewAndSignModal';
+import { MonthlyConsolidatedReportView } from './MonthlyConsolidatedReportView';
 import { ClinicConfig, DEFAULT_CLINIC_CONFIG, Therapist } from '../types/clinicConfig';
 import { Eye, FileDown } from 'lucide-react';
 
@@ -61,7 +62,7 @@ interface MedicalRecordViewProps {
   therapists?: Therapist[];
 }
 
-type TabType = 'resumo' | 'anamnese' | 'metas' | 'plano' | 'evolucoes' | 'avaliacoes' | 'graficos_evolucao';
+type TabType = 'evolucoes' | 'relatorio_mensal' | 'graficos_evolucao' | 'resumo' | 'anamnese' | 'metas' | 'plano' | 'avaliacoes';
 
 export const MedicalRecordView: React.FC<MedicalRecordViewProps> = ({
   selectedPatient,
@@ -424,6 +425,7 @@ export const MedicalRecordView: React.FC<MedicalRecordViewProps> = ({
         <div className="mt-6 pt-4 border-t border-[#342b26] flex flex-wrap items-center gap-2">
           {[
             { id: 'evolucoes' as TabType, label: `Evoluções Fonoaudiológicas (${patientOfficialEvolutions.length || currentRecord.sessions.length})`, icon: Clock },
+            { id: 'relatorio_mensal' as TabType, label: 'Relatório Mensal Consolidado', icon: FileText },
             { id: 'graficos_evolucao' as TabType, label: 'Curva & Gráficos de Evolução', icon: TrendingUp },
             { id: 'resumo' as TabType, label: 'Visão Geral & FOIS', icon: Activity },
             { id: 'anamnese' as TabType, label: 'Avaliação OFA & Deglutição', icon: Stethoscope },
@@ -864,7 +866,19 @@ export const MedicalRecordView: React.FC<MedicalRecordViewProps> = ({
         </div>
       )}
 
-      {/* TAB CONTENT: 2.1 CURVA & GRÁFICOS DE EVOLUÇÃO (INDEXAÇÃO ANALÍTICA) */}
+      {/* TAB CONTENT: 2.1 RELATÓRIO MENSAL CONSOLIDADO (AGREGAÇÃO, GRÁFICOS & AUDITORIA) */}
+      {activeTab === 'relatorio_mensal' && (
+        <MonthlyConsolidatedReportView
+          patients={patients}
+          selectedPatient={selectedPatient}
+          onSelectPatient={onSelectPatient}
+          officialEvolutions={officialEvolutions}
+          currentUser={currentUser}
+          clinicConfig={clinicConfig}
+        />
+      )}
+
+      {/* TAB CONTENT: 2.2 CURVA & GRÁFICOS DE EVOLUÇÃO (INDEXAÇÃO ANALÍTICA) */}
       {activeTab === 'graficos_evolucao' && (
         <EvolutionCharts evolutions={patientOfficialEvolutions} />
       )}
