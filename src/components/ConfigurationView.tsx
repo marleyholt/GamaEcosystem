@@ -9,6 +9,7 @@ import {
 import { Patient, UserProfile, UserRole, NavigationTab } from '../types';
 import { OfficialLetterhead } from './OfficialLetterhead';
 import { AdminUsersView } from './AdminUsersView';
+import { backupAllLocalToFirestore } from '../services/firestoreSync';
 import { 
   Building2, 
   Users, 
@@ -35,7 +36,9 @@ import {
   Flame,
   ExternalLink,
   Copy,
-  AlertTriangle
+  AlertTriangle,
+  RefreshCw,
+  CloudUpload
 } from 'lucide-react';
 
 interface ConfigurationViewProps {
@@ -70,6 +73,8 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
   const [activeTab, setActiveTab] = useState<'geral' | 'marca' | 'cuidadores' | 'terapeutas' | 'usuarios' | 'firebase'>('geral');
   const [tempConfig, setTempConfig] = useState<ClinicConfig>(clinicConfig);
   const [savedSuccess, setSavedSuccess] = useState(false);
+  const [isSyncingFirebase, setIsSyncingFirebase] = useState(false);
+  const [syncStatusMsg, setSyncStatusMsg] = useState<string | null>(null);
   const [previewTherapistId, setPreviewTherapistId] = useState<string>(''); // Vazio = Usar dados da Clínica & RT
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -1077,6 +1082,66 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
               </a>
             </div>
           </div>
+
+          {/* Botão de Envio Forçado de Toda a Base Local para o Firestore */}
+          <div className="p-5 rounded-xl bg-[#1b1714] border border-[#3d322a] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="space-y-1">
+              <h3 className="text-sm font-bold text-[#f4efe8] flex items-center gap-2">
+                <CloudUpload className="w-4 h-4 text-[#c8a88a]" />
+                Sincronizar Todos os Dados para o Firebase Firestore
+              </h3>
+              <p className="text-xs text-[#a69a8f]">
+                Envia imediatamente todos os pacientes ({patients.length}), cuidadores ({caregivers.length}), terapeutas ({therapists.length}) e prontuários para a sua base no console.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              disabled={isSyncingFirebase}
+              onClick={async () => {
+                setIsSyncingFirebase(true);
+                setSyncStatusMsg(null);
+                try {
+                  const count = await backupAllLocalToFirestore({
+                    patients,
+                    caregivers,
+                    therapists,
+                    evolutions: [],
+                    assessments: [],
+                    dailyLogs: [],
+                    medicalRecords: [],
+                    clinicConfig: tempConfig,
+                    users
+                  });
+                  setSyncStatusMsg(`Sincronização concluída! ${count} registros enviados para o Cloud Firestore.`);
+                } catch (err: any) {
+                  setSyncStatusMsg(`Erro ao sincronizar: ${err?.message || 'Falha na conexão'}`);
+                } finally {
+                  setIsSyncingFirebase(false);
+                }
+              }}
+              className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#c8a88a] hover:bg-[#d6bc9f] text-[#181513] font-bold text-xs shadow-md transition-all cursor-pointer disabled:opacity-50 shrink-0"
+            >
+              {isSyncingFirebase ? (
+                <>
+                  <RefreshCw className="w-4 h-4 animate-spin" />
+                  <span>Enviando Dados...</span>
+                </>
+              ) : (
+                <>
+                  <CloudUpload className="w-4 h-4" />
+                  <span>Sincronizar Base Agora</span>
+                </>
+              )}
+            </button>
+          </div>
+
+          {syncStatusMsg && (
+            <div className="p-3 rounded-xl bg-emerald-950/60 border border-emerald-500/40 text-emerald-300 text-xs flex items-center gap-2">
+              <CheckCircle className="w-4 h-4 shrink-0" />
+              <span>{syncStatusMsg}</span>
+            </div>
+          )}
 
           {/* Instruções para Transferência Completa das Credenciais do Web App */}
           <div className="p-4 rounded-xl bg-[#241e1a] border border-[#44362d] space-y-3 text-xs">
