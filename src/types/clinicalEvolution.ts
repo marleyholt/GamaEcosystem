@@ -60,6 +60,25 @@ export interface ComplementaryTherapy {
   techniqueOrParams?: string; // ex: 100Hz, 4J/ponto, tDCS anódica, corte em I
 }
 
+export type EvolutionApprovalStatus = 
+  | 'rascunho' 
+  | 'aguardando_familiar' // Terapeuta assinou, aguarda paciente/responsável
+  | 'finalizado_assinado'; // Ambos assinaram -> PDF Liberado
+
+export interface DigitalSignatureInfo {
+  signatureId: string; // ex: GAMA-SIG-9F8A2B1C-2026
+  signerName: string;
+  signerRole: 'fonoaudiologo' | 'cuidador' | 'familiar' | 'paciente' | 'admin';
+  signerDocument?: string; // CRFa ou CPF
+  signerEmail?: string;
+  signedAt: string; // ISO 8601 string
+  ipAddress?: string; // IP público capturado
+  location?: string; // Local / Cidade / Geolocalização
+  userAgent?: string; // Navegador / Dispositivo do signatário
+  signatureDataUrl: string; // Imagem em Base64 do traço ou rubrica oficial
+  verificationHash: string; // Hash SHA-256 de validação do documento
+}
+
 export interface OfficialEvolutionData {
   id: string;
   patientId: string;
@@ -67,6 +86,12 @@ export interface OfficialEvolutionData {
   therapistId: string;
   therapistName: string;
   therapistCrfa: string;
+
+  // Fluxo de Assinatura & Rastreabilidade Clínica
+  status: EvolutionApprovalStatus;
+  therapistSignature?: DigitalSignatureInfo;
+  responsibleSignature?: DigitalSignatureInfo;
+  pdfGeneratedAt?: string;
 
   // --- PÁGINA 1: QUADRO CLÍNICO, CONSCIÊNCIA, RESPIRAÇÃO, COMUNICAÇÃO & ALIMENTAÇÃO ORAL ---
   clinicalSummary: string; // Síntese do quadro clínico
