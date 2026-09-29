@@ -16,17 +16,25 @@ const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 export const auth = getAuth(app);
 export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
 
-// Teste de conexão obrigatório de acordo com o skill
+// Teste de conexão seguro com tratamento resiliente de modo offline
 export async function testFirebaseConnection(): Promise<boolean> {
   try {
-    await getDocFromServer(doc(db, 'test', 'connection'));
-    return true;
-  } catch (error) {
-    if (error instanceof Error && error.message.includes('the client is offline')) {
-      console.warn('Firebase client is offline. Verifique a configuração.');
+    // Usamos getDocFromServer apenas quando houver conectividade online
+    if (typeof navigator !== 'undefined' && !navigator.onLine) {
       return false;
     }
+    await getDocFromServer(doc(db, 'test', 'connection'));
     return true;
+  } catch (error: any) {
+    // Código 'unavailable' ou mensagem 'offline' indicam operação offline normal do Firestore
+    if (
+      error?.code === 'unavailable' ||
+      (error instanceof Error && (error.message.includes('the client is offline') || error.message.includes('unavailable') || error.message.includes('Could not reach Cloud Firestore')))
+    ) {
+      // Modo offline transparente do Firestore sem poluir o console ou quebrar a UI
+      return false;
+    }
+    return false;
   }
 }
 
