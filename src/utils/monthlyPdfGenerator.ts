@@ -9,6 +9,7 @@ export interface MonthlyReportPDFData {
   selectedMonth: string; // YYYY-MM
   evolutions: OfficialEvolutionData[];
   clinicConfig: ClinicConfig;
+  generalNotes?: string;
   therapistSignature?: DigitalSignatureInfo;
 }
 
@@ -17,6 +18,7 @@ export function generateMonthlyConsolidatedPDF({
   selectedMonth,
   evolutions,
   clinicConfig = DEFAULT_CLINIC_CONFIG,
+  generalNotes = '',
   therapistSignature
 }: MonthlyReportPDFData): string {
   const doc = new jsPDF({
@@ -307,6 +309,33 @@ export function generateMonthlyConsolidatedPDF({
   });
 
   // ========================================================
+  // QUADRO DE OBSERVAÇÕES GERAIS DA FONOAUDIÓLOGA
+  // ========================================================
+  if (generalNotes && generalNotes.trim().length > 0) {
+    if (y > pageHeight - 75) {
+      doc.addPage();
+      currentPage++;
+      drawOfficialGamaLetterhead(doc, clinicConfig, null, { pageNumber: currentPage, totalPages });
+      y = 48;
+    }
+
+    doc.setFillColor(242, 238, 232);
+    doc.rect(14, y, pageWidth - 26, 6, 'F');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8.5);
+    doc.setTextColor(122, 89, 55);
+    doc.text('OBSERVAÇÕES GERAIS, ORIENTAÇÕES DA FONOAUDIÓLOGA & CONDUTAS PARA O PRÓXIMO MÊS', 17, y + 4.5);
+    y += 8;
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.setTextColor(40, 35, 30);
+    const notesLines = doc.splitTextToSize(generalNotes.trim(), pageWidth - 34);
+    doc.text(notesLines, 17, y);
+    y += (notesLines.length * 4) + 6;
+  }
+
+  // ========================================================
   // QUADRO FINAL DE AUDITORIA & ASSINATURA DA FONOAUDIÓLOGA
   // ========================================================
   if (y > pageHeight - 55) {
@@ -347,7 +376,7 @@ export function generateMonthlyConsolidatedPDF({
     doc.setFontSize(7);
     doc.text(therapistSignature.signerDocument || clinicConfig.crfa, 17, y + 24);
     doc.text(`Data/Hora da Emissão: ${new Date(therapistSignature.signedAt).toLocaleString('pt-BR')}`, 17, y + 28);
-    doc.text(`IP de Rede: ${therapistSignature.ipAddress || '187.19.224.45'} • Localização: Curitiba/PR`, 17, y + 32);
+    doc.text(`IP de Rede: ${therapistSignature.ipAddress || '187.19.224.45'}`, 17, y + 32);
 
     doc.setFont('courier', 'normal');
     doc.setFontSize(6.5);
