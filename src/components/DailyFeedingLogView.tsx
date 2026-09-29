@@ -24,7 +24,13 @@ import {
   ArrowLeft, 
   Calendar, 
   Save, 
-  Lock 
+  Lock,
+  ChevronLeft,
+  ChevronRight,
+  Eye,
+  Layers,
+  X,
+  Upload
 } from 'lucide-react';
 
 interface DailyFeedingLogViewProps {
@@ -65,6 +71,9 @@ export const DailyFeedingLogView: React.FC<DailyFeedingLogViewProps> = ({
   // Photo upload states
   const [currentMealType, setCurrentMealType] = useState<MealType>('almoço');
   const [photoNote, setPhotoNote] = useState<string>('');
+  const [selectedMealFilter, setSelectedMealFilter] = useState<string>('todas');
+  const [fullscreenPhoto, setFullscreenPhoto] = useState<MealPhoto | null>(null);
+  const [carouselIndex, setCarouselIndex] = useState<{ [mealKey: string]: number }>({});
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const galleryInputRef = useRef<HTMLInputElement>(null);
 
@@ -130,24 +139,29 @@ export const DailyFeedingLogView: React.FC<DailyFeedingLogViewProps> = ({
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
 
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const newPhoto: MealPhoto = {
-        id: `photo_${Date.now()}`,
-        patientId: activePatient.id,
-        mealType: currentMealType,
-        photoUrl: reader.result as string,
-        date: logDate,
-        notes: photoNote || `Foto de ${currentMealType}`,
-        uploadedAt: new Date().toISOString()
+    Array.from(files).forEach((file, index) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const newPhoto: MealPhoto = {
+          id: `photo_${Date.now()}_${index}_${Math.random().toString(36).substring(2, 6)}`,
+          patientId: activePatient.id,
+          mealType: currentMealType,
+          photoUrl: reader.result as string,
+          date: logDate,
+          notes: photoNote || `Foto ${index + 1} de ${currentMealType}`,
+          uploadedAt: new Date().toISOString()
+        };
+        onAddPhoto(newPhoto);
       };
-      onAddPhoto(newPhoto);
-      setPhotoNote('');
-    };
-    reader.readAsDataURL(file);
+      reader.readAsDataURL(file);
+    });
+
+    setPhotoNote('');
+    // Limpar o input para permitir selecionar as mesmas fotos novamente se desejar
+    e.target.value = '';
   };
 
   const handleSave = () => {
@@ -415,40 +429,64 @@ export const DailyFeedingLogView: React.FC<DailyFeedingLogViewProps> = ({
         />
       </div>
 
-      {/* Fotos da Alimentação (Upload nativo via câmera / galeria - matching video at 01:11) */}
+      {/* Fotos da Alimentação (Upload nativo via câmera / galeria com suporte a múltiplas fotos) */}
       <div className="bg-[#221d1a] border border-[#3a312c] rounded-2xl p-5 sm:p-6 space-y-4">
-        <div className="flex items-center gap-2">
-          <Camera className="w-5 h-5 text-[#c8a88a]" />
-          <div>
-            <h3 className="text-lg font-bold font-serif text-[#f4efe8]">
-              Fotos da Alimentação (Opcional)
-            </h3>
-            <p className="text-xs text-[#a69a8f]">
-              Capture ou carregue fotos que possam ajudar na avaliação da consistência e aceitação
-            </p>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Camera className="w-5 h-5 text-[#c8a88a]" />
+            <div>
+              <h3 className="text-lg font-bold font-serif text-[#f4efe8]">
+                Fotos da Alimentação (Múltiplas Fotos por Refeição)
+              </h3>
+              <p className="text-xs text-[#a69a8f]">
+                Selecione uma ou mais fotos do prato, consistência, postura e aceitação para a refeição indicada
+              </p>
+            </div>
           </div>
+          <span className="text-[11px] font-bold text-[#c8a88a] bg-[#2a221d] px-2.5 py-1 rounded-full border border-[#44362d]">
+            Multi-upload Ativo
+          </span>
         </div>
 
         {/* Meal Selector for Photo */}
         <div className="flex flex-wrap items-center gap-2 pt-2">
-          <span className="text-xs font-semibold text-[#a69a8f]">Refeição:</span>
-          {(['café', 'lanche1', 'almoço', 'lanche2', 'jantar', 'ceia', 'suco'] as MealType[]).map((m) => (
-            <button
-              key={m}
-              type="button"
-              onClick={() => setCurrentMealType(m)}
-              className={`px-3 py-1 rounded-lg text-xs font-medium capitalize transition-colors ${
-                currentMealType === m
-                  ? 'bg-[#c8a88a] text-[#181513] font-bold'
-                  : 'bg-[#27211d] text-[#a69a8f] hover:bg-[#342b26]'
-              }`}
-            >
-              {m}
-            </button>
-          ))}
+          <span className="text-xs font-semibold text-[#a69a8f]">Refeição Alvo:</span>
+          {(['café', 'lanche1', 'almoço', 'lanche2', 'jantar', 'ceia', 'suco'] as MealType[]).map((m) => {
+            const countForMealAndDate = patientPhotos.filter(p => p.mealType === m && p.date === logDate).length;
+            return (
+              <button
+                key={m}
+                type="button"
+                onClick={() => setCurrentMealType(m)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-medium capitalize transition-all cursor-pointer flex items-center gap-1.5 ${
+                  currentMealType === m
+                    ? 'bg-[#c8a88a] text-[#181513] font-bold shadow-xs'
+                    : 'bg-[#27211d] text-[#a69a8f] hover:bg-[#342b26] border border-[#382e27]'
+                }`}
+              >
+                <span>{m}</span>
+                {countForMealAndDate > 0 && (
+                  <span className="w-4 h-4 rounded-full bg-[#181513] text-[#c8a88a] text-[10px] flex items-center justify-center font-bold">
+                    {countForMealAndDate}
+                  </span>
+                )}
+              </button>
+            );
+          })}
         </div>
 
-        {/* Hidden inputs for native camera / gallery */}
+        {/* Campo opcional de anotação da refeição */}
+        <div className="pt-1">
+          <input
+            type="text"
+            value={photoNote}
+            onChange={e => setPhotoNote(e.target.value)}
+            placeholder={`Legenda ou anotação para as fotos de ${currentMealType} (ex: Antes e depois da ingesta, aceitação de 100ml)...`}
+            className="w-full bg-[#181513] border border-[#3a312c] rounded-xl px-3.5 py-2 text-xs text-[#f4efe8] placeholder-[#6d635a] focus:outline-none focus:border-[#c8a88a]"
+          />
+        </div>
+
+        {/* Hidden inputs for native camera / gallery with multiple attribute */}
         <input
           ref={cameraInputRef}
           type="file"
@@ -461,6 +499,7 @@ export const DailyFeedingLogView: React.FC<DailyFeedingLogViewProps> = ({
           ref={galleryInputRef}
           type="file"
           accept="image/*"
+          multiple
           onChange={handleFileUpload}
           className="hidden"
         />
@@ -470,94 +509,211 @@ export const DailyFeedingLogView: React.FC<DailyFeedingLogViewProps> = ({
           <button
             type="button"
             onClick={() => cameraInputRef.current?.click()}
-            className="p-4 rounded-xl bg-[#27211d] hover:bg-[#342b26] border border-[#3a312c] flex flex-col items-center justify-center gap-2 transition-colors"
+            className="p-4 rounded-xl bg-[#27211d] hover:bg-[#342b26] border border-[#3a312c] flex flex-col items-center justify-center gap-1.5 transition-colors cursor-pointer"
           >
             <Camera className="w-6 h-6 text-[#c8a88a]" />
-            <span className="text-sm font-semibold text-[#f4efe8]">Tirar foto</span>
-            <span className="text-[11px] text-[#a69a8f]">Usar câmera do celular</span>
+            <span className="text-sm font-semibold text-[#f4efe8]">Tirar Foto com Câmera</span>
+            <span className="text-[11px] text-[#a69a8f]">Fotografar prato ou consistência agora</span>
           </button>
 
           <button
             type="button"
             onClick={() => galleryInputRef.current?.click()}
-            className="p-4 rounded-xl bg-[#27211d] hover:bg-[#342b26] border border-[#3a312c] flex flex-col items-center justify-center gap-2 transition-colors"
+            className="p-4 rounded-xl bg-[#27211d] hover:bg-[#342b26] border border-[#3a312c] flex flex-col items-center justify-center gap-1.5 transition-colors cursor-pointer"
           >
-            <ImageIcon className="w-6 h-6 text-[#c8a88a]" />
-            <span className="text-sm font-semibold text-[#f4efe8]">Carregar da galeria</span>
-            <span className="text-[11px] text-[#a69a8f]">Escolher imagem do dispositivo</span>
+            <div className="flex items-center gap-2 text-[#c8a88a]">
+              <ImageIcon className="w-6 h-6" />
+              <Upload className="w-4 h-4" />
+            </div>
+            <span className="text-sm font-semibold text-[#f4efe8]">Carregar Fotos da Galeria</span>
+            <span className="text-[11px] text-[#a69a8f]">Selecione 1 ou várias fotos simultaneamente</span>
           </button>
         </div>
       </div>
 
-      {/* Fotos Salvas de Registros Anteriores (EXATAMENTE COMO AOS 01:12 DO VÍDEO!) */}
-      <div className="bg-[#221d1a] border border-[#3a312c] rounded-2xl p-5 sm:p-6 space-y-4">
-        <div className="flex items-center justify-between">
-          <h3 className="text-lg font-bold font-serif text-[#f4efe8]">
-            Fotos Salvas de Registros
-          </h3>
-          <span className="text-xs text-[#a69a8f]">
-            {patientPhotos.length} foto(s) catalogada(s)
-          </span>
+      {/* Fotos Salvas de Registros com Agrupamento por Refeição, Carrossel & Galeria */}
+      <div className="bg-[#221d1a] border border-[#3a312c] rounded-2xl p-5 sm:p-6 space-y-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <h3 className="text-lg font-bold font-serif text-[#f4efe8] flex items-center gap-2">
+              <Layers className="w-5 h-5 text-[#c8a88a]" />
+              Fotos Salvas & Histórico Fotográfico por Refeição
+            </h3>
+            <p className="text-xs text-[#a69a8f]">
+              {patientPhotos.length} foto(s) catalogada(s) para este paciente
+            </p>
+          </div>
+
+          {/* Filtro por refeição */}
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-thin">
+            <span className="text-[10px] text-[#85796f] uppercase font-bold tracking-wider mr-1">Filtrar:</span>
+            {['todas', 'café', 'lanche1', 'almoço', 'lanche2', 'jantar', 'ceia', 'suco'].map(flt => (
+              <button
+                key={flt}
+                type="button"
+                onClick={() => setSelectedMealFilter(flt)}
+                className={`px-2.5 py-1 rounded-lg text-xs capitalize transition-all cursor-pointer ${
+                  selectedMealFilter === flt
+                    ? 'bg-[#c8a88a] text-[#181513] font-bold'
+                    : 'bg-[#181513] text-[#a69a8f] hover:text-[#f4efe8] border border-[#382e27]'
+                }`}
+              >
+                {flt}
+              </button>
+            ))}
+          </div>
         </div>
 
         {patientPhotos.length > 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-            {patientPhotos.map((photo) => (
-              <div
-                key={photo.id}
-                className="group relative rounded-xl overflow-hidden bg-[#1a1614] border border-[#3a312c] flex flex-col shadow-sm"
-              >
-                {/* Photo Image */}
-                <div className="aspect-video w-full overflow-hidden bg-[#27211d]">
-                  <img
-                    src={photo.photoUrl}
-                    alt={photo.mealType}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
+          <div className="space-y-6">
+            {/* Visualização de Carrossel Agrupado por Refeição (Almoço, Jantar, etc.) */}
+            {(['café', 'lanche1', 'almoço', 'lanche2', 'jantar', 'ceia', 'suco'] as MealType[])
+              .filter(m => selectedMealFilter === 'todas' || selectedMealFilter === m)
+              .map(meal => {
+                const photosForMeal = patientPhotos.filter(p => p.mealType === meal);
+                if (photosForMeal.length === 0) return null;
 
-                {/* Footer with Meal tag & Action buttons (matching video at 01:12) */}
-                <div className="p-2 flex items-center justify-between bg-[#221d1a] border-t border-[#342b26]">
-                  <div>
-                    <span className="text-xs font-semibold capitalize text-[#f4efe8] block">
-                      {photo.mealType}
-                    </span>
-                    <span className="text-[10px] text-[#85796f]">
-                      {photo.date}
-                    </span>
-                  </div>
+                const currentIndex = carouselIndex[meal] || 0;
+                const safeCurrentIndex = Math.min(currentIndex, photosForMeal.length - 1);
+                const currentPhoto = photosForMeal[safeCurrentIndex];
 
-                  <div className="flex items-center gap-1">
-                    <button
-                      type="button"
-                      title="Editar anotações da foto"
-                      onClick={() => {
-                        const note = prompt('Editar anotação da refeição:', photo.notes || '');
-                        if (note !== null) photo.notes = note;
-                      }}
-                      className="p-1 rounded text-[#a69a8f] hover:text-[#c8a88a]"
-                    >
-                      <Edit3 className="w-3.5 h-3.5" />
-                    </button>
-                    <button
-                      type="button"
-                      title="Excluir foto"
-                      onClick={() => onDeletePhoto(photo.id)}
-                      className="p-1 rounded text-[#a69a8f] hover:text-rose-400"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
+                return (
+                  <div key={meal} className="p-4 rounded-xl bg-[#191513] border border-[#342b26] space-y-3">
+                    <div className="flex items-center justify-between pb-2 border-b border-[#2d241f]">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-bold capitalize text-[#f4efe8]">
+                          {meal}
+                        </span>
+                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#c8a88a]/20 text-[#c8a88a] font-bold border border-[#c8a88a]/30">
+                          {photosForMeal.length} foto(s)
+                        </span>
+                      </div>
+
+                      {photosForMeal.length > 1 && (
+                        <div className="flex items-center gap-2 text-xs">
+                          <span className="text-[#a69a8f] text-[11px]">
+                            {safeCurrentIndex + 1} de {photosForMeal.length}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const newIdx = safeCurrentIndex > 0 ? safeCurrentIndex - 1 : photosForMeal.length - 1;
+                              setCarouselIndex(prev => ({ ...prev, [meal]: newIdx }));
+                            }}
+                            className="p-1 rounded-lg bg-[#27211d] text-[#c8a88a] hover:bg-[#382f2a] border border-[#3e342e]"
+                            title="Foto anterior"
+                          >
+                            <ChevronLeft className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const newIdx = safeCurrentIndex < photosForMeal.length - 1 ? safeCurrentIndex + 1 : 0;
+                              setCarouselIndex(prev => ({ ...prev, [meal]: newIdx }));
+                            }}
+                            className="p-1 rounded-lg bg-[#27211d] text-[#c8a88a] hover:bg-[#382f2a] border border-[#3e342e]"
+                            title="Próxima foto"
+                          >
+                            <ChevronRight className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Destaque da Foto Atual + Miniaturas do Carrossel */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+                      {/* Foto Principal em Destaque */}
+                      <div className="md:col-span-2 relative rounded-xl overflow-hidden bg-[#241d19] border border-[#3a312c] aspect-video group shadow-md">
+                        <img
+                          src={currentPhoto.photoUrl}
+                          alt={currentPhoto.mealType}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 cursor-pointer"
+                          onClick={() => setFullscreenPhoto(currentPhoto)}
+                        />
+                        <div className="absolute top-2 right-2 flex items-center gap-1.5 opacity-90 group-hover:opacity-100 transition-opacity">
+                          <button
+                            type="button"
+                            onClick={() => setFullscreenPhoto(currentPhoto)}
+                            className="p-1.5 rounded-lg bg-black/70 text-white hover:bg-black transition-colors"
+                            title="Visualizar em tela cheia"
+                          >
+                            <Eye className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => onDeletePhoto(currentPhoto.id)}
+                            className="p-1.5 rounded-lg bg-black/70 text-rose-400 hover:bg-black transition-colors"
+                            title="Excluir foto"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                        <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 to-transparent p-3 text-white text-xs">
+                          <p className="font-semibold">{currentPhoto.notes || `Foto de ${currentPhoto.mealType}`}</p>
+                          <span className="text-[10px] text-gray-300 font-mono">Data: {currentPhoto.date}</span>
+                        </div>
+                      </div>
+
+                      {/* Miniaturas da mesma refeição */}
+                      <div className="flex md:flex-col gap-2 overflow-x-auto md:overflow-y-auto max-h-52 pb-1 pr-1 scrollbar-thin">
+                        {photosForMeal.map((item, pIdx) => (
+                          <div
+                            key={item.id}
+                            onClick={() => setCarouselIndex(prev => ({ ...prev, [meal]: pIdx }))}
+                            className={`relative rounded-lg overflow-hidden bg-[#241d19] aspect-video shrink-0 md:shrink w-24 md:w-full border cursor-pointer transition-all ${
+                              pIdx === safeCurrentIndex
+                                ? 'border-[#c8a88a] ring-2 ring-[#c8a88a]/30'
+                                : 'border-[#3a312c] opacity-60 hover:opacity-100'
+                            }`}
+                          >
+                            <img src={item.photoUrl} alt="" className="w-full h-full object-cover" />
+                            <div className="absolute bottom-0 inset-x-0 bg-black/60 px-1 py-0.5 text-[9px] text-[#f4efe8] truncate">
+                              #{pIdx + 1} • {item.date}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            ))}
+                );
+              })}
           </div>
         ) : (
           <div className="py-8 text-center text-[#85796f] border border-dashed border-[#3a312c] rounded-xl text-xs">
-            Nenhuma foto anexada para este paciente ainda.
+            Nenhuma foto anexada para este paciente ainda. Você pode tirar uma foto agora ou carregar múltiplas fotos da galeria acima.
           </div>
         )}
       </div>
+
+      {/* Modal Lightbox de Foto em Tela Cheia */}
+      {fullscreenPhoto && (
+        <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="relative max-w-4xl max-h-[90vh] flex flex-col bg-[#1a1614] border border-[#3e342e] rounded-2xl overflow-hidden shadow-2xl">
+            <div className="flex items-center justify-between p-3.5 bg-[#221d1a] border-b border-[#382e27]">
+              <div>
+                <span className="font-bold text-sm text-[#f4efe8] capitalize">
+                  {fullscreenPhoto.mealType} - {fullscreenPhoto.date}
+                </span>
+                <p className="text-xs text-[#a69a8f]">{fullscreenPhoto.notes}</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setFullscreenPhoto(null)}
+                className="p-1.5 rounded-xl bg-[#2d241f] text-[#a69a8f] hover:text-[#f4efe8]"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-auto p-2 flex items-center justify-center bg-black/40">
+              <img
+                src={fullscreenPhoto.photoUrl}
+                alt=""
+                className="max-w-full max-h-[75vh] object-contain rounded-lg"
+              />
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Action Footer (Matching video: Voltar & Salvar Registro) */}
       <div className="flex items-center justify-between pt-4 border-t border-[#342b26]">
