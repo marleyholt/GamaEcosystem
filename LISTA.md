@@ -1,13 +1,67 @@
-# LISTA DE TAREFAS - GAMAECOSYSTEM
+# LISTA DE TAREFAS (TO-DO LIST & CHANGELOG) - GAMAECOSYSTEM
 
-## 🚀 FASE ATUAL: Migração e Deploy no Servidor Ubuntu 20 (Oracle Cloud)
+Este documento é a fonte de verdade para o acompanhamento contínuo de tarefas, prioridades, sprints e histórico de alterações (changelog).
 
-- [x] **1. Inspeção não destrutiva do servidor** (Nginx, portas, MariaDB, projetos existentes verificados).
-- [x] **2. Criação do Banco de Dados dedicado** (`gamaecosystem_db` com 9 tabelas InnoDB e usuário `gama_user`).
-- [x] **3. Criação e apontamento de DNS** (`gamaecosystem.duckdns.org` -> `152.67.60.236`).
-- [x] **4. Configuração de Nginx e Certificado SSL Let's Encrypt** (HTTPS ativo com redirecionamento).
-- [x] **5. Remoção da aba Segurança & LGPD** (Conforme solicitação, retirada da navegação).
-- [x] **6. Registro de credenciais e infraestrutura no agents.md**.
-- [ ] **7. Resolução do conflito de dependências npm e Build no Servidor** (Em andamento).
-- [ ] **8. Ativação do processo no PM2** (Porta 3005).
-- [ ] **9. Teste de ponta a ponta** no domínio `https://gamaecosystem.duckdns.org`.
+---
+
+## 📌 1. STATUS ATUAL DO PROJETO
+
+- **Ambiente de Produção:** `https://gamaecosystem.duckdns.org` (Ativo e Online via Nginx + SSL + PM2)
+- **Banco de Dados:** MariaDB `gamaecosystem_db` (Instância dedicada, 9 tabelas InnoDB ativas)
+- **Status do Endpoint de Saúde:** `{"status":"ok","database":"connected","db_name":"gamaecosystem_db"}`
+
+---
+
+## 📋 2. TO-DO LIST (Backlog de Tarefas por Prioridade)
+
+### 🔴 Alta Prioridade (Próximos Passos Imediatos)
+- [ ] **API de Sincronização MariaDB Completa (CRUD de Produção):**
+  - Implementar endpoints no backend Express (`server_prod.cjs`) para persistir:
+    - Pacientes (`/api/patients`)
+    - Prontuários Médicos (`/api/medical-records`)
+    - Avaliações RaDI (`/api/radi`)
+    - Registros Diários de Alimentação (`/api/feeding-logs`)
+    - Configurações da Clínica (`/api/clinic-config`)
+    - Evoluções Oficiais (`/api/evolutions`)
+  - Conectar o frontend React para ler/gravar diretamente nessas rotas da API em produção com fallback transparente.
+- [ ] **Script de Deploy Automatizado (One-Click Update via Git Hook / Script):**
+  - Criar um script `update.sh` em `/var/www/gamaecosystem` para atualizar o código via `git pull`, rodar `npm run build` e recarregar o PM2 de forma rápida.
+
+### 🟡 Média Prioridade
+- [ ] **Módulo de Relatórios e Exportação em Lote:**
+  - Exportação em lote de laudos em PDF com timbrado oficial da clínica e assinatura digital.
+- [ ] **Otimização de Code Splitting / Chunking no Vite:**
+  - Separar bibliotecas pesadas (`jspdf`, `html2canvas`) em chunks dinâmicos para acelerar o carregamento inicial.
+
+### 🟢 Baixa Prioridade / Melhorias Futuras
+- [ ] **Rotinas de Backup Automático do Banco de Dados:**
+  - Criar cronjob diário no Ubuntu para `mysqldump` com retenção de 7 dias do banco `gamaecosystem_db`.
+- [ ] **PWA / Notificações no Dispositivo:**
+  - Suporte a instalação como App no celular do cuidador e fonoaudiólogo.
+
+---
+
+## 📜 3. CHANGELOG (Histórico Cronológico de Entregas)
+
+### [v1.1.0] - 2026-09-29: Migração para Servidor de Produção & Infraestrutura Isolada
+- **Infraestrutura Ubuntu 20 (Oracle Cloud):**
+  - Realizada inspeção não-destrutiva sem afetar os dois outros projetos existentes (`telumak-server` e `pastelaria-argentino`).
+  - Criado banco de dados relacional dedicado `gamaecosystem_db` com usuário `gama_user` e 9 tabelas InnoDB estruturadas (`schema.sql`).
+  - Configurado VirtualHost dedicado no Nginx escutando o domínio `gamaecosystem.duckdns.org` e redirecionando para a porta interna isolada `3005`.
+  - Emitido e instalado certificado SSL HTTPS gratuito via Let's Encrypt / Certbot.
+  - Criado servidor de produção Express (`server_prod.cjs`) com pool de conexões MySQL e endpoint de verificação `/api/health`.
+  - Configurado processo resiliente no PM2 (`gamaecosystem`) com inicialização automática no boot do sistema.
+- **Ajustes de Sistema & Interface:**
+  - Removida definitivamente a aba **"Segurança & LGPD"** da navegação e das permissões de usuário.
+  - Resolvido conflito de versão peer do `esbuild`/`vite` no `package.json` para compilação estável no Node 20.
+  - Criado e sincronizado no GitHub o documento mestre `agents.md` com todos os dados técnicos de infraestrutura e acessos.
+
+### [v1.0.0] - 2026-09-28: Consolidação de Módulos Clínicos & Identidade Gama Fono
+- **Identidade & Configuração:**
+  - Inclusão do logotipo oficial Gama Fono, dados da Responsável Técnica (Adriane Gama - CRFa 2-12628).
+  - Implementação da Central de Configurações com campos institucionais, endereço e upload de logo.
+- **Módulos Clínicos:**
+  - Criação da Avaliação RaDI com cálculo automático de risco de disfagia.
+  - Registro Diário Alimentar com fotos, consistências e sinais de broncoaspiração.
+  - Prontuário Eletrônico do Paciente (PEP) com histórico clínico e condutas.
+  - Linha do Tempo e Evolução com gráficos e filtros por refeição.
