@@ -1,12 +1,12 @@
 {
-  "projectId": "finlhub",
-  "appId": "1:80100152503:web:d69e5f7492038ba4e0a932",
-  "apiKey": "AIzaSyAWsiRWFynuzmmVWtijPPugnZiA27Kus5I",
-  "authDomain": "finlhub.firebaseapp.com",
-  "firestoreDatabaseId": "gamaecosystem",
-  "storageBucket": "finlhub.firebasestorage.app",
-  "messagingSenderId": "80100152503",
-  "measurementId": "",
-  "oAuthClientId": "80100152503-o4al8geedo0jhm8hfjq5h36it3e3muve.apps.googleusercontent.com",
+  "projectId": "gamaecosystem",
+  "appId": "1:303494382042:web:cd52a8e6bad425562900e3",
+  "apiKey": "AIzaSyD9KZqdLEYuPQzXrUiF65Vs2m-6bdRQaTs",
+  "authDomain": "gamaecosystem.firebaseapp.com",
+  "firestoreDatabaseId": "(default)",
+  "storageBucket": "gamaecosystem.firebasestorage.app",
+  "messagingSenderId": "303494382042",
+  "measurementId": "G-H2RWQN150L",
+  "oAuthClientId": "",
   "recaptchaSiteKey": ""
 }
