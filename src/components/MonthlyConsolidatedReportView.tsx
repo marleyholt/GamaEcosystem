@@ -16,7 +16,9 @@ import {
   Layers,
   HeartPulse,
   User,
-  Filter
+  Filter,
+  Edit3,
+  X
 } from 'lucide-react';
 import { Patient, UserProfile } from '../types';
 import { OfficialEvolutionData, FOIS_LEVELS_INFO, PARD_LEVELS_INFO } from '../types/clinicalEvolution';
@@ -53,7 +55,9 @@ export const MonthlyConsolidatedReportView: React.FC<MonthlyConsolidatedReportVi
   });
 
   const [activePatient, setActivePatient] = useState<Patient | null>(selectedPatient);
+  const [generalNotes, setGeneralNotes] = useState<string>('');
   const [showSignPad, setShowSignPad] = useState(false);
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [signedData, setSignedData] = useState<any | null>(null);
 
@@ -113,6 +117,7 @@ export const MonthlyConsolidatedReportView: React.FC<MonthlyConsolidatedReportVi
           selectedMonth,
           evolutions: monthlyEvolutions,
           clinicConfig,
+          generalNotes,
           therapistSignature: sigInfo
         });
       }
@@ -124,7 +129,7 @@ export const MonthlyConsolidatedReportView: React.FC<MonthlyConsolidatedReportVi
     }
   };
 
-  const handleTriggerEmit = () => {
+  const handleOpenPreview = () => {
     if (!activePatient) {
       alert('Por favor, selecione um paciente.');
       return;
@@ -133,6 +138,11 @@ export const MonthlyConsolidatedReportView: React.FC<MonthlyConsolidatedReportVi
       alert('Não existem evoluções fonoaudiológicas registradas para este paciente no mês selecionado.');
       return;
     }
+    setShowPreviewModal(true);
+  };
+
+  const handleProceedToSign = () => {
+    setShowPreviewModal(false);
     setShowSignPad(true);
   };
 
@@ -185,7 +195,7 @@ export const MonthlyConsolidatedReportView: React.FC<MonthlyConsolidatedReportVi
 
           <button
             type="button"
-            onClick={handleTriggerEmit}
+            onClick={handleOpenPreview}
             disabled={monthlyEvolutions.length === 0}
             className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs shadow-md transition-all cursor-pointer ${
               monthlyEvolutions.length > 0
@@ -193,8 +203,8 @@ export const MonthlyConsolidatedReportView: React.FC<MonthlyConsolidatedReportVi
                 : 'bg-[#2a221d] text-[#6d5f53] border border-[#3d322b] cursor-not-allowed opacity-60'
             }`}
           >
-            <ShieldCheck className="w-4 h-4" />
-            <span>Assinar & Emitir Laudo Mensal</span>
+            <FileText className="w-4 h-4" />
+            <span>Visualizar Relatório & Assinar</span>
           </button>
         </div>
       </div>
@@ -493,6 +503,148 @@ export const MonthlyConsolidatedReportView: React.FC<MonthlyConsolidatedReportVi
                 </div>
               </div>
             ))}
+          </div>
+
+          {/* ======================================================== */}
+          {/* 4. CAMPO DE OBSERVAÇÕES GERAIS DA FONOAUDIÓLOGA          */}
+          {/* ======================================================== */}
+          <div className="p-5 rounded-2xl bg-[#1f1a17] border border-[#382e27] space-y-3">
+            <div className="flex items-center justify-between">
+              <label className="text-xs uppercase font-bold text-[#c8a88a] tracking-wider flex items-center gap-2">
+                <Edit3 className="w-4 h-4" />
+                Observações Gerais da Fonoaudióloga (Aparece no Final do Relatório)
+              </label>
+              <span className="text-[11px] text-[#85796f]">Texto livre editável pré-assinatura</span>
+            </div>
+            <textarea
+              rows={4}
+              placeholder="Digite aqui observações adicionais sobre a evolução geral do paciente no mês, orientações para os familiares/cuidadores, intercorrências clínicas, agendamento de retorno ou metas para o próximo mês..."
+              value={generalNotes}
+              onChange={e => setGeneralNotes(e.target.value)}
+              className="w-full bg-[#181513] border border-[#3e342e] rounded-xl p-3.5 text-xs text-[#f4efe8] outline-none focus:border-[#c8a88a] leading-relaxed"
+            />
+            <div className="flex justify-end pt-1">
+              <button
+                type="button"
+                onClick={handleOpenPreview}
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#c8a88a] hover:bg-[#d6bca3] text-[#181513] font-bold text-xs shadow-md transition-all cursor-pointer"
+              >
+                <FileText className="w-4 h-4" />
+                <span>Visualizar Relatório Completo</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL DE PRÉ-VISUALIZAÇÃO COMPLETA DO RELATÓRIO ANTES DA ASSINATURA */}
+      {showPreviewModal && activePatient && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+          <div className="bg-[#1f1a17] border border-[#3e342e] rounded-2xl w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl animate-in fade-in duration-200">
+            {/* Header do Preview */}
+            <div className="flex items-center justify-between p-4 sm:p-5 border-b border-[#342b26] bg-[#181513]">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-[#c8a88a]/20 border border-[#c8a88a]/40 flex items-center justify-center text-[#c8a88a]">
+                  <FileText className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-base text-[#f4efe8] font-serif">
+                    Conferência Prévia do Relatório Mensal ({selectedMonth})
+                  </h3>
+                  <p className="text-xs text-[#a69a8f]">
+                    Paciente: <strong className="text-[#f4efe8]">{activePatient.name}</strong> • Revise todos os dados antes de apor sua rubrica digital
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowPreviewModal(false)}
+                className="p-1.5 rounded-xl bg-[#2a221d] text-[#a69a8f] hover:text-[#f4efe8]"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Corpo com visualização fiel */}
+            <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 text-xs">
+              <div className="p-4 rounded-xl bg-[#181513] border border-[#2e2621] space-y-2">
+                <h4 className="font-bold text-[#c8a88a] uppercase text-[11px] tracking-wider">
+                  1. Indicadores de Desempenho & Comparativo
+                </h4>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  <div className="p-2.5 rounded bg-[#201a17] border border-[#342b26]">
+                    <span className="text-[10px] text-[#85796f] block uppercase">Sessões Totais</span>
+                    <span className="text-[#f4efe8] font-bold text-sm">{monthlyEvolutions.length}</span>
+                  </div>
+                  <div className="p-2.5 rounded bg-[#201a17] border border-[#342b26]">
+                    <span className="text-[10px] text-[#85796f] block uppercase">FOIS Inicial ➔ Final</span>
+                    <span className="text-[#f4efe8] font-bold text-sm">Nível {firstEvo?.foisLevel} ➔ Nível {lastEvo?.foisLevel}</span>
+                  </div>
+                  <div className="p-2.5 rounded bg-[#201a17] border border-[#342b26]">
+                    <span className="text-[10px] text-[#85796f] block uppercase">Classificação PARD</span>
+                    <span className="text-[#f4efe8] font-bold text-sm">Grau {lastEvo?.pardLevel}</span>
+                  </div>
+                  <div className="p-2.5 rounded bg-[#201a17] border border-[#342b26]">
+                    <span className="text-[10px] text-[#85796f] block uppercase">Via de Alimentação</span>
+                    <span className="text-[#f4efe8] font-bold text-sm capitalize">{lastEvo?.oralFeedingModality.replace(/_/g, ' ')}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Cronologia Resumida */}
+              <div className="p-4 rounded-xl bg-[#181513] border border-[#2e2621] space-y-2">
+                <h4 className="font-bold text-[#c8a88a] uppercase text-[11px] tracking-wider">
+                  2. Sessões Cronológicas que Integrarão o Laudo
+                </h4>
+                <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+                  {monthlyEvolutions.map((evo, i) => (
+                    <div key={evo.id} className="p-2.5 rounded-lg bg-[#201a17] border border-[#342b26] flex items-center justify-between">
+                      <div>
+                        <span className="font-bold text-[#f4efe8]">Sessão #{i + 1} - {new Date(evo.sessionDate).toLocaleDateString('pt-BR')}</span>
+                        <p className="text-[11px] text-[#a69a8f] line-clamp-1">{evo.sessionConductSummary || evo.clinicalSummary}</p>
+                      </div>
+                      <span className="text-[10px] font-mono font-bold text-amber-400 bg-[#2d241f] px-2 py-0.5 rounded border border-amber-600/30 shrink-0">
+                        FOIS {evo.foisLevel}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Observações Gerais */}
+              <div className="p-4 rounded-xl bg-[#181513] border border-[#2e2621] space-y-1.5">
+                <h4 className="font-bold text-[#c8a88a] uppercase text-[11px] tracking-wider">
+                  3. Observações Gerais & Metas para o Próximo Mês
+                </h4>
+                <p className="text-[#f4efe8] bg-[#201a17] p-3 rounded-lg border border-[#342b26] whitespace-pre-line leading-relaxed">
+                  {generalNotes.trim() || 'Nenhuma observação geral adicional informada. O relatório será emitido com as condutas consolidadas de cada sessão.'}
+                </p>
+              </div>
+            </div>
+
+            {/* Footer do Preview com Botão de Avanço para Assinatura */}
+            <div className="p-4 sm:p-5 border-t border-[#342b26] bg-[#181513] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="text-xs text-[#a69a8f]">
+                Revise os dados acima. Se estiver tudo correto, prossiga para a assinatura digital.
+              </div>
+              <div className="flex items-center gap-2.5 self-end sm:self-auto">
+                <button
+                  type="button"
+                  onClick={() => setShowPreviewModal(false)}
+                  className="px-4 py-2 rounded-xl bg-[#27211d] hover:bg-[#342b26] text-[#a69a8f] font-semibold text-xs border border-[#3a312c] cursor-pointer"
+                >
+                  Voltar e Editar
+                </button>
+                <button
+                  type="button"
+                  onClick={handleProceedToSign}
+                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#c8a88a] hover:bg-[#d6bca3] text-[#181513] font-bold text-xs shadow-md transition-all cursor-pointer"
+                >
+                  <ShieldCheck className="w-4 h-4" />
+                  <span>Confirmar & Assinar Digitalmente</span>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}
