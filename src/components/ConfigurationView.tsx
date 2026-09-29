@@ -30,7 +30,12 @@ import {
   MapPin,
   KeyRound,
   FileBadge,
-  UserCog
+  UserCog,
+  Database,
+  Flame,
+  ExternalLink,
+  Copy,
+  AlertTriangle
 } from 'lucide-react';
 
 interface ConfigurationViewProps {
@@ -62,7 +67,7 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
   onChangeRole = () => {},
   onUpdateUserPermissions
 }) => {
-  const [activeTab, setActiveTab] = useState<'geral' | 'marca' | 'cuidadores' | 'terapeutas' | 'usuarios'>('geral');
+  const [activeTab, setActiveTab] = useState<'geral' | 'marca' | 'cuidadores' | 'terapeutas' | 'usuarios' | 'firebase'>('geral');
   const [tempConfig, setTempConfig] = useState<ClinicConfig>(clinicConfig);
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [previewTherapistId, setPreviewTherapistId] = useState<string>(''); // Vazio = Usar dados da Clínica & RT
@@ -298,6 +303,19 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
         >
           <UserCog className="w-4 h-4 shrink-0" />
           <span>Gestão de Usuários & Telas ({users.length})</span>
+        </button>
+
+        {/* SUB-ABA: Conexão Firebase / Banco de Dados GAMAECOSYSTEM */}
+        <button
+          onClick={() => setActiveTab('firebase')}
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+            activeTab === 'firebase'
+              ? 'bg-[#c8a88a] text-[#181513] shadow-md font-bold'
+              : 'text-[#a69a8f] hover:text-[#f4efe8] hover:bg-[#25201c]'
+          }`}
+        >
+          <Flame className="w-4 h-4 text-amber-500 shrink-0" />
+          <span>Projeto Firebase & Banco</span>
         </button>
       </div>
 
@@ -995,6 +1013,91 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
             onChangeRole={onChangeRole}
             onUpdateUserPermissions={onUpdateUserPermissions}
           />
+        </div>
+      )}
+
+      {/* Conteúdo da Tab 6: Status & Conexão do Projeto Firebase (GAMAECOSYSTEM) */}
+      {activeTab === 'firebase' && (
+        <div className="bg-[#1f1a17] border border-[#382e27] rounded-2xl p-6 space-y-6 shadow-sm">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#382e27] pb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400">
+                <Flame className="w-5 h-5" />
+              </div>
+              <div>
+                <h2 className="text-base font-bold font-serif text-[#f4efe8]">
+                  Projeto Firebase & Banco de Dados
+                </h2>
+                <p className="text-xs text-[#a69a8f]">
+                  Configuração de autenticação, banco de dados Cloud Firestore e armazenamento seguro
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#27211d] border border-[#3f342d] text-xs text-[#c8a88a] self-start sm:self-auto">
+              <Database className="w-4 h-4 text-emerald-400" />
+              <span>Banco: <strong>gamaecosystem</strong></span>
+            </div>
+          </div>
+
+          {/* Cards de Status */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Status do Projeto */}
+            <div className="p-4 rounded-xl bg-[#181513] border border-[#342b26] space-y-3">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#a69a8f] block">
+                Projeto Ativo no Ambiente
+              </span>
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="text-base font-bold text-[#f4efe8] block">GAMAECOSYSTEM</span>
+                  <span className="text-xs text-[#85796f]">Cloud Firestore DB: gamaecosystem</span>
+                </div>
+                <span className="px-2.5 py-1 rounded-full bg-emerald-950/70 border border-emerald-500/40 text-emerald-400 text-xs font-semibold flex items-center gap-1">
+                  <CheckCircle className="w-3.5 h-3.5" /> Vinculado
+                </span>
+              </div>
+            </div>
+
+            {/* Acesso ao Console */}
+            <div className="p-4 rounded-xl bg-[#181513] border border-[#342b26] space-y-3">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#a69a8f] block">
+                Painel do Firebase Console
+              </span>
+              <p className="text-xs text-[#a69a8f]">
+                Gerencie usuários do Firebase Auth, índices do Firestore e regras de segurança.
+              </p>
+              <a
+                href="https://console.firebase.google.com/project/finlhub/firestore"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#c8a88a] hover:text-[#f4efe8]"
+              >
+                <span>Abrir Console do Firebase</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </a>
+            </div>
+          </div>
+
+          {/* Instruções para Transferência Completa das Credenciais do Web App */}
+          <div className="p-4 rounded-xl bg-[#241e1a] border border-[#44362d] space-y-3 text-xs">
+            <div className="flex items-start gap-2.5">
+              <Info className="w-5 h-5 text-[#c8a88a] shrink-0 mt-0.5" />
+              <div className="space-y-1">
+                <p className="font-bold text-[#f4efe8]">
+                  Transferência do Portal de Acesso e Credenciais do Projeto GAMAECOSYSTEM:
+                </p>
+                <p className="text-[#a69a8f] leading-relaxed">
+                  No seu print do Firebase, você está na tela inicial do projeto <strong>GAMAECOSYSTEM</strong> no Firebase Console com o botão <strong className="text-white">"Criar banco de dados"</strong>. Para ativar plenamente o banco no console:
+                </p>
+                <ol className="list-decimal list-inside text-[#c8a88a] space-y-1.5 pt-1 font-medium">
+                  <li>Clique no botão amarelo <strong>"Criar banco de dados"</strong> na sua tela do Firebase.</li>
+                  <li>Escolha o identificador do banco como <strong>(default)</strong> ou <strong>gamaecosystem</strong> e selecione a região recomendada (ex: <code>southamerica-east1</code> para São Paulo ou <code>us-central1</code>).</li>
+                  <li>Em <strong>Configurações do Projeto</strong> (ícone de engrenagem no menu lateral esquerdo), vá até a seção <em>"Seus aplicativos"</em> e crie um app Web (ícone <code>&lt;/&gt;</code>) com o nome <strong>GamaEcosystem Web</strong>.</li>
+                  <li>Copie as chaves geradas (<code>apiKey</code>, <code>authDomain</code>, <code>projectId</code>) caso queira apontar diretamente para este novo ID de projeto.</li>
+                </ol>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>
