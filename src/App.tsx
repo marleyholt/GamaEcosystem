@@ -28,7 +28,6 @@ import { PatientsManagementView } from './components/PatientsManagementView';
 import { HistoryTimelineView } from './components/HistoryTimelineView';
 import { PatientChatView } from './components/PatientChatView';
 import { ReportsView } from './components/ReportsView';
-import { LgpdSecurityView } from './components/LgpdSecurityView';
 import { AdminUsersView } from './components/AdminUsersView';
 import { MedicalRecordView } from './components/MedicalRecordView';
 import { ConfigurationView } from './components/ConfigurationView';
@@ -67,7 +66,7 @@ export default function App() {
       user = {
         ...user,
         role: 'admin',
-        allowedTabs: ['resumo', 'prontuario', 'radi', 'registro', 'historico', 'chat', 'pacientes', 'relatorios', 'seguranca', 'configuracao']
+        allowedTabs: ['resumo', 'prontuario', 'radi', 'registro', 'historico', 'chat', 'pacientes', 'relatorios', 'configuracao']
       };
     }
     return user;
@@ -128,7 +127,7 @@ export default function App() {
         return {
           ...u,
           role: 'admin',
-          allowedTabs: ['resumo', 'prontuario', 'radi', 'registro', 'historico', 'chat', 'pacientes', 'relatorios', 'seguranca', 'configuracao']
+          allowedTabs: ['resumo', 'prontuario', 'radi', 'registro', 'historico', 'chat', 'pacientes', 'relatorios', 'configuracao']
         };
       }
       return u;
@@ -531,10 +530,6 @@ export default function App() {
               officialEvolutions={officialEvolutions}
               clinicConfig={clinicConfig}
             />
-          )}
-
-          {(currentTab === 'security' || currentTab === 'seguranca') && (
-            <LgpdSecurityView />
           )}
 
           {(currentTab === 'admin_users' || currentTab === 'admin') && (
