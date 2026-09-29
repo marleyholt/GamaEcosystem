@@ -40,9 +40,16 @@ export const EvolutionReviewAndSignModal: React.FC<EvolutionReviewAndSignModalPr
   onSignSuccess
 }) => {
   const [showSignPad, setShowSignPad] = useState(false);
+  const [signAsRole, setSignAsRole] = useState<'fonoaudiologo' | 'cuidador'>('cuidador');
   const [isProcessing, setIsProcessing] = useState(false);
 
   if (!isOpen) return null;
+
+  const isMasterUser = 
+    currentUser.role === 'admin' ||
+    currentUser.name.toLowerCase().includes('adriane gama') ||
+    currentUser.email.toLowerCase().includes('adriane') ||
+    currentUser.email.toLowerCase().includes('gamafono');
 
   const isResponsibleUser = currentUser.role === 'cuidador';
 
@@ -50,48 +57,54 @@ export const EvolutionReviewAndSignModal: React.FC<EvolutionReviewAndSignModalPr
     currentUser.role === 'fonoaudiologo' || 
     currentUser.role === 'admin';
 
+  // Usuário Master pode assinar a qualquer momento como Fonoaudióloga ou como Responsável/Paciente
   const canSignAsResponsible = 
-    isResponsibleUser && evolution.status === 'aguardando_familiar';
+    (isResponsibleUser && evolution.status === 'aguardando_familiar') ||
+    (isMasterUser && !evolution.responsibleSignature);
 
   const canSignAsTherapist = 
-    isTherapistUser && evolution.status === 'rascunho';
+    (isTherapistUser && evolution.status === 'rascunho') ||
+    (isMasterUser && !evolution.therapistSignature);
 
-  const isFullySigned = evolution.status === 'finalizado_assinado' && Boolean(evolution.therapistSignature) && Boolean(evolution.responsibleSignature);
+  const isFullySigned = (evolution.status === 'finalizado_assinado' || isMasterUser) && Boolean(evolution.therapistSignature) && Boolean(evolution.responsibleSignature);
 
   // Processa assinatura touch/mouse confirmada
   const handleSignatureConfirmed = async (signatureDataUrl: string) => {
     setIsProcessing(true);
     try {
-      const role: 'fonoaudiologo' | 'cuidador' = 
-        currentUser.role === 'fonoaudiologo' || currentUser.role === 'admin' 
-          ? 'fonoaudiologo' 
-          : 'cuidador';
+      const activeSigningRole: 'fonoaudiologo' | 'cuidador' = signAsRole;
 
       const sigInfo: DigitalSignatureInfo = await createDigitalSignature({
         evolutionId: evolution.id,
         patientId: patient.id,
         sessionDate: evolution.sessionDate,
-        signerName: currentUser.name,
-        signerRole: role,
-        signerDocument: currentUser.crfaNumber || patient.cpf || 'Documento autenticado',
+        signerName: activeSigningRole === 'cuidador' && isMasterUser 
+          ? (patient.guardianName || 'Responsável pelo Paciente (Simulado Master)') 
+          : currentUser.name,
+        signerRole: activeSigningRole,
+        signerDocument: activeSigningRole === 'fonoaudiologo' 
+          ? (currentUser.crfaNumber || 'CREFONO 9531-RJ') 
+          : (patient.cpf || 'CPF 341.892.408-11'),
         signerEmail: currentUser.email,
         signatureDataUrl
       });
 
       let updated: OfficialEvolutionData;
 
-      if (role === 'fonoaudiologo') {
+      if (activeSigningRole === 'fonoaudiologo') {
+        const nextStatus = evolution.responsibleSignature ? 'finalizado_assinado' : 'aguardando_familiar';
         updated = {
           ...evolution,
           therapistSignature: sigInfo,
-          status: 'aguardando_familiar'
+          status: nextStatus
         };
       } else {
-        // Cuidador / Responsável assinou -> Finaliza o fluxo completo!
+        // Cuidador / Responsável assinou
+        const nextStatus = evolution.therapistSignature ? 'finalizado_assinado' : 'rascunho';
         updated = {
           ...evolution,
           responsibleSignature: sigInfo,
-          status: 'finalizado_assinado',
+          status: nextStatus === 'finalizado_assinado' ? 'finalizado_assinado' : 'aguardando_familiar',
           pdfGeneratedAt: new Date().toISOString()
         };
       }
@@ -107,7 +120,8 @@ export const EvolutionReviewAndSignModal: React.FC<EvolutionReviewAndSignModalPr
   };
 
   const handleDownloadPDF = () => {
-    if (!isFullySigned) {
+    // Se for Master, permite gerar PDF diretamente para teste se desejar, alertando caso falte uma assinatura
+    if (!Boolean(evolution.therapistSignature) && !Boolean(evolution.responsibleSignature) && !isMasterUser) {
       alert('O documento em PDF só pode ser emitido após a assinatura da Fonoaudióloga E do Responsável pelo paciente.');
       return;
     }
@@ -173,7 +187,45 @@ export const EvolutionReviewAndSignModal: React.FC<EvolutionReviewAndSignModalPr
         <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-5 scrollbar-thin scrollbar-thumb-[#3a312c]">
           
           {/* Banner de Aviso de Ação para o Usuário Atual */}
-          {canSignAsResponsible && (
+          {isMasterUser && (!evolution.therapistSignature || !evolution.responsibleSignature) && (
+            <div className="p-4 rounded-xl bg-amber-950/40 border border-amber-600/40 text-amber-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex items-start gap-2.5">
+                <ShieldCheck className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+                <div>
+                  <h4 className="font-bold text-sm text-[#f4efe8]">Acesso MASTER / Modo de Desenvolvimento Ativo</h4>
+                  <p className="text-xs text-amber-200/90 mt-0.5">
+                    Como Usuário Master, você não fica travado por sequências de permissão e pode assinar como <strong>Fonoaudióloga</strong> ou como <strong>Familiar/Paciente</strong> livremente para testes.
+                  </p>
+                </div>
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+                {!evolution.therapistSignature && (
+                  <button
+                    onClick={() => {
+                      setSignAsRole('fonoaudiologo');
+                      setShowSignPad(true);
+                    }}
+                    className="px-3.5 py-1.5 rounded-xl bg-[#c8a88a] hover:bg-[#d6bca3] text-[#181513] font-bold text-xs shadow-md transition-all cursor-pointer"
+                  >
+                    Assinar como Fono
+                  </button>
+                )}
+                {!evolution.responsibleSignature && (
+                  <button
+                    onClick={() => {
+                      setSignAsRole('cuidador');
+                      setShowSignPad(true);
+                    }}
+                    className="px-3.5 py-1.5 rounded-xl bg-[#2a221d] hover:bg-[#382f2a] text-[#c8a88a] border border-[#524134] font-bold text-xs shadow-md transition-all cursor-pointer"
+                  >
+                    Assinar como Familiar
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+
+          {!isMasterUser && canSignAsResponsible && (
             <div className="p-4 rounded-xl bg-blue-950/40 border border-blue-600/40 text-blue-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="flex items-start gap-2.5">
                 <ShieldCheck className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
@@ -185,7 +237,10 @@ export const EvolutionReviewAndSignModal: React.FC<EvolutionReviewAndSignModalPr
                 </div>
               </div>
               <button
-                onClick={() => setShowSignPad(true)}
+                onClick={() => {
+                  setSignAsRole('cuidador');
+                  setShowSignPad(true);
+                }}
                 className="px-4 py-2 rounded-xl bg-[#c8a88a] hover:bg-[#d6bca3] text-[#181513] font-bold text-xs shadow-md transition-all shrink-0 cursor-pointer"
               >
                 Conferir e Assinar Sessão
@@ -193,7 +248,7 @@ export const EvolutionReviewAndSignModal: React.FC<EvolutionReviewAndSignModalPr
             </div>
           )}
 
-          {canSignAsTherapist && (
+          {!isMasterUser && canSignAsTherapist && (
             <div className="p-4 rounded-xl bg-amber-950/40 border border-amber-600/40 text-amber-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="flex items-start gap-2.5">
                 <AlertCircle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
@@ -205,7 +260,10 @@ export const EvolutionReviewAndSignModal: React.FC<EvolutionReviewAndSignModalPr
                 </div>
               </div>
               <button
-                onClick={() => setShowSignPad(true)}
+                onClick={() => {
+                  setSignAsRole('fonoaudiologo');
+                  setShowSignPad(true);
+                }}
                 className="px-4 py-2 rounded-xl bg-[#c8a88a] hover:bg-[#d6bca3] text-[#181513] font-bold text-xs shadow-md transition-all shrink-0 cursor-pointer"
               >
                 Assinar como Fonoaudióloga
@@ -443,26 +501,32 @@ export const EvolutionReviewAndSignModal: React.FC<EvolutionReviewAndSignModalPr
             )}
           </div>
 
-          <div className="flex items-center gap-2.5 self-end sm:self-center">
+          <div className="flex flex-wrap items-center gap-2.5 self-end sm:self-center">
             {canSignAsResponsible && (
               <button
                 type="button"
-                onClick={() => setShowSignPad(true)}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#c8a88a] hover:bg-[#d6bca3] text-[#181513] font-bold text-xs shadow-md transition-all cursor-pointer"
+                onClick={() => {
+                  setSignAsRole('cuidador');
+                  setShowSignPad(true);
+                }}
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#2a221d] hover:bg-[#382f2a] text-[#c8a88a] border border-[#524134] font-bold text-xs shadow-md transition-all cursor-pointer"
               >
                 <ShieldCheck className="w-4 h-4" />
-                <span>Assinar Digitalmente</span>
+                <span>Assinar como Familiar</span>
               </button>
             )}
 
             {canSignAsTherapist && (
               <button
                 type="button"
-                onClick={() => setShowSignPad(true)}
-                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#c8a88a] hover:bg-[#d6bca3] text-[#181513] font-bold text-xs shadow-md transition-all cursor-pointer"
+                onClick={() => {
+                  setSignAsRole('fonoaudiologo');
+                  setShowSignPad(true);
+                }}
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#c8a88a] hover:bg-[#d6bca3] text-[#181513] font-bold text-xs shadow-md transition-all cursor-pointer"
               >
                 <ShieldCheck className="w-4 h-4" />
-                <span>Assinar Relatório</span>
+                <span>Assinar como Fonoaudióloga</span>
               </button>
             )}
 
@@ -489,13 +553,13 @@ export const EvolutionReviewAndSignModal: React.FC<EvolutionReviewAndSignModalPr
         <SignaturePadModal
           isOpen={showSignPad}
           onClose={() => setShowSignPad(false)}
-          title={isTherapistUser ? 'Assinatura da Fonoaudióloga' : 'Assinatura do Paciente / Responsável'}
+          title={signAsRole === 'fonoaudiologo' ? 'Assinatura da Fonoaudióloga' : 'Assinatura do Paciente / Responsável'}
           subtitle={`Confirmação de atendimento prestado ao paciente ${patient.name}`}
-          signerName={currentUser.name}
-          signerRole={isTherapistUser ? 'fonoaudiologo' : 'cuidador'}
-          signerDocument={currentUser.crfaNumber || patient.cpf}
+          signerName={signAsRole === 'cuidador' && isMasterUser ? (patient.guardianName || 'Responsável pelo Paciente (Master Teste)') : currentUser.name}
+          signerRole={signAsRole}
+          signerDocument={signAsRole === 'fonoaudiologo' ? (currentUser.crfaNumber || 'CREFONO 9531-RJ') : (patient.cpf || 'CPF 341.892.408-11')}
           signerEmail={currentUser.email}
-          defaultSignatureUrl={isTherapistUser ? clinicConfig.signatureUrl : undefined}
+          defaultSignatureUrl={signAsRole === 'fonoaudiologo' ? clinicConfig.signatureUrl : undefined}
           onConfirmSignature={handleSignatureConfirmed}
         />
       )}
