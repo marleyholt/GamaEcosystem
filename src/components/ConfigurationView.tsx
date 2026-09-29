@@ -1036,7 +1036,7 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
 
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#27211d] border border-[#3f342d] text-xs text-[#c8a88a] self-start sm:self-auto">
               <Database className="w-4 h-4 text-emerald-400" />
-              <span>Banco: <strong>gamaecosystem</strong></span>
+              <span>Projeto ID: <strong>gamaecosystem</strong></span>
             </div>
           </div>
 
@@ -1045,15 +1045,15 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
             {/* Status do Projeto */}
             <div className="p-4 rounded-xl bg-[#181513] border border-[#342b26] space-y-3">
               <span className="text-[10px] font-bold uppercase tracking-wider text-[#a69a8f] block">
-                Projeto Ativo no Ambiente
+                Projeto Ativo e Conectado
               </span>
               <div className="flex items-center justify-between">
                 <div>
                   <span className="text-base font-bold text-[#f4efe8] block">GAMAECOSYSTEM</span>
-                  <span className="text-xs text-[#85796f]">Cloud Firestore DB: gamaecosystem</span>
+                  <span className="text-xs text-[#85796f]">App ID: 1:303494382042:web:cd52a8e6bad425562900e3</span>
                 </div>
                 <span className="px-2.5 py-1 rounded-full bg-emerald-950/70 border border-emerald-500/40 text-emerald-400 text-xs font-semibold flex items-center gap-1">
-                  <CheckCircle className="w-3.5 h-3.5" /> Vinculado
+                  <CheckCircle className="w-3.5 h-3.5" /> Vinculado 100%
                 </span>
               </div>
             </div>
@@ -1061,18 +1061,18 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
             {/* Acesso ao Console */}
             <div className="p-4 rounded-xl bg-[#181513] border border-[#342b26] space-y-3">
               <span className="text-[10px] font-bold uppercase tracking-wider text-[#a69a8f] block">
-                Painel do Firebase Console
+                Painel do Firebase Console (GAMAECOSYSTEM)
               </span>
               <p className="text-xs text-[#a69a8f]">
-                Gerencie usuários do Firebase Auth, índices do Firestore e regras de segurança.
+                Gerencie usuários no Authentication, banco Cloud Firestore e regras de acesso.
               </p>
               <a
-                href="https://console.firebase.google.com/project/finlhub/firestore"
+                href="https://console.firebase.google.com/project/gamaecosystem/overview"
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#c8a88a] hover:text-[#f4efe8]"
               >
-                <span>Abrir Console do Firebase</span>
+                <span>Abrir Console do GAMAECOSYSTEM</span>
                 <ExternalLink className="w-3.5 h-3.5" />
               </a>
             </div>
