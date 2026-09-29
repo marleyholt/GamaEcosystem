@@ -146,7 +146,11 @@ export default function App() {
 
   const [officialEvolutions, setOfficialEvolutions] = useState<OfficialEvolutionData[]>(() => {
     const saved = localStorage.getItem('health_deglut_official_evolutions');
-    return saved ? JSON.parse(saved) : INITIAL_OFFICIAL_EVOLUTIONS;
+    const list: OfficialEvolutionData[] = saved ? JSON.parse(saved) : INITIAL_OFFICIAL_EVOLUTIONS;
+    return list.map(item => ({
+      ...item,
+      status: item.status || (item.responsibleSignature ? 'finalizado_assinado' : item.therapistSignature ? 'aguardando_familiar' : 'rascunho')
+    }));
   });
 
   // Sync to localStorage
@@ -361,7 +365,13 @@ export default function App() {
               dailyLogs={dailyLogs}
               officialEvolutions={officialEvolutions}
               onSaveOfficialEvolution={(newEvo) => {
-                setOfficialEvolutions(prev => [newEvo, ...prev]);
+                setOfficialEvolutions(prev => {
+                  const exists = prev.some(e => e.id === newEvo.id);
+                  if (exists) {
+                    return prev.map(e => e.id === newEvo.id ? newEvo : e);
+                  }
+                  return [newEvo, ...prev];
+                });
                 // Também atualiza o FOIS atual no prontuário do paciente
                 setMedicalRecords(prev => prev.map(rec => {
                   if (rec.patientId === newEvo.patientId) {
@@ -369,7 +379,13 @@ export default function App() {
                   }
                   return rec;
                 }));
-                alert('Evolução Fonoaudiológica Oficial (4 Módulos) salva e indexada com sucesso!');
+                if (newEvo.status === 'finalizado_assinado') {
+                  alert('Evolução 100% assinada por ambas as partes! O Laudo em PDF em papel timbrado está liberado.');
+                } else if (newEvo.status === 'aguardando_familiar') {
+                  alert('Evolução salva e assinada pela Fonoaudióloga! Agora está liberada para conferência e assinatura do Familiar.');
+                } else {
+                  alert('Evolução salva como rascunho com sucesso!');
+                }
               }}
               clinicConfig={clinicConfig}
               therapists={therapists}
