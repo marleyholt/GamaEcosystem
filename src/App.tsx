@@ -469,6 +469,8 @@ export default function App() {
               assessments={assessments}
               dailyLogs={dailyLogs}
               currentUser={currentUser}
+              officialEvolutions={officialEvolutions}
+              clinicConfig={clinicConfig}
             />
           )}
 
