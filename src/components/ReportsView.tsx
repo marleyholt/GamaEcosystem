@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { Patient, RadiAssessment, DailyFeedingLog, UserProfile } from '../types';
+import { OfficialEvolutionData } from '../types/clinicalEvolution';
+import { ClinicConfig, DEFAULT_CLINIC_CONFIG } from '../types/clinicConfig';
+import { MonthlyConsolidatedReportView } from './MonthlyConsolidatedReportView';
 import { generateOfficialReportPDF } from '../utils/pdfGenerator';
 import { maskCPF } from '../utils/crypto';
 import { 
@@ -10,7 +13,8 @@ import {
   CheckCircle2, 
   AlertTriangle, 
   ArrowLeft,
-  Share2
+  Share2,
+  Calendar
 } from 'lucide-react';
 
 interface ReportsViewProps {
@@ -20,6 +24,8 @@ interface ReportsViewProps {
   assessments: RadiAssessment[];
   dailyLogs: DailyFeedingLog[];
   currentUser: UserProfile;
+  officialEvolutions?: OfficialEvolutionData[];
+  clinicConfig?: ClinicConfig;
 }
 
 export const ReportsView: React.FC<ReportsViewProps> = ({
@@ -29,7 +35,10 @@ export const ReportsView: React.FC<ReportsViewProps> = ({
   assessments,
   dailyLogs,
   currentUser,
+  officialEvolutions = [],
+  clinicConfig = DEFAULT_CLINIC_CONFIG
 }) => {
+  const [reportType, setReportType] = useState<'mensal_consolidado' | 'laudo_radi'>('mensal_consolidado');
   const [activePatient, setActivePatient] = useState<Patient | null>(selectedPatient);
   const [reportDate] = useState<string>(new Date().toLocaleDateString('pt-BR'));
 
@@ -96,39 +105,82 @@ export const ReportsView: React.FC<ReportsViewProps> = ({
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto pb-12">
-      {/* Top Controls */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <button
-            onClick={() => setActivePatient(null)}
-            className="flex items-center gap-1.5 text-xs text-[#a69a8f] hover:text-[#f4efe8] mb-1"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" /> Selecionar outro paciente
-          </button>
-          <h2 className="text-2xl font-bold font-serif text-[#f4efe8]">
-            Folha Padrão & Laudo Clínico
-          </h2>
-          <p className="text-xs text-[#a69a8f]">
-            Visualização prévia do documento timbrado com marca d'água anti-fraude e conformidade LGPD
-          </p>
-        </div>
+      {/* Abas Superiores de Seleção de Tipo de Relatório */}
+      <div className="flex flex-wrap items-center gap-2 p-1.5 rounded-2xl bg-[#1f1a17] border border-[#382e27]">
+        <button
+          type="button"
+          onClick={() => setReportType('mensal_consolidado')}
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+            reportType === 'mensal_consolidado'
+              ? 'bg-[#c8a88a] text-[#181513] shadow-md'
+              : 'text-[#a69a8f] hover:text-[#f4efe8] hover:bg-[#27211d]'
+          }`}
+        >
+          <Calendar className="w-4 h-4" />
+          <span>Relatório de Acompanhamento Mensal Consolidado</span>
+        </button>
 
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => window.print()}
-            className="px-4 py-2.5 rounded-xl bg-[#27211d] hover:bg-[#342b26] text-[#f4efe8] text-xs font-semibold border border-[#3a312c] flex items-center gap-2 transition-colors"
-          >
-            <Printer className="w-4 h-4 text-[#c8a88a]" /> Imprimir
-          </button>
-
-          <button
-            onClick={handleDownloadPDF}
-            className="px-5 py-2.5 rounded-xl bg-[#c8a88a] hover:bg-[#d6bba0] text-[#181513] text-xs font-bold shadow-md flex items-center gap-2 transition-all"
-          >
-            <Download className="w-4 h-4" /> Baixar PDF com Marca d'Água
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={() => setReportType('laudo_radi')}
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+            reportType === 'laudo_radi'
+              ? 'bg-[#c8a88a] text-[#181513] shadow-md'
+              : 'text-[#a69a8f] hover:text-[#f4efe8] hover:bg-[#27211d]'
+          }`}
+        >
+          <FileText className="w-4 h-4" />
+          <span>Laudo RaDI & Folha com Marca d'Água</span>
+        </button>
       </div>
+
+      {reportType === 'mensal_consolidado' ? (
+        <MonthlyConsolidatedReportView
+          patients={patients}
+          selectedPatient={activePatient}
+          onSelectPatient={(p) => {
+            setActivePatient(p);
+            onSelectPatient(p);
+          }}
+          officialEvolutions={officialEvolutions}
+          currentUser={currentUser}
+          clinicConfig={clinicConfig}
+        />
+      ) : (
+        <>
+          {/* Top Controls */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <button
+                onClick={() => setActivePatient(null)}
+                className="flex items-center gap-1.5 text-xs text-[#a69a8f] hover:text-[#f4efe8] mb-1"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" /> Selecionar outro paciente
+              </button>
+              <h2 className="text-2xl font-bold font-serif text-[#f4efe8]">
+                Folha Padrão & Laudo Clínico
+              </h2>
+              <p className="text-xs text-[#a69a8f]">
+                Visualização prévia do documento timbrado com marca d'água anti-fraude e conformidade LGPD
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => window.print()}
+                className="px-4 py-2.5 rounded-xl bg-[#27211d] hover:bg-[#342b26] text-[#f4efe8] text-xs font-semibold border border-[#3a312c] flex items-center gap-2 transition-colors"
+              >
+                <Printer className="w-4 h-4 text-[#c8a88a]" /> Imprimir
+              </button>
+
+              <button
+                onClick={handleDownloadPDF}
+                className="px-5 py-2.5 rounded-xl bg-[#c8a88a] hover:bg-[#d6bba0] text-[#181513] text-xs font-bold shadow-md flex items-center gap-2 transition-all"
+              >
+                <Download className="w-4 h-4" /> Baixar PDF com Marca d'Água
+              </button>
+            </div>
+          </div>
 
       {/* Visual Letterhead Sheet (Folha Padrão com Marca d'Água) */}
       <div className="relative bg-[#fffdfa] text-[#2c2420] border-2 border-[#c8a88a] rounded-2xl p-8 sm:p-12 shadow-2xl overflow-hidden print:p-0 print:border-none print:shadow-none print:bg-white">
@@ -290,6 +342,8 @@ export const ReportsView: React.FC<ReportsViewProps> = ({
           </div>
         </div>
       </div>
+        </>
+      )}
     </div>
   );
 };
