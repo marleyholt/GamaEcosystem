@@ -127,8 +127,7 @@ export const Navigation: React.FC<NavigationProps> = ({
       label: 'Sistema & Configurações',
       icon: Settings,
       subItems: [
-        { id: 'configuracao' as NavigationTab, label: 'Central de Configurações', icon: Settings },
-        { id: 'seguranca', label: 'Segurança & LGPD', icon: ShieldCheck }
+        { id: 'configuracao' as NavigationTab, label: 'Central de Configurações', icon: Settings }
       ]
     }
   ];
