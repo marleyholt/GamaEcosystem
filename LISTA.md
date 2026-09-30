@@ -33,9 +33,17 @@ Este documento é a fonte de verdade para o acompanhamento contínuo de tarefas,
     - Card 2: Favicon & Ícone do App PWA (para a aba do navegador e ícone de instalação no celular).
   - Implementado redimensionamento inteligente via Canvas (`imageOptimizer.ts`) para achatar/expandir automaticamente imagens de qualquer resolução para proporção perfeita.
   - Implementado botão explícito "Salvar Alterações de Marca" com Janela Modal de Confirmação ("As configurações serão alteradas, tem certeza?") antes de efetivar e gravar permanentemente no banco.
-- [x] **Pop-up de Usuário no Topo Estilo Google (Troca de Senha e Logout):**
-  - Removido o botão de logout solto na barra superior.
-  - Ao clicar no badge do usuário logado, abre um pop-up elegante estilo Google com dados do usuário, formulário para alterar senha e botão seguro de logout.
+- [x] **Pop-up de Usuário no Topo Estilo Google (Troca de Senha com Senha Atual, Tema e Configurações):**
+  - Removido o botão de logout solto e botão de tema da barra superior.
+  - Ao clicar no badge do usuário logado, abre um pop-up flutuante contendo:
+    - Alternador de Tema Claro e Escuro.
+    - Botão de atalho para "Configurações Gerais".
+    - Formulário seguro de troca de senha exigindo: **Senha Atual**, Nova Senha e Confirmação.
+    - Botão de logout seguro.
+  - Reposicionado o **Sino de Notificações** para o **lado esquerdo** do botão do usuário.
+- [ ] **Sino de Notificações Integrado com Lista de Pendências Clínicas:**
+  - Exibir pop-up/dropdown ao clicar no sino listando todas as pendências do usuário autenticado (assinaturas de evoluções pendentes, familiares aguardando retorno, mensagens não lidas no chat).
+  - Incluir links diretos de 1 clique para abrir os respectivos modais e prontuários.
 - [ ] **Aba Visão Geral (Dashboard) - Seletor Suspenso de Pacientes:**
   - Substituir o botão inoperante "Trocar" por uma lista suspensa (dropdown/select) com a lista dos pacientes cadastrados, permitindo alternar instantaneamente o paciente em foco na Visão Geral.
 - [ ] **Limpeza de Resquícios do Firebase na Interface:**
