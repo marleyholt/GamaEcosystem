@@ -35,6 +35,13 @@ REGRA DE OURO: SEMPRE SEGUIR AS DIRETRIZES DO agents.md
     1. Executa `git reset --hard` e `git pull origin main` para sincronizar o repositório.
     2. Roda `npm run build` para compilar o frontend com otimização de chunks.
     3. Reinicia e salva o processo gerenciado no PM2 (`sudo pm2 restart gamaecosystem`).
+- **Rotina de Backup Automático do Banco MariaDB:**
+  - **Script de Dump:** `/var/www/gamaecosystem/scripts/backup_db.sh`
+  - **Diretório de Armazenamento:** `/var/backups/gamaecosystem`
+  - **Periodicidade:** Cronjob diário às 03:00 (`0 3 * * *`)
+  - **Formato:** `gamaecosystem_YYYYMMDD_HHMMSS.sql.gz` (compactado com gzip)
+  - **Política de Retenção:** Expurgo automático de backups com mais de 7 dias
+  - **Acionamento Manual:** Disponível via rota `/api/admin/backup` ou botão na tela de Configurações do App.
 
 ### 🗄️ Banco de Dados Dedicado (MariaDB / MySQL)
 - **Host:** `127.0.0.1` (Porta padrão: `3306`)
