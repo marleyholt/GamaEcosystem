@@ -3,9 +3,10 @@ import React from 'react';
 interface LogoProps {
   size?: 'sm' | 'md' | 'lg' | 'xl';
   showText?: boolean;
+  customLogoUrl?: string;
 }
 
-export const Logo: React.FC<LogoProps> = ({ size = 'md', showText = true }) => {
+export const Logo: React.FC<LogoProps> = ({ size = 'md', showText = true, customLogoUrl }) => {
   const sizeMap = {
     sm: 'w-8 h-8',
     md: 'w-10 h-10',
@@ -13,32 +14,50 @@ export const Logo: React.FC<LogoProps> = ({ size = 'md', showText = true }) => {
     xl: 'w-24 h-24',
   };
 
+  // Se não foi passado customLogoUrl, busca do cache local de clinicConfig
+  const effectiveCustomLogo = customLogoUrl || (() => {
+    try {
+      const saved = localStorage.getItem('health_deglut_clinic_config');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        return parsed.faviconUrl || parsed.logoUrl;
+      }
+    } catch {
+      return undefined;
+    }
+    return undefined;
+  })();
+
   return (
     <div className="flex items-center gap-3">
       {/* Stylized circular logo matching the image */}
       <div
-        className={`${sizeMap[size]} rounded-full bg-white flex items-center justify-center p-1.5 shadow-md border border-[#c8a88a]/30 shrink-0`}
+        className={`${sizeMap[size]} rounded-full bg-white flex items-center justify-center p-1 shadow-md border border-[#c8a88a]/30 shrink-0 overflow-hidden`}
       >
-        <svg viewBox="0 0 100 100" className="w-full h-full" fill="none">
-          {/* Main brown circle */}
-          <circle cx="50" cy="50" r="28" fill="#5c2c16" />
-          <circle cx="50" cy="50" r="14" fill="#ffffff" />
-          {/* Head circle */}
-          <circle cx="68" cy="28" r="8" fill="#5c2c16" />
-          {/* Acoustic waves / deglutition waves */}
-          <path
-            d="M74 38 C79 43, 79 57, 74 62"
-            stroke="#5c2c16"
-            strokeWidth="4"
-            strokeLinecap="round"
-          />
-          <path
-            d="M82 32 C90 40, 90 60, 82 68"
-            stroke="#5c2c16"
-            strokeWidth="4"
-            strokeLinecap="round"
-          />
-        </svg>
+        {effectiveCustomLogo ? (
+          <img src={effectiveCustomLogo} alt="Logo" className="w-full h-full object-contain rounded-full" />
+        ) : (
+          <svg viewBox="0 0 100 100" className="w-full h-full" fill="none">
+            {/* Main brown circle */}
+            <circle cx="50" cy="50" r="28" fill="#5c2c16" />
+            <circle cx="50" cy="50" r="14" fill="#ffffff" />
+            {/* Head circle */}
+            <circle cx="68" cy="28" r="8" fill="#5c2c16" />
+            {/* Acoustic waves / deglutition waves */}
+            <path
+              d="M74 38 C79 43, 79 57, 74 62"
+              stroke="#5c2c16"
+              strokeWidth="4"
+              strokeLinecap="round"
+            />
+            <path
+              d="M82 32 C90 40, 90 60, 82 68"
+              stroke="#5c2c16"
+              strokeWidth="4"
+              strokeLinecap="round"
+            />
+          </svg>
+        )}
       </div>
 
       {showText && (
