@@ -351,10 +351,20 @@ export default function App() {
       }
     });
 
-    // Carregar configuração da clínica
+    // Carregar configuração da clínica sem sobrescrever logo/favicon locais com valores vazios
     fetchCollectionFromFirestore<ClinicConfig>(FirestoreCollections.CLINIC_CONFIG).then(remoteConfig => {
       if (remoteConfig && remoteConfig.length > 0) {
-        setClinicConfig(remoteConfig[0]);
+        const rc = remoteConfig[0];
+        setClinicConfig(prev => {
+          const merged: ClinicConfig = {
+            ...prev,
+            ...rc,
+            logoUrl: (rc.logoUrl && rc.logoUrl.trim() !== '') ? rc.logoUrl : prev.logoUrl,
+            faviconUrl: (rc.faviconUrl && rc.faviconUrl.trim() !== '') ? rc.faviconUrl : prev.faviconUrl
+          };
+          localStorage.setItem('health_deglut_clinic_config', JSON.stringify(merged));
+          return merged;
+        });
       } else {
         syncDocToFirestore(FirestoreCollections.CLINIC_CONFIG, 'global_settings', clinicConfig);
       }
