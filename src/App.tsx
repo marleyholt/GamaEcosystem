@@ -148,7 +148,20 @@ export default function App() {
   // Clinic Configuration States (Persisted in localStorage)
   const [clinicConfig, setClinicConfig] = useState<ClinicConfig>(() => {
     const saved = localStorage.getItem('health_deglut_clinic_config');
-    return saved ? JSON.parse(saved) : DEFAULT_CLINIC_CONFIG;
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        return {
+          ...DEFAULT_CLINIC_CONFIG,
+          ...parsed,
+          logoUrl: (parsed.logoUrl && parsed.logoUrl.trim() !== '') ? parsed.logoUrl : '/assets/logo.png',
+          faviconUrl: (parsed.faviconUrl && parsed.faviconUrl.trim() !== '') ? parsed.faviconUrl : '/assets/logo.png'
+        };
+      } catch {
+        return DEFAULT_CLINIC_CONFIG;
+      }
+    }
+    return DEFAULT_CLINIC_CONFIG;
   });
 
   const [caregivers, setCaregivers] = useState<Caregiver[]>(() => {
