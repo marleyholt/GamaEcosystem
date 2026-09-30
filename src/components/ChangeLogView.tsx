@@ -154,9 +154,31 @@ export const ChangeLogView: React.FC<ChangeLogViewProps> = () => {
                   <CheckCircle2 className="w-3 h-3 text-emerald-400" />
                 </div>
                 <div>
-                  <strong className="text-white">Script de Deploy Automatizado (One-Click Update via Shell):</strong>
+                  <strong className="text-white">Separação de Marca & Otimização de Imagens:</strong>
                   <p className="text-xs text-[#a69a8f] mt-0.5">
-                    Script no servidor em nuvem para atualização de código via Git, compilação de assets do Vite e recarregamento sem downtime no PM2.
+                    Upload independente para Logo de Laudos e Favicon/PWA, redimensionamento/achatar via Canvas de alta qualidade e botão com janela modal de confirmação.
+                  </p>
+                </div>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <div className="w-4 h-4 mt-0.5 rounded border border-[#c8a88a]/40 bg-[#1f1a17] flex items-center justify-center shrink-0">
+                  <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                </div>
+                <div>
+                  <strong className="text-white">Pop-up de Usuário no Topo Estilo Google:</strong>
+                  <p className="text-xs text-[#a69a8f] mt-0.5">
+                    Troca de senha com validação de senha atual, botão de tema claro/escuro integrado, atalho para configurações e sino de notificações à esquerda.
+                  </p>
+                </div>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <div className="w-4 h-4 mt-0.5 rounded border border-[#c8a88a]/40 bg-[#1f1a17] flex items-center justify-center shrink-0">
+                  <Clock className="w-3 h-3 text-amber-400" />
+                </div>
+                <div>
+                  <strong className="text-white">Sino de Notificações com Lista de Pendências Clínicas:</strong>
+                  <p className="text-xs text-[#a69a8f] mt-0.5">
+                    Listagem de pendências (assinaturas, familiares aguardando retorno, chat) com link direto para os modais clínicos.
                   </p>
                 </div>
               </li>
