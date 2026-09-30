@@ -154,9 +154,9 @@ export const ChangeLogView: React.FC<ChangeLogViewProps> = () => {
                   <CheckCircle2 className="w-3 h-3 text-emerald-400" />
                 </div>
                 <div>
-                  <strong className="text-white">Separação de Marca, Logo 2.5x Maior & Favicon Universal:</strong>
+                  <strong className="text-white">Cabeçalho Enxuto sem Vácuos & Favicon de Borda a Borda:</strong>
                   <p className="text-xs text-[#a69a8f] mt-0.5">
-                    Logomarca ampliada em 2.5x e justificada estritamente à direita no cabeçalho do timbrado. Gerenciador universal de Favicon no boot e no ciclo de vida, além de modal de confirmação para salvar.
+                    Distâncias em cima e embaixo reduzidas no papel timbrado para melhor aproveitamento do papel. Algoritmo de Auto-Trim que elimina margens brancas e expande o Favicon para ocupar a aba inteira (grande como o do Google AI Studio).
                   </p>
                 </div>
               </li>
