@@ -42,6 +42,11 @@ REGRA DE OURO: SEMPRE SEGUIR AS DIRETRIZES DO agents.md
   - **Formato:** `gamaecosystem_YYYYMMDD_HHMMSS.sql.gz` (compactado com gzip)
   - **Política de Retenção:** Expurgo automático de backups com mais de 7 dias
   - **Acionamento Manual:** Disponível via rota `/api/admin/backup` ou botão na tela de Configurações do App.
+- **Suporte a PWA & Aplicativo Mobile:**
+  - **Manifesto:** `/manifest.json` com `display: standalone` e tema `#c8a88a`
+  - **Service Worker:** `/sw.js` com cache de casca (App Shell) e resiliência offline
+  - **Ícones em Alta Resolução:** `pwa-192x192.png`, `pwa-512x512.png`, `pwa-maskable-512x512.png` e `apple-touch-icon.png`
+  - **Instalabilidade Nativa:** Componente `PWAInstallPrompt.tsx` com banner responsivo e instruções personalizadas para iOS e Android.
 
 ### 🗄️ Banco de Dados Dedicado (MariaDB / MySQL)
 - **Host:** `127.0.0.1` (Porta padrão: `3306`)
