@@ -9,6 +9,7 @@ import {
 import { Patient, UserProfile, UserRole, NavigationTab } from '../types';
 import { OfficialLetterhead } from './OfficialLetterhead';
 import { AdminUsersView } from './AdminUsersView';
+import { ChangeLogView } from './ChangeLogView';
 import { backupAllLocalToFirestore } from '../services/firestoreSync';
 import { 
   Building2, 
@@ -38,7 +39,8 @@ import {
   Copy,
   AlertTriangle,
   RefreshCw,
-  CloudUpload
+  CloudUpload,
+  ClipboardList
 } from 'lucide-react';
 
 interface ConfigurationViewProps {
@@ -70,7 +72,7 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
   onChangeRole = () => {},
   onUpdateUserPermissions
 }) => {
-  const [activeTab, setActiveTab] = useState<'geral' | 'marca' | 'cuidadores' | 'terapeutas' | 'usuarios' | 'firebase'>('geral');
+  const [activeTab, setActiveTab] = useState<'geral' | 'marca' | 'cuidadores' | 'terapeutas' | 'usuarios' | 'firebase' | 'changelog'>('geral');
   const [tempConfig, setTempConfig] = useState<ClinicConfig>(clinicConfig);
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [isSyncingFirebase, setIsSyncingFirebase] = useState(false);
@@ -321,6 +323,19 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
         >
           <Flame className="w-4 h-4 text-amber-500 shrink-0" />
           <span>Projeto Firebase & Banco</span>
+        </button>
+
+        {/* SUB-ABA: ChangeLog & Transparência Técnica (LISTA.md) */}
+        <button
+          onClick={() => setActiveTab('changelog')}
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+            activeTab === 'changelog'
+              ? 'bg-[#c8a88a] text-[#181513] shadow-md font-bold'
+              : 'text-[#a69a8f] hover:text-[#f4efe8] hover:bg-[#25201c]'
+          }`}
+        >
+          <ClipboardList className="w-4 h-4 text-emerald-400 shrink-0" />
+          <span>ChangeLog & Entregas</span>
         </button>
       </div>
 
@@ -1164,6 +1179,11 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
             </div>
           </div>
         </div>
+      )}
+
+      {/* Conteúdo da Tab: ChangeLog & Transparência Técnica */}
+      {activeTab === 'changelog' && (
+        <ChangeLogView />
       )}
     </div>
   );
