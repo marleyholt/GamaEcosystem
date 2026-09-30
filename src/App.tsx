@@ -32,6 +32,7 @@ import { AdminUsersView } from './components/AdminUsersView';
 import { MedicalRecordView } from './components/MedicalRecordView';
 import { ConfigurationView } from './components/ConfigurationView';
 import { AuthModal } from './components/AuthModal';
+import { PWAInstallPrompt } from './components/PWAInstallPrompt';
 import { generateOfficialReportPDF } from './utils/pdfGenerator';
 import { 
   ClinicConfig, 
@@ -649,6 +650,9 @@ export default function App() {
             Conformidade LGPD Ativa • Criptografia AES-GCM • Banco de Dados Seguro
           </p>
         </footer>
+
+        {/* Banner de Instalação PWA e Notificações */}
+        <PWAInstallPrompt />
     </div>
   );
 }
