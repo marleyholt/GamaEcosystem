@@ -28,6 +28,13 @@ REGRA DE OURO: SEMPRE SEGUIR AS DIRETRIZES DO agents.md
 - **Gerenciador de Processos:** PM2 (`name: gamaecosystem`)
   - **Comando de Restart:** `pm2 restart gamaecosystem`
   - **Comando de Logs:** `pm2 logs gamaecosystem`
+- **Script Oficial de Atualização Contínua (One-Click Deploy):**
+  - **Caminho:** `/var/www/gamaecosystem/update.sh`
+  - **Execução:** `/var/www/gamaecosystem/update.sh`
+  - **Operações Realizadas pelo Script:**
+    1. Executa `git reset --hard` e `git pull origin main` para sincronizar o repositório.
+    2. Roda `npm run build` para compilar o frontend com otimização de chunks.
+    3. Reinicia e salva o processo gerenciado no PM2 (`sudo pm2 restart gamaecosystem`).
 
 ### 🗄️ Banco de Dados Dedicado (MariaDB / MySQL)
 - **Host:** `127.0.0.1` (Porta padrão: `3306`)
