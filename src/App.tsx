@@ -457,6 +457,10 @@ export default function App() {
         darkMode={darkMode}
         setDarkMode={setDarkMode}
         onLogout={() => setCurrentUser(null)}
+        onUpdateUser={(updated) => {
+          setCurrentUser(updated);
+          setUsersList(prev => prev.map(u => u.id === updated.id ? updated : u));
+        }}
         patientsCount={patients.length}
         onOpenMenu={() => setIsMenuOpen(true)}
       />
