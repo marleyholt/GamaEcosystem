@@ -32,9 +32,14 @@ Este documento é a fonte de verdade para o acompanhamento contínuo de tarefas,
     - Card 1: Logomarca para Relatórios e Laudos (exclusivo para PDFs e papel timbrado).
     - Card 2: Favicon & Ícone do App PWA (para a aba do navegador e ícone de instalação no celular).
   - Redução das distâncias verticais (topo e rodapé do cabeçalho) no papel timbrado (`OfficialLetterhead.tsx`), otimizando o aproveitamento da folha A4 e eliminando vácuos.
+  - Redução de ~30% no tamanho da imagem no relatório para **alinhar perfeitamente com a altura do texto do título** (`max-h-20 sm:max-h-24 md:max-h-28`), mantendo proporção ideal e estética profissional.
   - Implementado algoritmo de **Auto-Trim** (`autoTrimCanvas` em `imageOptimizer.ts`) que recorta automaticamente margens brancas/transparentes de imagens enviadas.
   - Favicon com preenchimento de borda a borda (**grande como o do Google AI Studio**), sem margens em branco na aba do navegador.
   - Implementado botão explícito "Salvar Alterações de Marca" com Janela Modal de Confirmação antes de efetivar e gravar permanentemente no banco.
+- [x] **Manual do Usuário Integrado ao Topo com Restrições por Perfil (RBAC):**
+  - Adicionado botão discreto ao lado esquerdo do sino de notificações com ícone de interrogação (`HelpCircle`).
+  - Ao clicar, abre o **Manual do Usuário** (`UserManualModal.tsx`) contendo janelas e explicações operacionais detalhadas por módulo (O que faz, Como usar passo a passo, Dicas clínicas e Enquadramento regulatório).
+  - Segue estritamente a mesma regra de permissão dos módulos: se o usuário não tem acesso ao módulo (ex: PEP, Laudos, Configurações), a respectiva janela do manual não é exibida para ele. Administradores e RT (Adriane Gama) têm acesso irrestrito ao manual completo.
 - [x] **Pop-up de Usuário no Topo Estilo Google (Troca de Senha com Senha Atual, Tema e Configurações):**
   - Removido o botão de logout solto e botão de tema da barra superior.
   - Ao clicar no badge do usuário logado, abre um pop-up flutuante contendo:
