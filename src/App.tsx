@@ -461,6 +461,7 @@ export default function App() {
           setCurrentUser(updated);
           setUsersList(prev => prev.map(u => u.id === updated.id ? updated : u));
         }}
+        onOpenSettings={() => setCurrentTab('configuracao')}
         patientsCount={patients.length}
         onOpenMenu={() => setIsMenuOpen(true)}
       />
