@@ -50,6 +50,15 @@ import {
   backupAllLocalToFirestore,
   FirestoreCollections 
 } from './services/firestoreSync';
+import { 
+  fetchAllFromMariaDB, 
+  savePatientToMariaDB, 
+  saveMedicalRecordToMariaDB, 
+  saveRadiToMariaDB, 
+  saveFeedingLogToMariaDB, 
+  saveEvolutionToMariaDB,
+  saveClinicConfigToMariaDB 
+} from './services/mariaDBSync';
 
 export default function App() {
   // Authentication State
@@ -233,15 +242,70 @@ export default function App() {
     }
   }, [darkMode]);
 
-  // Auto-sincronização inicial e bidirecional com o Firestore
+  // Auto-sincronização inicial com o MariaDB (Produção) e Firestore (Backup)
   useEffect(() => {
-    // Carregar pacientes remotos se existirem no Firestore
+    // 1. Sincronização primária via API MariaDB em Produção
+    fetchAllFromMariaDB().then(dbData => {
+      if (dbData) {
+        if (dbData.patients && Array.isArray(dbData.patients)) {
+          // Formata campos snake_case para camelCase se vierem do MariaDB
+          const mappedPatients: Patient[] = dbData.patients.map((p: any) => ({
+            id: p.id,
+            name: p.name,
+            cpf: p.cpf || '',
+            birthDate: p.birth_date || p.birthDate || '',
+            gender: p.gender || 'Feminino',
+            mainDiagnosis: p.main_diagnosis || p.mainDiagnosis || '',
+            diagnosis: p.diagnosis || p.main_diagnosis || '',
+            medicalHistory: p.medical_history || p.medicalHistory || '',
+            currentMedications: p.current_medications || p.currentMedications || '',
+            guardianName: p.guardian_name || p.guardianName || '',
+            guardianPhone: p.guardian_phone || p.guardianPhone || '',
+            guardianEmail: p.guardian_email || p.guardianEmail || '',
+            receiptName: p.receipt_name || p.receiptName || '',
+            fonoaudiologistId: p.fonoaudiologist_id || p.fonoaudiologistId || '',
+            fonoaudiologistName: p.fonoaudiologist_name || p.fonoaudiologistName || '',
+            caregiverId: p.caregiver_id || p.caregiverId || '',
+            caregiverName: p.caregiver_name || p.caregiverName || '',
+            address: p.address || '',
+            cep: p.cep || '',
+            phone: p.phone || '',
+            secondaryPhone: p.secondary_phone || p.secondaryPhone || '',
+            email: p.email || '',
+            status: p.status || 'ativo',
+            createdAt: p.created_at || new Date().toISOString(),
+            updatedAt: p.updated_at || new Date().toISOString(),
+            lgpdConsentAccepted: true
+          }));
+          setPatients(mappedPatients);
+          if (mappedPatients.length > 0 && !selectedPatient) {
+            setSelectedPatient(mappedPatients[0]);
+          }
+        }
+
+        if (dbData.clinicConfig) {
+          const cfg = dbData.clinicConfig;
+          setClinicConfig(prev => ({
+            ...prev,
+            clinicName: cfg.clinic_name || prev.clinicName,
+            legalName: cfg.legal_name || prev.legalName,
+            cnpj: cfg.cnpj || prev.cnpj,
+            technicalResponsible: cfg.technical_manager_name || prev.technicalResponsible,
+            crfa: cfg.technical_manager_crfa || prev.crfa,
+            addressLine: cfg.address || prev.addressLine,
+            phoneWhatsApp: cfg.phone || prev.phoneWhatsApp,
+            email: cfg.email || prev.email,
+            instagram: cfg.instagram || prev.instagram,
+            logoUrl: cfg.logo_url || prev.logoUrl
+          }));
+        }
+      }
+    });
+
+    // 2. Carregar pacientes remotos se existirem no Firestore (Fallback / Nuvem)
     fetchCollectionFromFirestore<Patient>(FirestoreCollections.PATIENTS).then(remotePatients => {
       if (remotePatients && remotePatients.length > 0) {
         setPatients(remotePatients);
-      } else {
-        // Primeira carga: sobe a base inicial para o Firestore
-        patients.forEach(p => syncDocToFirestore(FirestoreCollections.PATIENTS, p.id, p));
       }
     });
 
@@ -286,6 +350,7 @@ export default function App() {
   const handleSaveAssessment = (newAssessment: RadiAssessment) => {
     setAssessments([newAssessment, ...assessments]);
     syncDocToFirestore(FirestoreCollections.ASSESSMENTS, newAssessment.id, newAssessment);
+    saveRadiToMariaDB(newAssessment);
     alert('Avaliação RaDI registrada com sucesso no prontuário do paciente!');
     setCurrentTab('reports');
   };
@@ -293,6 +358,7 @@ export default function App() {
   const handleSaveLog = (newLog: DailyFeedingLog) => {
     setDailyLogs([newLog, ...dailyLogs]);
     syncDocToFirestore(FirestoreCollections.DAILY_LOGS, newLog.id, newLog);
+    saveFeedingLogToMariaDB(newLog);
     alert('Registro diário de alimentação e consistências salvo com sucesso!');
     setCurrentTab('history');
   };
@@ -309,6 +375,7 @@ export default function App() {
     });
     setSelectedPatient(newPatient);
     syncDocToFirestore(FirestoreCollections.PATIENTS, newPatient.id, newPatient);
+    savePatientToMariaDB(newPatient);
   };
 
   const handleAddPhoto = (photo: MealPhoto) => {
@@ -345,6 +412,7 @@ export default function App() {
       }
       return [updated, ...prev];
     });
+    saveMedicalRecordToMariaDB(updated);
   };
 
   const handleGenerateDirectReport = (assessment: RadiAssessment) => {
@@ -550,7 +618,10 @@ export default function App() {
           {(currentTab === 'configuracao' || currentTab === 'settings') && (
             <ConfigurationView
               clinicConfig={clinicConfig}
-              onUpdateClinicConfig={setClinicConfig}
+              onUpdateClinicConfig={(newCfg) => {
+                setClinicConfig(newCfg);
+                saveClinicConfigToMariaDB(newCfg);
+              }}
               caregivers={caregivers}
               onUpdateCaregivers={setCaregivers}
               therapists={therapists}
