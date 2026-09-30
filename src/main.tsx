@@ -2,6 +2,10 @@ import {StrictMode} from 'react';
 import {createRoot} from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
+import { registerServiceWorker } from './services/pwaService.ts';
+
+// Inicializa o Service Worker do PWA
+registerServiceWorker();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
