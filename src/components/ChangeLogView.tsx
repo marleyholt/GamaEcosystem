@@ -154,9 +154,9 @@ export const ChangeLogView: React.FC<ChangeLogViewProps> = () => {
                   <CheckCircle2 className="w-3 h-3 text-emerald-400" />
                 </div>
                 <div>
-                  <strong className="text-white">Cabeçalho Enxuto, Logo Alinhada (-30%) & Favicon de Borda a Borda:</strong>
+                  <strong className="text-white">Cabeçalho Enxuto, Logo Alinhada (-30%) & Persistência Blindada no F5:</strong>
                   <p className="text-xs text-[#a69a8f] mt-0.5">
-                    Redução de 30% na altura da logo para coincidir perfeitamente com a altura do texto do título. Auto-Trim de bordas brancas e favicon grande na aba.
+                    Redução de 30% na altura da logo alinhada com o título. Persistência imediata no momento do upload que impede perda da logo ao atualizar a página.
                   </p>
                 </div>
               </li>
