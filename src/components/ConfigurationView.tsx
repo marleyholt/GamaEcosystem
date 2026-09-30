@@ -43,7 +43,9 @@ import {
   CloudUpload,
   ClipboardList,
   HardDrive,
-  Download
+  Download,
+  AppWindow,
+  Smartphone
 } from 'lucide-react';
 
 interface ConfigurationViewProps {
@@ -83,6 +85,7 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
   const [previewTherapistId, setPreviewTherapistId] = useState<string>(''); // Vazio = Usar dados da Clínica & RT
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const faviconInputRef = useRef<HTMLInputElement>(null);
 
   // Estados para Backup do Banco MariaDB
   const [isBackingUp, setIsBackingUp] = useState<boolean>(false);
@@ -93,18 +96,25 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
     fetchBackupList().then(list => setBackupFiles(list));
   }, []);
 
-  // Sincronizar Favicon do navegador quando houver logomarca
+  // Sincronizar Favicon e Ícones do Navegador/PWA
   useEffect(() => {
-    if (tempConfig.logoUrl) {
+    const iconSource = tempConfig.faviconUrl || tempConfig.logoUrl;
+    if (iconSource) {
       let link: HTMLLinkElement | null = document.querySelector("link[rel*='icon']");
       if (!link) {
         link = document.createElement('link');
         link.rel = 'shortcut icon';
         document.getElementsByTagName('head')[0].appendChild(link);
       }
-      link.href = tempConfig.logoUrl;
+      link.href = iconSource;
+
+      // Também sincroniza com o apple-touch-icon
+      let appleLink: HTMLLinkElement | null = document.querySelector("link[rel='apple-touch-icon']");
+      if (appleLink) {
+        appleLink.href = iconSource;
+      }
     }
-  }, [tempConfig.logoUrl]);
+  }, [tempConfig.faviconUrl, tempConfig.logoUrl]);
 
   // Estados para novo cadastro robusto de Cuidador
   const [newCaregiverName, setNewCaregiverName] = useState('');
@@ -133,16 +143,39 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
     setTimeout(() => setSavedSuccess(false), 3000);
   };
 
-  // Upload da Logomarca
+  // Upload da Logomarca (Exclusivo para Relatórios e Timbrados)
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Converte a imagem para Base64 para persistência segura
     const reader = new FileReader();
     reader.onload = (event) => {
       const base64 = event.target?.result as string;
       const updated = { ...tempConfig, logoUrl: base64 };
+      setTempConfig(updated);
+      onUpdateClinicConfig(updated);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleResetLogo = () => {
+    const updated = { ...tempConfig, logoUrl: undefined };
+    setTempConfig(updated);
+    onUpdateClinicConfig(updated);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  // Upload do Ícone de Aplicativo / Favicon (Navegador & PWA)
+  const handleFaviconUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const base64 = event.target?.result as string;
+      const updated = { ...tempConfig, faviconUrl: base64 };
       setTempConfig(updated);
       onUpdateClinicConfig(updated);
 
@@ -154,16 +187,26 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
         document.getElementsByTagName('head')[0].appendChild(link);
       }
       link.href = base64;
+
+      let appleLink: HTMLLinkElement | null = document.querySelector("link[rel='apple-touch-icon']");
+      if (appleLink) {
+        appleLink.href = base64;
+      }
     };
     reader.readAsDataURL(file);
   };
 
-  const handleResetLogo = () => {
-    const updated = { ...tempConfig, logoUrl: undefined };
+  const handleResetFavicon = () => {
+    const updated = { ...tempConfig, faviconUrl: undefined };
     setTempConfig(updated);
     onUpdateClinicConfig(updated);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+    if (faviconInputRef.current) {
+      faviconInputRef.current.value = '';
+    }
+
+    let link: HTMLLinkElement | null = document.querySelector("link[rel*='icon']");
+    if (link) {
+      link.href = '/pwa-192x192.png';
     }
   };
 
@@ -458,23 +501,61 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
         </form>
       )}
 
-      {/* Conteúdo da Tab 2: CONFIGURAÇÃO DE MARCA (Com Upload de Logo Proporcional) */}
+      {/* Conteúdo da Tab 2: CONFIGURAÇÃO DE MARCA (Dois Painéis Independentes: Relatórios e Favicon/PWA) */}
       {activeTab === 'marca' && (
         <div className="space-y-6">
-          {/* Card de Upload da Logomarca */}
-          <div className="bg-[#1f1a17] border border-[#382e27] rounded-2xl p-6 space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#382e27] pb-4">
-              <div>
-                <h2 className="text-base font-bold font-serif text-[#f4efe8] flex items-center gap-2">
-                  <ImageIcon className="w-4 h-4 text-[#c8a88a]" />
-                  Upload da Logomarca Oficial
-                </h2>
-                <p className="text-xs text-[#a69a8f] mt-0.5">
-                  A logomarca enviada aqui será aplicada automaticamente em escala proporcional em todos os relatórios/laudos e na <strong>barra do navegador (Favicon)</strong>.
-                </p>
+          {/* PAINEL DUPLO: Lado a Lado no Desktop */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            
+            {/* CARD 1: Upload da Logomarca (EXCLUSIVO PARA RELATÓRIOS E LAUDOS) */}
+            <div className="bg-[#1f1a17] border border-[#382e27] rounded-2xl p-6 space-y-4 flex flex-col justify-between">
+              <div className="space-y-4">
+                <div className="border-b border-[#382e27] pb-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <h2 className="text-base font-bold font-serif text-[#f4efe8] flex items-center gap-2">
+                      <FileCheck2 className="w-5 h-5 text-[#c8a88a]" />
+                      1. Logomarca dos Relatórios & Laudos
+                    </h2>
+                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-[#c8a88a]/20 text-[#c8a88a] border border-[#c8a88a]/30">
+                      PDF / Timbrado
+                    </span>
+                  </div>
+                  <p className="text-xs text-[#a69a8f] mt-1 leading-relaxed">
+                    Esta imagem é aplicada <strong>exclusivamente</strong> no cabeçalho dos laudos, atestados, relatórios clínicos e prévia do papel timbrado.
+                  </p>
+                </div>
+
+                {/* Prévia da Logomarca dos Relatórios */}
+                <div className="flex items-center gap-4 p-4 rounded-xl bg-[#181513] border border-[#2e2621]">
+                  <div className="w-24 h-20 rounded-lg bg-white/5 border border-dashed border-[#44362d] flex items-center justify-center p-2 overflow-hidden shrink-0">
+                    {tempConfig.logoUrl ? (
+                      <img src={tempConfig.logoUrl} alt="Logo Relatórios" className="max-h-full max-w-full object-contain" />
+                    ) : (
+                      <div className="flex flex-col items-center">
+                        <div className="relative mb-0.5">
+                          <div className="w-8 h-8 rounded-full border-2 border-[#7a5937] flex items-center justify-center font-serif text-[#7a5937] font-bold text-base leading-none">
+                            g
+                          </div>
+                          <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-[#7a5937]" />
+                        </div>
+                        <span className="text-[9px] font-serif font-black tracking-widest text-[#f4efe8]">GAMA</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="space-y-1 text-xs">
+                    <p className="font-semibold text-[#f4efe8]">
+                      {tempConfig.logoUrl ? 'Logomarca Customizada de Laudos' : 'Monograma Padrão Oficial GAMA'}
+                    </p>
+                    <p className="text-[#a69a8f] text-[11px] leading-relaxed">
+                      Proporção retangular ou quadrada recomendada. PNG com fundo transparente para impressão nítida.
+                    </p>
+                  </div>
+                </div>
               </div>
 
-              <div className="flex items-center gap-2">
+              {/* Botões de Ação do Card 1 */}
+              <div className="pt-3 border-t border-[#382e27] flex items-center gap-2">
                 <input
                   type="file"
                   ref={fileInputRef}
@@ -486,57 +567,110 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#c8a88a] hover:bg-[#d6bca3] text-[#181513] font-bold text-xs shadow-md transition-all cursor-pointer"
+                  className="flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-[#c8a88a] hover:bg-[#d6bca3] text-[#181513] font-bold text-xs shadow-md transition-all cursor-pointer"
                 >
                   <Upload className="w-4 h-4" />
-                  Fazer Upload da Logomarca
+                  Upload Logo dos Laudos
                 </button>
 
                 {tempConfig.logoUrl && (
                   <button
                     type="button"
                     onClick={handleResetLogo}
-                    className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl bg-[#27211d] hover:bg-[#342b26] text-[#a69a8f] hover:text-rose-400 border border-[#3e342e] text-xs transition-colors"
+                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#27211d] hover:bg-[#342b26] text-[#a69a8f] hover:text-rose-400 border border-[#3e342e] text-xs transition-colors shrink-0"
                     title="Restaurar logotipo padrão"
                   >
                     <RotateCcw className="w-4 h-4" />
-                    Restaurar Padrão
+                    Padrão
                   </button>
                 )}
               </div>
             </div>
 
-            {/* Prévia da Logomarca carregada com escala proporcional ampliada */}
-            <div className="flex items-center gap-5 p-5 rounded-xl bg-[#181513] border border-[#2e2621]">
-              <div className="w-28 h-24 rounded-lg bg-white/5 border border-dashed border-[#44362d] flex items-center justify-center p-2 overflow-hidden">
-                {tempConfig.logoUrl ? (
-                  <img src={tempConfig.logoUrl} alt="Logo" className="max-h-full max-w-full object-contain" />
-                ) : (
-                  <div className="flex flex-col items-center">
-                    <div className="relative mb-1">
-                      <div className="w-10 h-10 rounded-full border-2 border-[#7a5937] flex items-center justify-center font-serif text-[#7a5937] font-bold text-xl leading-none">
-                        g
-                      </div>
-                      <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-[#7a5937]" />
-                    </div>
-                    <span className="text-[10px] font-serif font-black tracking-widest text-[#f4efe8]">GAMA</span>
+            {/* CARD 2: Upload do Favicon & Ícone do Aplicativo PWA (CELULAR & NAVEGADOR) */}
+            <div className="bg-[#1f1a17] border border-[#382e27] rounded-2xl p-6 space-y-4 flex flex-col justify-between">
+              <div className="space-y-4">
+                <div className="border-b border-[#382e27] pb-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <h2 className="text-base font-bold font-serif text-[#f4efe8] flex items-center gap-2">
+                      <Smartphone className="w-5 h-5 text-emerald-400" />
+                      2. Ícone do App & Favicon (Celular / Navegador)
+                    </h2>
+                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                      PWA / Aba
+                    </span>
                   </div>
-                )}
-              </div>
+                  <p className="text-xs text-[#a69a8f] mt-1 leading-relaxed">
+                    Este ícone define a imagem que aparece na <strong>aba do navegador (Favicon)</strong> e o <strong>ícone na tela inicial do celular</strong> ao instalar o PWA.
+                  </p>
+                </div>
 
-              <div className="space-y-1.5 text-xs">
-                <p className="font-semibold text-[#f4efe8]">
-                  {tempConfig.logoUrl ? 'Logomarca Customizada Ativa (Proporção Ampliada)' : 'Logomarca Oficial Padrão (Monograma GAMA g° Nobre)'}
-                </p>
-                <p className="text-[#a69a8f] text-[11px] leading-relaxed">
-                  Agora calibrada para preencher harmoniosamente o canto superior direito do papel timbrado, espelhando fielmente o PDF da clínica.
-                </p>
-                <div className="flex items-center gap-2 pt-1 text-[11px] text-emerald-400 font-medium">
-                  <CheckCircle className="w-3.5 h-3.5" />
-                  Sincronizado automaticamente com o Favicon do navegador
+                {/* Prévia do Ícone de App / Favicon */}
+                <div className="flex items-center gap-4 p-4 rounded-xl bg-[#181513] border border-[#2e2621]">
+                  <div className="w-20 h-20 rounded-2xl bg-white/5 border border-dashed border-[#44362d] flex items-center justify-center p-2 overflow-hidden shadow-inner shrink-0 relative">
+                    {tempConfig.faviconUrl ? (
+                      <img src={tempConfig.faviconUrl} alt="Ícone PWA / Favicon" className="w-full h-full object-contain rounded-xl" />
+                    ) : tempConfig.logoUrl ? (
+                      <img src={tempConfig.logoUrl} alt="Ícone Herdado da Logo" className="w-full h-full object-contain rounded-xl opacity-80" />
+                    ) : (
+                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#c8a88a] to-[#8d6948] flex items-center justify-center font-serif text-[#181513] font-bold text-2xl shadow-md">
+                        G
+                      </div>
+                    )}
+                    <span className="absolute bottom-1 right-1 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-[#181513]" />
+                  </div>
+
+                  <div className="space-y-1 text-xs">
+                    <p className="font-semibold text-[#f4efe8] flex items-center gap-1.5">
+                      {tempConfig.faviconUrl ? (
+                        <>
+                          <CheckCircle className="w-3.5 h-3.5 text-emerald-400" />
+                          Ícone Dedicado Ativo
+                        </>
+                      ) : (
+                        'Ícone Padrão GamaEco'
+                      )}
+                    </p>
+                    <p className="text-[#a69a8f] text-[11px] leading-relaxed">
+                      Recomendado formato quadrado (ex: 512×512 ou 192×192 em PNG). Ícone nítido para visualização como aplicativo no celular.
+                    </p>
+                  </div>
                 </div>
               </div>
+
+              {/* Botões de Ação do Card 2 */}
+              <div className="pt-3 border-t border-[#382e27] flex items-center gap-2">
+                <input
+                  type="file"
+                  ref={faviconInputRef}
+                  onChange={handleFaviconUpload}
+                  accept="image/png, image/jpeg, image/x-icon, image/svg+xml, image/webp"
+                  className="hidden"
+                />
+
+                <button
+                  type="button"
+                  onClick={() => faviconInputRef.current?.click()}
+                  className="flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-all cursor-pointer"
+                >
+                  <Upload className="w-4 h-4" />
+                  Upload do Ícone PWA / Favicon
+                </button>
+
+                {tempConfig.faviconUrl && (
+                  <button
+                    type="button"
+                    onClick={handleResetFavicon}
+                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#27211d] hover:bg-[#342b26] text-[#a69a8f] hover:text-rose-400 border border-[#3e342e] text-xs transition-colors shrink-0"
+                    title="Restaurar ícone padrão"
+                  >
+                    <RotateCcw className="w-4 h-4" />
+                    Padrão
+                  </button>
+                )}
+              </div>
             </div>
+
           </div>
 
           {/* Seleção do Perfil de Terapeuta para Prévia em Tempo Real */}
