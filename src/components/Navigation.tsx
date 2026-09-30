@@ -70,11 +70,10 @@ export const Navigation: React.FC<NavigationProps> = ({
     userEmail.toLowerCase().includes('leaog') ||
     userName.toLowerCase().includes('adriane gama');
 
-  // Estado que controla quais submenus estão abertos ou fechados
+  // Estado que controla quais submenus estão abertos ou fechados (por padrão FECHADAS)
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
-    clinico: true,
-    gestao: true,
-    sistema: true
+    clinico: false,
+    gestao: false
   });
 
   const toggleGroup = (groupId: string, e: React.MouseEvent) => {
@@ -123,12 +122,10 @@ export const Navigation: React.FC<NavigationProps> = ({
       ]
     },
     {
-      id: 'sistema',
-      label: 'Sistema & Configurações',
+      id: 'configuracao',
+      label: 'Central de Configurações',
       icon: Settings,
-      subItems: [
-        { id: 'configuracao' as NavigationTab, label: 'Central de Configurações', icon: Settings }
-      ]
+      directTab: 'configuracao' as NavigationTab
     }
   ];
 
