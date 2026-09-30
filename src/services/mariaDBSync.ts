@@ -122,3 +122,32 @@ export const saveClinicConfigToMariaDB = async (config: any): Promise<boolean> =
     return false;
   }
 };
+
+export const triggerDatabaseBackup = async (): Promise<{ success: boolean; message: string; filename?: string }> => {
+  try {
+    const res = await fetch('/api/admin/backup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' }
+    });
+    if (res.ok) {
+      const data = await res.json();
+      return { success: true, message: data.message || 'Backup gerado com sucesso!', filename: data.filename };
+    }
+    return { success: false, message: 'Falha ao acionar backup no servidor.' };
+  } catch (err: any) {
+    return { success: false, message: err?.message || 'Servidor indisponível para backup.' };
+  }
+};
+
+export const fetchBackupList = async (): Promise<{ filename: string; size: string; createdAt: string }[]> => {
+  try {
+    const res = await fetch('/api/admin/backups');
+    if (res.ok) {
+      const data = await res.json();
+      return data.backups || [];
+    }
+    return [];
+  } catch {
+    return [];
+  }
+};
