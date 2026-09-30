@@ -180,7 +180,7 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
   };
 
   const handleResetLogo = () => {
-    const updated = { ...tempConfig, logoUrl: undefined };
+    const updated = { ...tempConfig, logoUrl: '/assets/logo.png' };
     setTempConfig(updated);
     setHasPendingChanges(true);
     onUpdateClinicConfig(updated);
@@ -216,14 +216,14 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
   };
 
   const handleResetFavicon = () => {
-    const updated = { ...tempConfig, faviconUrl: undefined };
+    const updated = { ...tempConfig, faviconUrl: '/assets/logo.png' };
     setTempConfig(updated);
     setHasPendingChanges(true);
     onUpdateClinicConfig(updated);
     localStorage.setItem('health_deglut_clinic_config', JSON.stringify(updated));
     saveClinicConfigToMariaDB(updated);
     syncDocToFirestore(FirestoreCollections.CLINIC_CONFIG, 'global_settings', updated);
-    updateBrowserFavicon(undefined);
+    updateBrowserFavicon('/assets/logo.png');
     if (faviconInputRef.current) {
       faviconInputRef.current.value = '';
     }
