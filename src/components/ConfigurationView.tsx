@@ -11,6 +11,7 @@ import { OfficialLetterhead } from './OfficialLetterhead';
 import { AdminUsersView } from './AdminUsersView';
 import { ChangeLogView } from './ChangeLogView';
 import { backupAllLocalToFirestore } from '../services/firestoreSync';
+import { triggerDatabaseBackup, fetchBackupList } from '../services/mariaDBSync';
 import { 
   Building2, 
   Users, 
@@ -40,7 +41,9 @@ import {
   AlertTriangle,
   RefreshCw,
   CloudUpload,
-  ClipboardList
+  ClipboardList,
+  HardDrive,
+  Download
 } from 'lucide-react';
 
 interface ConfigurationViewProps {
@@ -80,6 +83,15 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
   const [previewTherapistId, setPreviewTherapistId] = useState<string>(''); // Vazio = Usar dados da Clínica & RT
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Estados para Backup do Banco MariaDB
+  const [isBackingUp, setIsBackingUp] = useState<boolean>(false);
+  const [backupMsg, setBackupMsg] = useState<{ success: boolean; text: string } | null>(null);
+  const [backupFiles, setBackupFiles] = useState<{ filename: string; size: string; createdAt: string }[]>([]);
+
+  useEffect(() => {
+    fetchBackupList().then(list => setBackupFiles(list));
+  }, []);
 
   // Sincronizar Favicon do navegador quando houver logomarca
   useEffect(() => {
@@ -1157,6 +1169,84 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
               <span>{syncStatusMsg}</span>
             </div>
           )}
+
+          {/* CARD DE BACKUP AUTOMÁTICO & SOB DEMANDA DO MARIADB (PRODUÇÃO) */}
+          <div className="p-5 rounded-xl bg-[#1b1714] border border-[#3d322a] space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="space-y-1">
+                <h3 className="text-sm font-bold text-[#f4efe8] flex items-center gap-2">
+                  <HardDrive className="w-4 h-4 text-emerald-400" />
+                  Backup Automático do Banco MariaDB (`gamaecosystem_db`)
+                </h3>
+                <p className="text-xs text-[#a69a8f]">
+                  Rotina diária às 03:00 com retenção de 7 dias e compactação Gzip no servidor OCI. Você também pode acionar um dump manual imediato.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                disabled={isBackingUp}
+                onClick={async () => {
+                  setIsBackingUp(true);
+                  setBackupMsg(null);
+                  const res = await triggerDatabaseBackup();
+                  if (res.success) {
+                    setBackupMsg({ success: true, text: res.message });
+                    const list = await fetchBackupList();
+                    setBackupFiles(list);
+                  } else {
+                    setBackupMsg({ success: false, text: res.message });
+                  }
+                  setIsBackingUp(false);
+                }}
+                className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-all cursor-pointer disabled:opacity-50 shrink-0"
+              >
+                {isBackingUp ? (
+                  <>
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                    <span>Gerando Dump...</span>
+                  </>
+                ) : (
+                  <>
+                    <HardDrive className="w-4 h-4" />
+                    <span>Gerar Backup Agora</span>
+                  </>
+                )}
+              </button>
+            </div>
+
+            {backupMsg && (
+              <div className={`p-3 rounded-xl border text-xs flex items-center gap-2 ${
+                backupMsg.success 
+                  ? 'bg-emerald-950/60 border-emerald-500/40 text-emerald-300' 
+                  : 'bg-amber-950/60 border-amber-500/40 text-amber-300'
+              }`}>
+                {backupMsg.success ? <CheckCircle className="w-4 h-4 shrink-0" /> : <AlertTriangle className="w-4 h-4 shrink-0" />}
+                <span>{backupMsg.text}</span>
+              </div>
+            )}
+
+            {/* Lista de Backups Existentes no Servidor */}
+            {backupFiles.length > 0 && (
+              <div className="pt-2 border-t border-[#342a22] space-y-2">
+                <span className="text-[11px] font-bold text-[#c8a88a] uppercase tracking-wider block">
+                  Backups Recentes no Servidor ({backupFiles.length})
+                </span>
+                <div className="space-y-1.5 max-h-40 overflow-y-auto pr-1">
+                  {backupFiles.map((b, i) => (
+                    <div key={i} className="p-2.5 rounded-lg bg-[#241e1a] border border-[#382e27] flex items-center justify-between text-xs">
+                      <div className="flex items-center gap-2">
+                        <HardDrive className="w-3.5 h-3.5 text-[#c8a88a]" />
+                        <span className="font-mono text-[#f4efe8]">{b.filename}</span>
+                        <span className="text-[10px] text-[#7d7168]">({b.size})</span>
+                      </div>
+                      <span className="text-[11px] text-[#a69a8f]">{b.createdAt}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
 
           {/* Instruções para Transferência Completa das Credenciais do Web App */}
           <div className="p-4 rounded-xl bg-[#241e1a] border border-[#44362d] space-y-3 text-xs">
