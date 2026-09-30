@@ -1,0 +1,53 @@
+{
+  "id": "/",
+  "name": "GamaEcosystem - Fonoaudiologia",
+  "short_name": "GamaEco",
+  "description": "Sistema especializado em Fonoaudiologia, Disfagia, Avaliação RaDI e Gestão Clínica.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#181513",
+  "theme_color": "#c8a88a",
+  "icons": [
+    {
+      "src": "/pwa-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "categories": ["medical", "health", "productivity"],
+  "shortcuts": [
+    {
+      "name": "Pacientes",
+      "short_name": "Pacientes",
+      "description": "Lista de Pacientes Cadastrados",
+      "url": "/?tab=patients"
+    },
+    {
+      "name": "Diário de Refeições",
+      "short_name": "Diário",
+      "description": "Registros de Alimentação e Deglutição",
+      "url": "/?tab=foodDiary"
+    },
+    {
+      "name": "Avaliação RaDI",
+      "short_name": "RaDI",
+      "description": "Triagem e Indicadores de Risco de Disfagia",
+      "url": "/?tab=radi"
+    }
+  ]
+}
