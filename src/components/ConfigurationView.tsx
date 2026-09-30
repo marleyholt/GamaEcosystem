@@ -79,6 +79,11 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState<'geral' | 'marca' | 'cuidadores' | 'terapeutas' | 'usuarios' | 'firebase' | 'changelog'>('geral');
   const [tempConfig, setTempConfig] = useState<ClinicConfig>(clinicConfig);
+
+  // Mantém tempConfig sempre sincronizado quando clinicConfig for atualizado
+  useEffect(() => {
+    setTempConfig(clinicConfig);
+  }, [clinicConfig]);
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [isSyncingFirebase, setIsSyncingFirebase] = useState(false);
   const [syncStatusMsg, setSyncStatusMsg] = useState<string | null>(null);
@@ -153,7 +158,10 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
       const base64 = event.target?.result as string;
       const updated = { ...tempConfig, logoUrl: base64 };
       setTempConfig(updated);
+      localStorage.setItem('health_deglut_clinic_config', JSON.stringify(updated));
       onUpdateClinicConfig(updated);
+      setSavedSuccess(true);
+      setTimeout(() => setSavedSuccess(false), 3000);
     };
     reader.readAsDataURL(file);
   };
@@ -161,6 +169,7 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
   const handleResetLogo = () => {
     const updated = { ...tempConfig, logoUrl: undefined };
     setTempConfig(updated);
+    localStorage.setItem('health_deglut_clinic_config', JSON.stringify(updated));
     onUpdateClinicConfig(updated);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
@@ -177,6 +186,7 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
       const base64 = event.target?.result as string;
       const updated = { ...tempConfig, faviconUrl: base64 };
       setTempConfig(updated);
+      localStorage.setItem('health_deglut_clinic_config', JSON.stringify(updated));
       onUpdateClinicConfig(updated);
 
       // Injeta diretamente na aba do navegador
@@ -192,6 +202,8 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
       if (appleLink) {
         appleLink.href = base64;
       }
+      setSavedSuccess(true);
+      setTimeout(() => setSavedSuccess(false), 3000);
     };
     reader.readAsDataURL(file);
   };
@@ -199,6 +211,7 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
   const handleResetFavicon = () => {
     const updated = { ...tempConfig, faviconUrl: undefined };
     setTempConfig(updated);
+    localStorage.setItem('health_deglut_clinic_config', JSON.stringify(updated));
     onUpdateClinicConfig(updated);
     if (faviconInputRef.current) {
       faviconInputRef.current.value = '';
