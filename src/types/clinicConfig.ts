@@ -9,7 +9,9 @@ export interface ClinicConfig {
   email: string; // gamafono@gamafono.com.br
   instagram: string; // @gama_fonoaudiologia
   addressLine?: string; // Endereço físico ou polo de atendimento
-  logoUrl?: string; // Base64 ou URL da logomarca oficial customizada
+  logoUrl?: string; // Base64 ou URL da logomarca oficial para Relatórios e Timbrados
+  faviconUrl?: string; // Base64 ou URL do Favicon e Ícone de App PWA (Navegador e Celular)
+  pwaIconUrl?: string; // Ícone PWA alternativo
   signatureUrl?: string; // Rubrica / Assinatura digitalizada
   useLetterheadByDefault: boolean; // Obrigatório em todo documento
   includeSignatureOnPrint: boolean; // Permitir modelo com ou sem rubrica
