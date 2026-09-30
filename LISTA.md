@@ -31,6 +31,11 @@ Este documento é a fonte de verdade para o acompanhamento contínuo de tarefas,
   - Reformulada a aba **Configuração de Marca** em dois painéis independentes:
     - Card 1: Logomarca para Relatórios e Laudos (exclusivo para PDFs e papel timbrado).
     - Card 2: Favicon & Ícone do App PWA (para a aba do navegador e ícone de instalação no celular).
+  - Implementado redimensionamento inteligente via Canvas (`imageOptimizer.ts`) para achatar/expandir automaticamente imagens de qualquer resolução para proporção perfeita.
+  - Implementado botão explícito "Salvar Alterações de Marca" com Janela Modal de Confirmação ("As configurações serão alteradas, tem certeza?") antes de efetivar e gravar permanentemente no banco.
+- [x] **Pop-up de Usuário no Topo Estilo Google (Troca de Senha e Logout):**
+  - Removido o botão de logout solto na barra superior.
+  - Ao clicar no badge do usuário logado, abre um pop-up elegante estilo Google com dados do usuário, formulário para alterar senha e botão seguro de logout.
 - [ ] **Aba Visão Geral (Dashboard) - Seletor Suspenso de Pacientes:**
   - Substituir o botão inoperante "Trocar" por uma lista suspensa (dropdown/select) com a lista dos pacientes cadastrados, permitindo alternar instantaneamente o paciente em foco na Visão Geral.
 - [ ] **Limpeza de Resquícios do Firebase na Interface:**
