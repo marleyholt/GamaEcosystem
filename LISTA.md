@@ -24,8 +24,9 @@ Este documento é a fonte de verdade para o acompanhamento contínuo de tarefas,
     - Configurações da Clínica (`/api/clinic-config`)
     - Evoluções Oficiais (`/api/evolutions`)
   - Conectado o frontend React (`src/services/mariaDBSync.ts` e `App.tsx`) para ler e gravar em tempo real no MariaDB com sincronização automática e resiliência local.
-- [ ] **Script de Deploy Automatizado (One-Click Update via Git Hook / Script):**
-  - Criar um script `update.sh` em `/var/www/gamaecosystem` para atualizar o código via `git pull`, rodar `npm run build` e recarregar o PM2 de forma rápida e segura.
+- [x] **Script de Deploy Automatizado (One-Click Update via Shell Script):**
+  - Criado e configurado o script `/var/www/gamaecosystem/update.sh` com permissões de execução.
+  - Documentado oficialmente no `agents.md` para deploy automático em 1 clique.
 
 ### 🟡 Média Prioridade
 - [x] **Módulo de Relatórios e Exportação em Lote:**
