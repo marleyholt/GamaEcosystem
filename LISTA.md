@@ -37,8 +37,10 @@ Este documento é a fonte de verdade para o acompanhamento contínuo de tarefas,
   - Configurado `manualChunks` no `vite.config.ts` para separar `vendor-pdf` (`jspdf`, `html2canvas`), `vendor-react` e `vendor-icons`, acelerando o carregamento inicial da aplicação.
 
 ### 🟢 Baixa Prioridade / Melhorias Futuras
-- [ ] **Rotinas de Backup Automático do Banco de Dados:**
-  - Criar cronjob diário no Ubuntu para `mysqldump` com retenção de 7 dias do banco `gamaecosystem_db`.
+- [x] **Rotinas de Backup Automático do Banco de Dados:**
+  - Criado o script `scripts/backup_db.sh` com dump consistente (`--single-transaction`), compressão Gzip e política de retenção de 7 dias.
+  - Agendado cronjob diário das 03:00 no Ubuntu.
+  - Implementada rota administrativa no Express (`/api/admin/backup` e `/api/admin/backups`) e interface visual na Central de Configurações para acionamento sob demanda.
 - [ ] **PWA / Notificações no Dispositivo:**
   - Suporte a instalação como App no celular do cuidador e fonoaudiólogo.
 
