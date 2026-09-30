@@ -286,19 +286,26 @@ export default function App() {
 
         if (dbData.clinicConfig) {
           const cfg = dbData.clinicConfig;
-          setClinicConfig(prev => ({
-            ...prev,
-            clinicName: cfg.clinic_name || prev.clinicName,
-            legalName: cfg.legal_name || prev.legalName,
-            cnpj: cfg.cnpj || prev.cnpj,
-            technicalResponsible: cfg.technical_manager_name || prev.technicalResponsible,
-            crfa: cfg.technical_manager_crfa || prev.crfa,
-            addressLine: cfg.address || prev.addressLine,
-            phoneWhatsApp: cfg.phone || prev.phoneWhatsApp,
-            email: cfg.email || prev.email,
-            instagram: cfg.instagram || prev.instagram,
-            logoUrl: cfg.logo_url || prev.logoUrl
-          }));
+          setClinicConfig(prev => {
+            // Prioriza a imagem do banco, mas se o banco ainda estiver vazio, NÃO apaga a imagem já salva localmente
+            const effectiveLogo = (cfg.logo_url && cfg.logo_url.trim() !== '') ? cfg.logo_url : prev.logoUrl;
+            const effectiveFavicon = (cfg.favicon_url && cfg.favicon_url.trim() !== '') ? cfg.favicon_url : prev.faviconUrl;
+
+            const updated: ClinicConfig = {
+              ...prev,
+              clinicName: cfg.clinic_name || prev.clinicName,
+              technicalResponsible: cfg.technical_manager_name || prev.technicalResponsible,
+              crfa: cfg.technical_manager_crfa || prev.crfa,
+              addressLine: cfg.address || prev.addressLine,
+              phoneWhatsapp: cfg.phone || prev.phoneWhatsapp,
+              email: cfg.email || prev.email,
+              instagram: cfg.instagram || prev.instagram,
+              logoUrl: effectiveLogo,
+              faviconUrl: effectiveFavicon
+            };
+            localStorage.setItem('health_deglut_clinic_config', JSON.stringify(updated));
+            return updated;
+          });
         }
       }
     });
