@@ -41,8 +41,11 @@ Este documento é a fonte de verdade para o acompanhamento contínuo de tarefas,
   - Criado o script `scripts/backup_db.sh` com dump consistente (`--single-transaction`), compressão Gzip e política de retenção de 7 dias.
   - Agendado cronjob diário das 03:00 no Ubuntu.
   - Implementada rota administrativa no Express (`/api/admin/backup` e `/api/admin/backups`) e interface visual na Central de Configurações para acionamento sob demanda.
-- [ ] **PWA / Notificações no Dispositivo:**
-  - Suporte a instalação como App no celular do cuidador e fonoaudiólogo.
+- [x] **PWA / Notificações no Dispositivo:**
+  - Criado o manifesto W3C (`manifest.json`) com ícones de alta resolução (192x192, 512x512, maskable e apple-touch-icon).
+  - Implementado Service Worker (`sw.js`) para carregamento instantâneo e resiliência offline do App Shell.
+  - Criado o componente inteligente `PWAInstallPrompt.tsx` com detecção de modo standalone, suporte nativo a prompt no Android/Desktop e instruções de instalação para iOS (Safari).
+  - Suporte à API nativa de Notificações do Navegador para lembretes clínicos e de alimentação.
 
 ---
 
