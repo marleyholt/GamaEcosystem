@@ -40,7 +40,7 @@ export const OfficialLetterhead: React.FC<LetterheadProps> = ({
       <div className="flex-1 flex flex-col pl-7 sm:pl-9 pr-6 sm:pr-8 pt-7 pb-6 relative z-0">
         {/* Cabeçalho Oficial GAMA FONOAUDIOLOGIA - Área nobre ampliada com o DOBRO do tamanho */}
         <header className="flex items-center justify-between border-b border-neutral-200 pb-5 mb-6 min-h-[170px] sm:min-h-[190px]">
-          <div className="flex-1 pr-4 max-w-[45%]">
+          <div className="flex-1 pr-4 max-w-[40%]">
             {documentType && (
               <span className="text-[10px] sm:text-xs uppercase font-bold tracking-widest text-[#7a5937] block mb-1">
                 {documentType}
@@ -56,14 +56,16 @@ export const OfficialLetterhead: React.FC<LetterheadProps> = ({
             </p>
           </div>
 
-          {/* Área da Logomarca DOBRADA - Ocupando com Imponência Toda a Lateral Superior Direita */}
-          <div className="w-[50%] sm:w-[52%] max-w-[460px] h-36 sm:h-44 md:h-48 flex items-center justify-end select-none">
+          {/* Área da Logomarca Ampliada 2.5x e Justificada Exclusivamente à Direita */}
+          <div className="w-[58%] sm:w-[60%] flex items-center justify-end select-none pl-2">
             {config.logoUrl ? (
-              <img 
-                src={config.logoUrl} 
-                alt={config.clinicName || 'Logomarca Oficial'} 
-                className="w-full h-full max-h-48 object-contain object-right drop-shadow-sm scale-110 sm:scale-125 origin-right" 
-              />
+              <div className="w-full flex justify-end items-center">
+                <img 
+                  src={config.logoUrl} 
+                  alt={config.clinicName || 'Logomarca Oficial'} 
+                  className="max-h-52 sm:max-h-64 md:max-h-72 w-auto max-w-full object-contain object-right drop-shadow-sm ml-auto" 
+                />
+              </div>
             ) : (
               <div className="flex items-center justify-end gap-5 h-full">
                 {/* Símbolo do Monograma g° com Dimensões Dobradas */}
