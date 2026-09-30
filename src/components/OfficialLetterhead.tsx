@@ -58,10 +58,10 @@ export const OfficialLetterhead: React.FC<LetterheadProps> = ({
 
           {/* Área da Logomarca Proporcional à Altura do Título (-30% do tamanho anterior) Justificada à Direita */}
           <div className="w-[50%] sm:w-[52%] flex items-center justify-end select-none pl-2">
-            {config.logoUrl ? (
+            {(config.logoUrl || '/assets/logo.png') ? (
               <div className="w-full flex justify-end items-center">
                 <img 
-                  src={config.logoUrl} 
+                  src={config.logoUrl || '/assets/logo.png'} 
                   alt={config.clinicName || 'Logomarca Oficial'} 
                   className="max-h-20 sm:max-h-24 md:max-h-28 w-auto max-w-full object-contain object-right drop-shadow-sm ml-auto" 
                 />
