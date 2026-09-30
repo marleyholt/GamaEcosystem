@@ -15,17 +15,17 @@ Este documento é a fonte de verdade para o acompanhamento contínuo de tarefas,
 ## 📋 2. TO-DO LIST (Backlog de Tarefas por Prioridade)
 
 ### 🔴 Alta Prioridade (Próximos Passos Imediatos)
-- [ ] **API de Sincronização MariaDB Completa (CRUD de Produção):**
-  - Implementar endpoints no backend Express (`server_prod.cjs`) para persistir:
+- [x] **API de Sincronização MariaDB Completa (CRUD de Produção):**
+  - Implementados endpoints no backend Express (`server_prod.cjs`) para persistir:
     - Pacientes (`/api/patients`)
     - Prontuários Médicos (`/api/medical-records`)
     - Avaliações RaDI (`/api/radi`)
     - Registros Diários de Alimentação (`/api/feeding-logs`)
     - Configurações da Clínica (`/api/clinic-config`)
     - Evoluções Oficiais (`/api/evolutions`)
-  - Conectar o frontend React para ler/gravar diretamente nessas rotas da API em produção com fallback transparente.
+  - Conectado o frontend React (`src/services/mariaDBSync.ts` e `App.tsx`) para ler e gravar em tempo real no MariaDB com sincronização automática e resiliência local.
 - [ ] **Script de Deploy Automatizado (One-Click Update via Git Hook / Script):**
-  - Criar um script `update.sh` em `/var/www/gamaecosystem` para atualizar o código via `git pull`, rodar `npm run build` e recarregar o PM2 de forma rápida.
+  - Criar um script `update.sh` em `/var/www/gamaecosystem` para atualizar o código via `git pull`, rodar `npm run build` e recarregar o PM2 de forma rápida e segura.
 
 ### 🟡 Média Prioridade
 - [ ] **Módulo de Relatórios e Exportação em Lote:**
