@@ -34,6 +34,7 @@ import { ConfigurationView } from './components/ConfigurationView';
 import { AuthModal } from './components/AuthModal';
 import { PWAInstallPrompt } from './components/PWAInstallPrompt';
 import { generateOfficialReportPDF } from './utils/pdfGenerator';
+import { updateBrowserFavicon } from './utils/faviconManager';
 import { 
   ClinicConfig, 
   Caregiver, 
@@ -242,6 +243,12 @@ export default function App() {
       document.body.classList.add('theme-light');
     }
   }, [darkMode]);
+
+  // Sincroniza dinamicamente o Favicon da aba do navegador e ícone de celular com o clinicConfig
+  useEffect(() => {
+    const iconSource = clinicConfig.faviconUrl || clinicConfig.logoUrl;
+    updateBrowserFavicon(iconSource);
+  }, [clinicConfig.faviconUrl, clinicConfig.logoUrl]);
 
   // Auto-sincronização inicial com o MariaDB (Produção) e Firestore (Backup)
   useEffect(() => {
