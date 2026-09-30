@@ -31,10 +31,10 @@ Este documento é a fonte de verdade para o acompanhamento contínuo de tarefas,
   - Reformulada a aba **Configuração de Marca** em dois painéis independentes:
     - Card 1: Logomarca para Relatórios e Laudos (exclusivo para PDFs e papel timbrado).
     - Card 2: Favicon & Ícone do App PWA (para a aba do navegador e ícone de instalação no celular).
-  - Implementado redimensionamento inteligente via Canvas (`imageOptimizer.ts`) sem letterboxing/margens vazias com modo `contain-right`.
-  - Logomarca no cabeçalho do Papel Timbrado ampliada em **2,5x** (`max-h-52 md:max-h-72`) e estritamente **justificada à direita** (`ml-auto object-right`).
-  - Implementado gerenciador universal de Favicon (`faviconManager.ts`) com injeção em tempo real e no boot (`main.tsx`), garantindo que o ícone apareça na aba e no atalho do PWA.
-  - Implementado botão explícito "Salvar Alterações de Marca" com Janela Modal de Confirmação ("As configurações serão alteradas, tem certeza?") antes de efetivar e gravar permanentemente no banco.
+  - Redução das distâncias verticais (topo e rodapé do cabeçalho) no papel timbrado (`OfficialLetterhead.tsx`), otimizando o aproveitamento da folha A4 e eliminando vácuos.
+  - Implementado algoritmo de **Auto-Trim** (`autoTrimCanvas` em `imageOptimizer.ts`) que recorta automaticamente margens brancas/transparentes de imagens enviadas.
+  - Favicon com preenchimento de borda a borda (**grande como o do Google AI Studio**), sem margens em branco na aba do navegador.
+  - Implementado botão explícito "Salvar Alterações de Marca" com Janela Modal de Confirmação antes de efetivar e gravar permanentemente no banco.
 - [x] **Pop-up de Usuário no Topo Estilo Google (Troca de Senha com Senha Atual, Tema e Configurações):**
   - Removido o botão de logout solto e botão de tema da barra superior.
   - Ao clicar no badge do usuário logado, abre um pop-up flutuante contendo:
