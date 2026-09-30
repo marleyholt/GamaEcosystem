@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { Logo } from './Logo';
 import { UserProfile } from '../types';
 import { UserProfileModal } from './UserProfileModal';
+import { UserManualModal } from './UserManualModal';
 import { 
   Bell, 
+  HelpCircle,
   Moon, 
   Sun, 
   ShieldCheck, 
@@ -40,6 +42,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenMenu
 }) => {
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [isManualModalOpen, setIsManualModalOpen] = useState(false);
 
   const activeUser = user || propCurrentUser || {
     id: 'user_fallback',
@@ -103,6 +106,16 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
           )}
 
+          {/* Botão Discreto de Manual do Usuário com Símbolo de Interrogação */}
+          <button 
+            onClick={() => setIsManualModalOpen(true)}
+            className="p-2 rounded-xl bg-[#27211d] hover:bg-[#342b26] text-[#a69a8f] hover:text-[#f4efe8] border border-[#3f342d] transition-colors cursor-pointer group"
+            title="Manual do Usuário & Guia Operacional"
+            aria-label="Abrir manual do usuário"
+          >
+            <HelpCircle className="w-4 h-4 text-[#a69a8f] group-hover:text-[#c8a88a] transition-colors" />
+          </button>
+
           {/* Sino de Notificações Posicionado no Lado ESQUERDO do Botão do Usuário */}
           <button 
             className="p-2 rounded-xl bg-[#27211d] hover:bg-[#342b26] text-[#a69a8f] hover:text-[#f4efe8] border border-[#3f342d] transition-colors cursor-pointer"
@@ -142,6 +155,13 @@ export const Header: React.FC<HeaderProps> = ({
         darkMode={darkMode}
         setDarkMode={setDarkMode}
         onOpenSettings={onOpenSettings}
+      />
+
+      {/* Modal de Manual do Usuário com Janelas por Módulo e Regras de Permissão RBAC */}
+      <UserManualModal
+        isOpen={isManualModalOpen}
+        onClose={() => setIsManualModalOpen(false)}
+        currentUser={activeUser}
       />
     </header>
   );
