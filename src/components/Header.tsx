@@ -20,6 +20,7 @@ export interface HeaderProps {
   onLogout: () => void;
   onOpenUserModal?: () => void;
   onUpdateUser?: (updated: UserProfile) => void;
+  onOpenSettings?: () => void;
   patientsCount?: number;
   pendingUsersCount?: number;
   onOpenMenu: () => void;
@@ -33,6 +34,7 @@ export const Header: React.FC<HeaderProps> = ({
   onLogout,
   onOpenUserModal,
   onUpdateUser,
+  onOpenSettings,
   patientsCount,
   pendingUsersCount = 0,
   onOpenMenu
@@ -88,7 +90,28 @@ export const Header: React.FC<HeaderProps> = ({
             <span className="text-[11px]">Firebase / OCI MariaDB Ready</span>
           </div>
 
-          {/* User Badge (Abre Pop-up Flutuante com Troca de Senha e Logout) */}
+          {/* Pending Users Notification */}
+          {pendingUsersCount > 0 && (
+            <div
+              className="relative p-2 rounded-xl bg-[#27211d] text-amber-400 border border-amber-900/50 cursor-pointer"
+              title={`${pendingUsersCount} usuário(s) aguardando aprovação`}
+            >
+              <UserCheck className="w-4 h-4" />
+              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-amber-500 text-black text-[10px] font-bold flex items-center justify-center">
+                {pendingUsersCount}
+              </span>
+            </div>
+          )}
+
+          {/* Sino de Notificações Posicionado no Lado ESQUERDO do Botão do Usuário */}
+          <button 
+            className="p-2 rounded-xl bg-[#27211d] hover:bg-[#342b26] text-[#a69a8f] hover:text-[#f4efe8] border border-[#3f342d] transition-colors cursor-pointer"
+            title="Notificações e pendências clínicas"
+          >
+            <Bell className="w-4 h-4 text-[#c8a88a]" />
+          </button>
+
+          {/* User Badge (Abre Pop-up Flutuante com Troca de Senha, Tema, Configurações Gerais e Logout) */}
           <button
             onClick={handleUserBadgeClick}
             className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl bg-[#27211d] hover:bg-[#342b26] border border-[#3f342d] transition-all text-left cursor-pointer active:scale-95"
@@ -106,47 +129,6 @@ export const Header: React.FC<HeaderProps> = ({
               </span>
             </div>
           </button>
-
-          {/* Pending Users Notification */}
-          {pendingUsersCount > 0 && (
-            <div
-              className="relative p-2 rounded-xl bg-[#27211d] text-amber-400 border border-amber-900/50 cursor-pointer"
-              title={`${pendingUsersCount} usuário(s) aguardando aprovação`}
-            >
-              <UserCheck className="w-4 h-4" />
-              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-amber-500 text-black text-[10px] font-bold flex items-center justify-center">
-                {pendingUsersCount}
-              </span>
-            </div>
-          )}
-
-          {/* Notification Bell */}
-          <button 
-            className="p-2 rounded-xl bg-[#27211d] hover:bg-[#342b26] text-[#a69a8f] hover:text-[#f4efe8] border border-[#3f342d] transition-colors"
-            title="Notificações clínicas"
-          >
-            <Bell className="w-4 h-4" />
-          </button>
-
-          {/* Dark / Light Toggle */}
-          <button
-            onClick={() => setDarkMode && setDarkMode(!darkMode)}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-[#27211d] hover:bg-[#342b26] text-[#a69a8f] hover:text-[#c8a88a] border border-[#3f342d] transition-all cursor-pointer shadow-sm group"
-            title={darkMode ? 'Mudar para Modo Claro' : 'Mudar para Modo Escuro'}
-            aria-label={darkMode ? 'Mudar para Modo Claro' : 'Mudar para Modo Escuro'}
-          >
-            {darkMode ? (
-              <>
-                <Sun className="w-4 h-4 text-amber-400 group-hover:rotate-45 transition-transform" />
-                <span className="text-[11px] font-medium hidden sm:inline text-[#c8a88a]">Claro</span>
-              </>
-            ) : (
-              <>
-                <Moon className="w-4 h-4 text-indigo-600 group-hover:-rotate-12 transition-transform" />
-                <span className="text-[11px] font-medium hidden sm:inline text-[#1c1714]">Escuro</span>
-              </>
-            )}
-          </button>
         </div>
       </div>
 
@@ -157,6 +139,9 @@ export const Header: React.FC<HeaderProps> = ({
         onClose={() => setIsProfileModalOpen(false)}
         onLogout={onLogout}
         onUpdateUser={onUpdateUser}
+        darkMode={darkMode}
+        setDarkMode={setDarkMode}
+        onOpenSettings={onOpenSettings}
       />
     </header>
   );
