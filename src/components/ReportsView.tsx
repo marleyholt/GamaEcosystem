@@ -3,6 +3,7 @@ import { Patient, RadiAssessment, DailyFeedingLog, UserProfile } from '../types'
 import { OfficialEvolutionData } from '../types/clinicalEvolution';
 import { ClinicConfig, DEFAULT_CLINIC_CONFIG } from '../types/clinicConfig';
 import { MonthlyConsolidatedReportView } from './MonthlyConsolidatedReportView';
+import { BatchReportsExportModal } from './BatchReportsExportModal';
 import { generateOfficialReportPDF } from '../utils/pdfGenerator';
 import { maskCPF } from '../utils/crypto';
 import { 
@@ -14,7 +15,8 @@ import {
   AlertTriangle, 
   ArrowLeft,
   Share2,
-  Calendar
+  Calendar,
+  Layers
 } from 'lucide-react';
 
 interface ReportsViewProps {
@@ -41,17 +43,28 @@ export const ReportsView: React.FC<ReportsViewProps> = ({
   const [reportType, setReportType] = useState<'mensal_consolidado' | 'laudo_radi'>('mensal_consolidado');
   const [activePatient, setActivePatient] = useState<Patient | null>(selectedPatient);
   const [reportDate] = useState<string>(new Date().toLocaleDateString('pt-BR'));
+  const [isBatchModalOpen, setIsBatchModalOpen] = useState<boolean>(false);
 
   if (!activePatient) {
     return (
       <div className="space-y-6">
-        <div>
-          <h2 className="text-2xl font-bold font-serif text-[#f4efe8]">
-            Emitir Laudo / Relatório com Marca d'Água
-          </h2>
-          <p className="text-sm text-[#a69a8f] mt-1">
-            Escolha qual paciente deseja gerar a folha padrão timbrada com marca d'água oficial
-          </p>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h2 className="text-2xl font-bold font-serif text-[#f4efe8]">
+              Emitir Laudo / Relatório com Marca d'Água
+            </h2>
+            <p className="text-sm text-[#a69a8f] mt-1">
+              Escolha qual paciente deseja gerar a folha padrão timbrada com marca d'água oficial
+            </p>
+          </div>
+
+          <button
+            onClick={() => setIsBatchModalOpen(true)}
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#c8a88a] hover:bg-[#d6bba0] text-[#181513] font-bold text-xs shadow-md transition-all cursor-pointer shrink-0"
+          >
+            <Layers className="w-4 h-4" />
+            <span>Exportação em Lote ({patients.length})</span>
+          </button>
         </div>
 
         <div className="space-y-3">
@@ -84,6 +97,18 @@ export const ReportsView: React.FC<ReportsViewProps> = ({
             </div>
           ))}
         </div>
+
+        {/* Modal de Exportação em Lote */}
+        <BatchReportsExportModal
+          isOpen={isBatchModalOpen}
+          onClose={() => setIsBatchModalOpen(false)}
+          patients={patients}
+          assessments={assessments}
+          dailyLogs={dailyLogs}
+          officialEvolutions={officialEvolutions}
+          currentUser={currentUser}
+          clinicConfig={clinicConfig}
+        />
       </div>
     );
   }
@@ -167,6 +192,14 @@ export const ReportsView: React.FC<ReportsViewProps> = ({
 
             <div className="flex items-center gap-2">
               <button
+                onClick={() => setIsBatchModalOpen(true)}
+                className="px-4 py-2.5 rounded-xl bg-[#27211d] hover:bg-[#342b26] text-[#c8a88a] text-xs font-semibold border border-[#3a312c] flex items-center gap-2 transition-colors cursor-pointer"
+                title="Exportação em Lote de Relatórios"
+              >
+                <Layers className="w-4 h-4" /> Exportação em Lote
+              </button>
+
+              <button
                 onClick={() => window.print()}
                 className="px-4 py-2.5 rounded-xl bg-[#27211d] hover:bg-[#342b26] text-[#f4efe8] text-xs font-semibold border border-[#3a312c] flex items-center gap-2 transition-colors"
               >
@@ -175,9 +208,9 @@ export const ReportsView: React.FC<ReportsViewProps> = ({
 
               <button
                 onClick={handleDownloadPDF}
-                className="px-5 py-2.5 rounded-xl bg-[#c8a88a] hover:bg-[#d6bba0] text-[#181513] text-xs font-bold shadow-md flex items-center gap-2 transition-all"
+                className="px-5 py-2.5 rounded-xl bg-[#c8a88a] hover:bg-[#d6bba0] text-[#181513] text-xs font-bold shadow-md flex items-center gap-2 transition-all cursor-pointer"
               >
-                <Download className="w-4 h-4" /> Baixar PDF com Marca d'Água
+                <Download className="w-4 h-4" /> Baixar PDF
               </button>
             </div>
           </div>
@@ -344,6 +377,18 @@ export const ReportsView: React.FC<ReportsViewProps> = ({
       </div>
         </>
       )}
+
+      {/* Modal de Exportação em Lote */}
+      <BatchReportsExportModal
+        isOpen={isBatchModalOpen}
+        onClose={() => setIsBatchModalOpen(false)}
+        patients={patients}
+        assessments={assessments}
+        dailyLogs={dailyLogs}
+        officialEvolutions={officialEvolutions}
+        currentUser={currentUser}
+        clinicConfig={clinicConfig}
+      />
     </div>
   );
 };
