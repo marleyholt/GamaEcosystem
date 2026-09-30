@@ -46,6 +46,9 @@ REGRA DE OURO: SEMPRE SEGUIR AS DIRETRIZES DO agents.md
   - **Manifesto:** `/manifest.json` com `display: standalone` e tema `#c8a88a`
   - **Service Worker:** `/sw.js` com cache de casca (App Shell) e resiliência offline
   - **Ícones em Alta Resolução:** `pwa-192x192.png`, `pwa-512x512.png`, `pwa-maskable-512x512.png` e `apple-touch-icon.png`
+  - **Gestão de Identidade Visual Independente:**
+    - `logoUrl`: Exclusiva para laudos clínicos, PDFs e papel timbrado oficial.
+    - `faviconUrl`: Exclusiva para aba do navegador (Favicon) e ícone gerado ao instalar o App PWA no celular do cliente/cuidador.
   - **Instalabilidade Nativa:** Componente `PWAInstallPrompt.tsx` com banner responsivo e instruções personalizadas para iOS e Android.
 
 ### 🗄️ Banco de Dados Dedicado (MariaDB / MySQL)
