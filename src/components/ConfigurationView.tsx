@@ -12,6 +12,7 @@ import { AdminUsersView } from './AdminUsersView';
 import { ChangeLogView } from './ChangeLogView';
 import { backupAllLocalToFirestore } from '../services/firestoreSync';
 import { triggerDatabaseBackup, fetchBackupList } from '../services/mariaDBSync';
+import { resizeImageToTarget } from '../utils/imageOptimizer';
 import { 
   Building2, 
   Users, 
@@ -141,85 +142,89 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
   const [newTherapistInstagram, setNewTherapistInstagram] = useState('');
   const [newTherapistSpecialty, setNewTherapistSpecialty] = useState('Disfagia & Deglutição');
 
-  const handleSaveConfig = (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
+  // Estado para Janela de Confirmação de Alterações
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [hasPendingChanges, setHasPendingChanges] = useState(false);
+
+  // Efetiva as alterações apenas após confirmação explícita
+  const handleConfirmSave = () => {
     onUpdateClinicConfig(tempConfig);
+    localStorage.setItem('health_deglut_clinic_config', JSON.stringify(tempConfig));
+    setHasPendingChanges(false);
+    setShowConfirmModal(false);
     setSavedSuccess(true);
-    setTimeout(() => setSavedSuccess(false), 3000);
-  };
+    setTimeout(() => setSavedSuccess(false), 3500);
 
-  // Upload da Logomarca (Exclusivo para Relatórios e Timbrados)
-  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const base64 = event.target?.result as string;
-      const updated = { ...tempConfig, logoUrl: base64 };
-      setTempConfig(updated);
-      localStorage.setItem('health_deglut_clinic_config', JSON.stringify(updated));
-      onUpdateClinicConfig(updated);
-      setSavedSuccess(true);
-      setTimeout(() => setSavedSuccess(false), 3000);
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const handleResetLogo = () => {
-    const updated = { ...tempConfig, logoUrl: undefined };
-    setTempConfig(updated);
-    localStorage.setItem('health_deglut_clinic_config', JSON.stringify(updated));
-    onUpdateClinicConfig(updated);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
-  };
-
-  // Upload do Ícone de Aplicativo / Favicon (Navegador & PWA)
-  const handleFaviconUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const base64 = event.target?.result as string;
-      const updated = { ...tempConfig, faviconUrl: base64 };
-      setTempConfig(updated);
-      localStorage.setItem('health_deglut_clinic_config', JSON.stringify(updated));
-      onUpdateClinicConfig(updated);
-
-      // Injeta diretamente na aba do navegador
+    // Sincroniza Favicon do navegador com a nova configuração confirmada
+    const iconSource = tempConfig.faviconUrl || tempConfig.logoUrl;
+    if (iconSource) {
       let link: HTMLLinkElement | null = document.querySelector("link[rel*='icon']");
       if (!link) {
         link = document.createElement('link');
         link.rel = 'shortcut icon';
         document.getElementsByTagName('head')[0].appendChild(link);
       }
-      link.href = base64;
+      link.href = iconSource;
 
       let appleLink: HTMLLinkElement | null = document.querySelector("link[rel='apple-touch-icon']");
       if (appleLink) {
-        appleLink.href = base64;
+        appleLink.href = iconSource;
       }
-      setSavedSuccess(true);
-      setTimeout(() => setSavedSuccess(false), 3000);
-    };
-    reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSaveConfig = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    setShowConfirmModal(true);
+  };
+
+  // Upload da Logomarca (Exclusivo para Relatórios e Timbrados) com achatar/expandir para proporção ideal (500x200)
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      // Redimensiona/achata para resolução nítida de cabeçalho mantendo fidelidade
+      const optimizedBase64 = await resizeImageToTarget(file, 600, 240, 'contain');
+      const updated = { ...tempConfig, logoUrl: optimizedBase64 };
+      setTempConfig(updated);
+      setHasPendingChanges(true);
+    } catch {
+      alert('Erro ao processar imagem da logomarca.');
+    }
+  };
+
+  const handleResetLogo = () => {
+    const updated = { ...tempConfig, logoUrl: undefined };
+    setTempConfig(updated);
+    setHasPendingChanges(true);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  // Upload do Ícone de Aplicativo / Favicon (Navegador & PWA) com achatar/expandir para quadrado perfeito (512x512)
+  const handleFaviconUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      // Garante ícone quadrado exato (512x512) para PWA e abas
+      const optimizedSquareBase64 = await resizeImageToTarget(file, 512, 512, 'contain');
+      const updated = { ...tempConfig, faviconUrl: optimizedSquareBase64 };
+      setTempConfig(updated);
+      setHasPendingChanges(true);
+    } catch {
+      alert('Erro ao processar imagem do ícone.');
+    }
   };
 
   const handleResetFavicon = () => {
     const updated = { ...tempConfig, faviconUrl: undefined };
     setTempConfig(updated);
-    localStorage.setItem('health_deglut_clinic_config', JSON.stringify(updated));
-    onUpdateClinicConfig(updated);
+    setHasPendingChanges(true);
     if (faviconInputRef.current) {
       faviconInputRef.current.value = '';
-    }
-
-    let link: HTMLLinkElement | null = document.querySelector("link[rel*='icon']");
-    if (link) {
-      link.href = '/pwa-192x192.png';
     }
   };
 
@@ -684,6 +689,30 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
               </div>
             </div>
 
+          </div>
+
+          {/* Barra Superior / Alerta de Alterações Pendentes na Marca com Botão de Salvar Alterações */}
+          <div className="bg-[#1f1a17] border border-[#382e27] rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-lg">
+            <div className="flex items-center gap-3">
+              <div className={`w-3 h-3 rounded-full ${hasPendingChanges ? 'bg-amber-400 animate-ping' : 'bg-emerald-400'}`} />
+              <div>
+                <p className="text-xs font-bold text-[#f4efe8]">
+                  {hasPendingChanges ? 'Você possui alterações de imagem não salvas!' : 'Identidade visual e logotipo em conformidade.'}
+                </p>
+                <p className="text-[11px] text-[#a69a8f]">
+                  Clique no botão ao lado para salvar de forma permanente no banco de dados e aplicar ao sistema.
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setShowConfirmModal(true)}
+              className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#c8a88a] to-[#b69474] hover:brightness-110 text-[#181513] font-bold text-xs shadow-md transition-all cursor-pointer active:scale-95 shrink-0"
+            >
+              <Save className="w-4 h-4" />
+              Salvar Alterações de Marca
+            </button>
           </div>
 
           {/* Seleção do Perfil de Terapeuta para Prévia em Tempo Real */}
@@ -1421,6 +1450,54 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
       {/* Conteúdo da Tab: ChangeLog & Transparência Técnica */}
       {activeTab === 'changelog' && (
         <ChangeLogView />
+      )}
+
+      {/* Modal de Confirmação Obrigatório para Salvar Alterações */}
+      {showConfirmModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="bg-[#1f1a17] border border-[#c8a88a]/40 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0">
+                <AlertTriangle className="w-5 h-5" />
+              </div>
+              <div className="space-y-1">
+                <h3 className="text-base font-bold font-serif text-[#f4efe8]">
+                  Confirmar Alterações
+                </h3>
+                <p className="text-xs text-[#a69a8f] leading-relaxed">
+                  As configurações e arquivos visuais serão salvos de forma permanente no banco de dados e aplicados em toda a plataforma. <strong>Tem certeza que deseja salvar?</strong>
+                </p>
+              </div>
+            </div>
+
+            <div className="p-3 rounded-xl bg-[#181513] border border-[#342b26] text-xs text-[#c8a88a] space-y-1">
+              <p className="font-semibold text-[#f4efe8]">Itens que serão efetivados:</p>
+              <ul className="list-disc list-inside space-y-0.5 text-[11px] text-[#a69a8f]">
+                <li>Logomarca de relatórios, atestados e papel timbrado</li>
+                <li>Favicon do navegador e ícone de instalação do PWA</li>
+                <li>Dados cadastrais da clínica e da Responsável Técnica</li>
+              </ul>
+            </div>
+
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setShowConfirmModal(false)}
+                className="px-4 py-2 rounded-xl bg-[#27211d] hover:bg-[#342b26] text-[#a69a8f] hover:text-[#f4efe8] text-xs font-semibold transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmSave}
+                className="flex items-center gap-1.5 px-5 py-2 rounded-xl bg-[#c8a88a] hover:bg-[#d6bca3] text-[#181513] font-bold text-xs shadow-md transition-all cursor-pointer active:scale-95"
+              >
+                <Save className="w-4 h-4" />
+                Sim, Salvar Alterações
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
