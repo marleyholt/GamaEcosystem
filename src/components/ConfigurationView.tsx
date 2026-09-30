@@ -177,14 +177,14 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
     }
   };
 
-  // Upload do Ícone de Aplicativo / Favicon (Navegador & PWA) com achatar/expandir para quadrado perfeito (512x512)
+  // Upload do Ícone de Aplicativo / Favicon (Navegador & PWA) com auto-trim de bordas brancas e expansão máxima de borda a borda (512x512)
   const handleFaviconUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     try {
-      // Garante ícone quadrado exato (512x512) para PWA e abas
-      const optimizedSquareBase64 = await resizeImageToTarget(file, 512, 512, 'contain');
+      // Elimina margens em branco da imagem e expande o símbolo para ocupar o favicon inteiro (estilo Google AI Studio)
+      const optimizedSquareBase64 = await resizeImageToTarget(file, 512, 512, 'favicon-square');
       const updated = { ...tempConfig, faviconUrl: optimizedSquareBase64 };
       setTempConfig(updated);
       setHasPendingChanges(true);
