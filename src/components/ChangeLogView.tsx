@@ -154,9 +154,20 @@ export const ChangeLogView: React.FC<ChangeLogViewProps> = () => {
                   <CheckCircle2 className="w-3 h-3 text-emerald-400" />
                 </div>
                 <div>
-                  <strong className="text-white">Cabeçalho Enxuto sem Vácuos & Favicon de Borda a Borda:</strong>
+                  <strong className="text-white">Cabeçalho Enxuto, Logo Alinhada (-30%) & Favicon de Borda a Borda:</strong>
                   <p className="text-xs text-[#a69a8f] mt-0.5">
-                    Distâncias em cima e embaixo reduzidas no papel timbrado para melhor aproveitamento do papel. Algoritmo de Auto-Trim que elimina margens brancas e expande o Favicon para ocupar a aba inteira (grande como o do Google AI Studio).
+                    Redução de 30% na altura da logo para coincidir perfeitamente com a altura do texto do título. Auto-Trim de bordas brancas e favicon grande na aba.
+                  </p>
+                </div>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <div className="w-4 h-4 mt-0.5 rounded border border-[#c8a88a]/40 bg-[#1f1a17] flex items-center justify-center shrink-0">
+                  <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                </div>
+                <div>
+                  <strong className="text-white">Manual do Usuário com Restrição de Acesso (RBAC):</strong>
+                  <p className="text-xs text-[#a69a8f] mt-0.5">
+                    Botão discreto de interrogação ao lado do sino abrindo guia completo por módulo. Segue as mesmas permissões do usuário logado.
                   </p>
                 </div>
               </li>
