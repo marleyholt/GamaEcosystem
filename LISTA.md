@@ -28,10 +28,12 @@ Este documento é a fonte de verdade para o acompanhamento contínuo de tarefas,
   - Criar um script `update.sh` em `/var/www/gamaecosystem` para atualizar o código via `git pull`, rodar `npm run build` e recarregar o PM2 de forma rápida e segura.
 
 ### 🟡 Média Prioridade
-- [ ] **Módulo de Relatórios e Exportação em Lote:**
-  - Exportação em lote de laudos em PDF com timbrado oficial da clínica e assinatura digital.
-- [ ] **Otimização de Code Splitting / Chunking no Vite:**
-  - Separar bibliotecas pesadas (`jspdf`, `html2canvas`) em chunks dinâmicos para acelerar o carregamento inicial.
+- [x] **Módulo de Relatórios e Exportação em Lote:**
+  - Implementado o componente `BatchReportsExportModal.tsx` com suporte a seleção granular de pacientes.
+  - Exportação em lote de laudos clínicos em PDF com timbrado, marca d'água oficial e chave criptográfica SEAL.
+  - Exportação consolidada de indicadores em planilha CSV formatada para prontuários e acompanhamento.
+- [x] **Otimização de Code Splitting / Chunking no Vite:**
+  - Configurado `manualChunks` no `vite.config.ts` para separar `vendor-pdf` (`jspdf`, `html2canvas`), `vendor-react` e `vendor-icons`, acelerando o carregamento inicial da aplicação.
 
 ### 🟢 Baixa Prioridade / Melhorias Futuras
 - [ ] **Rotinas de Backup Automático do Banco de Dados:**
