@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Logo } from './Logo';
 import { UserProfile } from '../types';
+import { UserProfileModal } from './UserProfileModal';
 import { 
   Bell, 
   Moon, 
   Sun, 
-  LogOut, 
   ShieldCheck, 
   Database, 
   UserCheck,
@@ -19,6 +19,7 @@ export interface HeaderProps {
   setDarkMode?: (val: boolean) => void;
   onLogout: () => void;
   onOpenUserModal?: () => void;
+  onUpdateUser?: (updated: UserProfile) => void;
   patientsCount?: number;
   pendingUsersCount?: number;
   onOpenMenu: () => void;
@@ -31,10 +32,13 @@ export const Header: React.FC<HeaderProps> = ({
   setDarkMode,
   onLogout,
   onOpenUserModal,
+  onUpdateUser,
   patientsCount,
   pendingUsersCount = 0,
   onOpenMenu
 }) => {
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+
   const activeUser = user || propCurrentUser || {
     id: 'user_fallback',
     name: 'Adriane Gama',
@@ -43,6 +47,13 @@ export const Header: React.FC<HeaderProps> = ({
     approved: true,
     crfaNumber: 'CRFa 3-12894',
     createdAt: new Date().toISOString()
+  };
+
+  const handleUserBadgeClick = () => {
+    setIsProfileModalOpen(prev => !prev);
+    if (onOpenUserModal) {
+      onOpenUserModal();
+    }
   };
 
   return (
@@ -77,11 +88,11 @@ export const Header: React.FC<HeaderProps> = ({
             <span className="text-[11px]">Firebase / OCI MariaDB Ready</span>
           </div>
 
-          {/* User Badge */}
+          {/* User Badge (Abre Pop-up Flutuante com Troca de Senha e Logout) */}
           <button
-            onClick={onOpenUserModal}
-            className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl bg-[#27211d] hover:bg-[#342b26] border border-[#3f342d] transition-all text-left"
-            title="Alterar perfil / Ver dados do usuário"
+            onClick={handleUserBadgeClick}
+            className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl bg-[#27211d] hover:bg-[#342b26] border border-[#3f342d] transition-all text-left cursor-pointer active:scale-95"
+            title="Conta & Configurações de Usuário"
           >
             <div className="w-7 h-7 rounded-full bg-[#c8a88a] text-[#181513] font-bold flex items-center justify-center text-xs">
               {activeUser.name.charAt(0)}
@@ -136,17 +147,17 @@ export const Header: React.FC<HeaderProps> = ({
               </>
             )}
           </button>
-
-          {/* Logout */}
-          <button
-            onClick={onLogout}
-            className="p-2 rounded-xl bg-[#27211d] hover:bg-rose-950/40 text-[#a69a8f] hover:text-rose-400 border border-[#3f342d] transition-colors"
-            title="Sair do sistema"
-          >
-            <LogOut className="w-4 h-4" />
-          </button>
         </div>
       </div>
+
+      {/* Pop-up Flutuante de Perfil de Usuário */}
+      <UserProfileModal
+        user={activeUser}
+        isOpen={isProfileModalOpen}
+        onClose={() => setIsProfileModalOpen(false)}
+        onLogout={onLogout}
+        onUpdateUser={onUpdateUser}
+      />
     </header>
   );
 };
