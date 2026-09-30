@@ -154,9 +154,9 @@ export const ChangeLogView: React.FC<ChangeLogViewProps> = () => {
                   <CheckCircle2 className="w-3 h-3 text-emerald-400" />
                 </div>
                 <div>
-                  <strong className="text-white">Separação de Marca & Otimização de Imagens:</strong>
+                  <strong className="text-white">Separação de Marca, Logo 2.5x Maior & Favicon Universal:</strong>
                   <p className="text-xs text-[#a69a8f] mt-0.5">
-                    Upload independente para Logo de Laudos e Favicon/PWA, redimensionamento/achatar via Canvas de alta qualidade e botão com janela modal de confirmação.
+                    Logomarca ampliada em 2.5x e justificada estritamente à direita no cabeçalho do timbrado. Gerenciador universal de Favicon no boot e no ciclo de vida, além de modal de confirmação para salvar.
                   </p>
                 </div>
               </li>
