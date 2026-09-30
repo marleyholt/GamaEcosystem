@@ -36,34 +36,34 @@ export const OfficialLetterhead: React.FC<LetterheadProps> = ({
         aria-hidden="true" 
       />
 
-      {/* Conteúdo da Folha com Margem da Faixa */}
-      <div className="flex-1 flex flex-col pl-7 sm:pl-9 pr-6 sm:pr-8 pt-7 pb-6 relative z-0">
-        {/* Cabeçalho Oficial GAMA FONOAUDIOLOGIA - Área nobre ampliada com o DOBRO do tamanho */}
-        <header className="flex items-center justify-between border-b border-neutral-200 pb-5 mb-6 min-h-[170px] sm:min-h-[190px]">
-          <div className="flex-1 pr-4 max-w-[40%]">
+      {/* Conteúdo da Folha com Margem da Faixa Otimizada para Aproveitamento Máximo de Espaço */}
+      <div className="flex-1 flex flex-col pl-6 sm:pl-8 pr-5 sm:pr-7 pt-4 sm:pt-5 pb-5 relative z-0">
+        {/* Cabeçalho Oficial GAMA FONOAUDIOLOGIA - Enxuto e Elegante sem vácuos em cima e embaixo */}
+        <header className="flex items-center justify-between border-b border-neutral-200 pb-3 mb-4 min-h-[90px] sm:min-h-[110px]">
+          <div className="flex-1 pr-4 max-w-[42%]">
             {documentType && (
-              <span className="text-[10px] sm:text-xs uppercase font-bold tracking-widest text-[#7a5937] block mb-1">
+              <span className="text-[10px] sm:text-xs uppercase font-bold tracking-widest text-[#7a5937] block mb-0.5">
                 {documentType}
               </span>
             )}
             {title && (
-              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold font-serif text-neutral-900 leading-tight">
+              <h1 className="text-lg sm:text-xl lg:text-2xl font-bold font-serif text-neutral-900 leading-tight">
                 {title}
               </h1>
             )}
-            <p className="text-xs sm:text-sm text-neutral-500 font-sans mt-2">
+            <p className="text-xs text-neutral-500 font-sans mt-1">
               Responsável Técnica: <span className="font-semibold text-neutral-800">{profile.name}</span> • {profile.crfa}
             </p>
           </div>
 
-          {/* Área da Logomarca Ampliada 2.5x e Justificada Exclusivamente à Direita */}
-          <div className="w-[58%] sm:w-[60%] flex items-center justify-end select-none pl-2">
+          {/* Área da Logomarca Ampliada e Justificada Exclusivamente à Direita, Otimizada Sem Vácuos */}
+          <div className="w-[56%] sm:w-[58%] flex items-center justify-end select-none pl-2">
             {config.logoUrl ? (
               <div className="w-full flex justify-end items-center">
                 <img 
                   src={config.logoUrl} 
                   alt={config.clinicName || 'Logomarca Oficial'} 
-                  className="max-h-52 sm:max-h-64 md:max-h-72 w-auto max-w-full object-contain object-right drop-shadow-sm ml-auto" 
+                  className="max-h-28 sm:max-h-36 md:max-h-40 w-auto max-w-full object-contain object-right drop-shadow-sm ml-auto" 
                 />
               </div>
             ) : (
