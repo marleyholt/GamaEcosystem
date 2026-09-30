@@ -7,13 +7,36 @@ export const resizeImageToTarget = (
   file: File,
   targetWidth: number,
   targetHeight: number,
-  mode: 'contain' | 'cover' | 'stretch' = 'contain'
+  mode: 'contain' | 'cover' | 'stretch' | 'contain-right' = 'contain'
 ): Promise<string> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = (e) => {
       const img = new Image();
       img.onload = () => {
+        // Se a imagem for uma logo e quisermos preservar proporção nativa com alta definição sem canvas vazio:
+        if (mode === 'contain-right') {
+          // Mantém proporção e escala para caber em targetHeight ou targetWidth
+          const scale = Math.min(targetWidth / img.width, targetHeight / img.height, 1.5);
+          const finalW = Math.round(img.width * scale);
+          const finalH = Math.round(img.height * scale);
+
+          const canvas = document.createElement('canvas');
+          canvas.width = finalW;
+          canvas.height = finalH;
+          const ctx = canvas.getContext('2d');
+          if (!ctx) {
+            resolve(e.target?.result as string);
+            return;
+          }
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = 'high';
+          ctx.clearRect(0, 0, finalW, finalH);
+          ctx.drawImage(img, 0, 0, finalW, finalH);
+          resolve(canvas.toDataURL('image/png', 0.98));
+          return;
+        }
+
         const canvas = document.createElement('canvas');
         canvas.width = targetWidth;
         canvas.height = targetHeight;
@@ -53,7 +76,7 @@ export const resizeImageToTarget = (
         }
 
         // Retorna Base64 PNG otimizado
-        resolve(canvas.toDataURL('image/png', 0.95));
+        resolve(canvas.toDataURL('image/png', 0.98));
       };
       img.onerror = reject;
       img.src = e.target?.result as string;
