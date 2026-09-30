@@ -38,9 +38,9 @@ export const OfficialLetterhead: React.FC<LetterheadProps> = ({
 
       {/* Conteúdo da Folha com Margem da Faixa Otimizada para Aproveitamento Máximo de Espaço */}
       <div className="flex-1 flex flex-col pl-6 sm:pl-8 pr-5 sm:pr-7 pt-4 sm:pt-5 pb-5 relative z-0">
-        {/* Cabeçalho Oficial GAMA FONOAUDIOLOGIA - Enxuto e Elegante sem vácuos em cima e embaixo */}
-        <header className="flex items-center justify-between border-b border-neutral-200 pb-3 mb-4 min-h-[90px] sm:min-h-[110px]">
-          <div className="flex-1 pr-4 max-w-[42%]">
+        {/* Cabeçalho Oficial GAMA FONOAUDIOLOGIA - Alinhado perfeitamente com a altura do título */}
+        <header className="flex items-center justify-between border-b border-neutral-200 pb-3 mb-4 min-h-[75px] sm:min-h-[85px]">
+          <div className="flex-1 pr-4 max-w-[48%]">
             {documentType && (
               <span className="text-[10px] sm:text-xs uppercase font-bold tracking-widest text-[#7a5937] block mb-0.5">
                 {documentType}
@@ -56,14 +56,14 @@ export const OfficialLetterhead: React.FC<LetterheadProps> = ({
             </p>
           </div>
 
-          {/* Área da Logomarca Ampliada e Justificada Exclusivamente à Direita, Otimizada Sem Vácuos */}
-          <div className="w-[56%] sm:w-[58%] flex items-center justify-end select-none pl-2">
+          {/* Área da Logomarca Proporcional à Altura do Título (-30% do tamanho anterior) Justificada à Direita */}
+          <div className="w-[50%] sm:w-[52%] flex items-center justify-end select-none pl-2">
             {config.logoUrl ? (
               <div className="w-full flex justify-end items-center">
                 <img 
                   src={config.logoUrl} 
                   alt={config.clinicName || 'Logomarca Oficial'} 
-                  className="max-h-28 sm:max-h-36 md:max-h-40 w-auto max-w-full object-contain object-right drop-shadow-sm ml-auto" 
+                  className="max-h-20 sm:max-h-24 md:max-h-28 w-auto max-w-full object-contain object-right drop-shadow-sm ml-auto" 
                 />
               </div>
             ) : (
