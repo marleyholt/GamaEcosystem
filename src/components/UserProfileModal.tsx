@@ -12,7 +12,10 @@ import {
   User, 
   Mail, 
   Award,
-  ChevronRight
+  ChevronRight,
+  Settings,
+  Sun,
+  Moon
 } from 'lucide-react';
 
 interface UserProfileModalProps {
@@ -21,6 +24,9 @@ interface UserProfileModalProps {
   onClose: () => void;
   onLogout: () => void;
   onUpdateUser?: (updated: UserProfile) => void;
+  darkMode?: boolean;
+  setDarkMode?: (val: boolean) => void;
+  onOpenSettings?: () => void;
 }
 
 export const UserProfileModal: React.FC<UserProfileModalProps> = ({
@@ -28,7 +34,10 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
   isOpen,
   onClose,
   onLogout,
-  onUpdateUser
+  onUpdateUser,
+  darkMode = true,
+  setDarkMode,
+  onOpenSettings
 }) => {
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [currentPassword, setCurrentPassword] = useState('');
@@ -46,13 +55,30 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
     setPasswordError('');
     setPasswordSuccess(false);
 
+    // Validação da Senha Atual
+    if (!currentPassword || currentPassword.trim() === '') {
+      setPasswordError('Por favor, informe a sua senha atual.');
+      return;
+    }
+
+    // Se o usuário já tiver uma senha cadastrada no perfil ou no localStorage, confere
+    if (user.password && user.password !== currentPassword) {
+      setPasswordError('A senha atual informada está incorreta.');
+      return;
+    }
+
     if (newPassword.length < 6) {
       setPasswordError('A nova senha deve ter no mínimo 6 caracteres.');
       return;
     }
 
+    if (newPassword === currentPassword) {
+      setPasswordError('A nova senha deve ser diferente da senha atual.');
+      return;
+    }
+
     if (newPassword !== confirmPassword) {
-      setPasswordError('As senhas digitadas não coincidem.');
+      setPasswordError('A confirmação não coincide com a nova senha digitada.');
       return;
     }
 
@@ -142,6 +168,46 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
         {/* Corpo: Alternância entre Visão Geral e Troca de Senha */}
         {!isChangingPassword ? (
           <div className="pt-4 space-y-2.5">
+            {/* Botão de Alternar Modo Claro / Escuro */}
+            {setDarkMode && (
+              <button
+                type="button"
+                onClick={() => setDarkMode(!darkMode)}
+                className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-[#27211d] hover:bg-[#342b26] border border-[#382e27] text-xs font-semibold text-[#f4efe8] transition-all cursor-pointer group"
+              >
+                <div className="flex items-center gap-2.5">
+                  {darkMode ? (
+                    <Sun className="w-4 h-4 text-amber-400 group-hover:rotate-45 transition-transform" />
+                  ) : (
+                    <Moon className="w-4 h-4 text-indigo-400 group-hover:-rotate-12 transition-transform" />
+                  )}
+                  <span>Tema da Interface</span>
+                </div>
+                <span className={`text-[11px] font-bold px-2 py-0.5 rounded-md ${darkMode ? 'bg-[#382e27] text-amber-400' : 'bg-[#382e27] text-indigo-300'}`}>
+                  {darkMode ? 'Modo Escuro' : 'Modo Claro'}
+                </span>
+              </button>
+            )}
+
+            {/* Botão de Acessar Configurações Gerais */}
+            {onOpenSettings && (
+              <button
+                type="button"
+                onClick={() => {
+                  onClose();
+                  onOpenSettings();
+                }}
+                className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-[#27211d] hover:bg-[#342b26] border border-[#382e27] text-xs font-semibold text-[#f4efe8] transition-all cursor-pointer group"
+              >
+                <div className="flex items-center gap-2.5">
+                  <Settings className="w-4 h-4 text-[#c8a88a] group-hover:rotate-45 transition-transform" />
+                  <span>Configurações Gerais</span>
+                </div>
+                <ChevronRight className="w-4 h-4 text-[#8e8073] group-hover:translate-x-0.5 transition-transform" />
+              </button>
+            )}
+
+            {/* Botão de Alterar Minha Senha */}
             <button
               onClick={() => setIsChangingPassword(true)}
               className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-[#27211d] hover:bg-[#342b26] border border-[#382e27] text-xs font-semibold text-[#f4efe8] transition-all cursor-pointer group"
@@ -153,12 +219,13 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
               <ChevronRight className="w-4 h-4 text-[#8e8073] group-hover:translate-x-0.5 transition-transform" />
             </button>
 
+            {/* Botão de Logout */}
             <button
               onClick={() => {
                 onClose();
                 onLogout();
               }}
-              className="w-full flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-xl bg-rose-950/40 hover:bg-rose-950/70 border border-rose-900/50 text-xs font-bold text-rose-300 transition-all cursor-pointer shadow-sm"
+              className="w-full flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-xl bg-rose-950/40 hover:bg-rose-950/70 border border-rose-900/50 text-xs font-bold text-rose-300 transition-all cursor-pointer shadow-sm mt-1"
             >
               <LogOut className="w-4 h-4" />
               <span>Sair da Conta (Logout)</span>
@@ -169,7 +236,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
             <div className="flex items-center justify-between pb-1">
               <span className="text-xs font-bold text-[#c8a88a] flex items-center gap-1.5">
                 <Lock className="w-3.5 h-3.5" />
-                Nova Senha de Acesso
+                Segurança: Alterar Senha
               </span>
               <button
                 type="button"
@@ -196,6 +263,29 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
               </div>
             )}
 
+            {/* Campo 1: Senha Atual */}
+            <div>
+              <label className="block text-[11px] text-[#a69a8f] mb-1">Senha Atual *</label>
+              <div className="relative">
+                <input
+                  type={showCurrentPassword ? 'text' : 'password'}
+                  placeholder="Digite sua senha atual"
+                  value={currentPassword}
+                  onChange={e => setCurrentPassword(e.target.value)}
+                  className="w-full bg-[#181513] border border-[#3e342e] rounded-xl px-3 py-2 pr-9 text-xs text-[#f4efe8] outline-none focus:border-[#c8a88a]"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                  className="absolute right-2.5 top-2.5 text-[#8e8073] hover:text-[#f4efe8]"
+                >
+                  {showCurrentPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                </button>
+              </div>
+            </div>
+
+            {/* Campo 2: Nova Senha */}
             <div>
               <label className="block text-[11px] text-[#a69a8f] mb-1">Nova Senha *</label>
               <div className="relative">
@@ -217,11 +307,12 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
               </div>
             </div>
 
+            {/* Campo 3: Confirmar Nova Senha */}
             <div>
               <label className="block text-[11px] text-[#a69a8f] mb-1">Confirmar Nova Senha *</label>
               <input
                 type="password"
-                placeholder="Repita a nova senha"
+                placeholder="Repita exatamente a nova senha"
                 value={confirmPassword}
                 onChange={e => setConfirmPassword(e.target.value)}
                 className="w-full bg-[#181513] border border-[#3e342e] rounded-xl px-3 py-2 text-xs text-[#f4efe8] outline-none focus:border-[#c8a88a]"
