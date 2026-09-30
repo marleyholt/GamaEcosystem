@@ -57,6 +57,8 @@ export const DEFAULT_CLINIC_CONFIG: ClinicConfig = {
   email: 'gamafono@gamafono.com.br',
   instagram: '@gama_fonoaudiologia',
   addressLine: 'Rio de Janeiro - RJ • Atendimento Clínico e Domiciliar',
+  logoUrl: '/assets/logo.png',
+  faviconUrl: '/assets/logo.png',
   useLetterheadByDefault: true,
   includeSignatureOnPrint: false // Modelo padrão: papel timbrado sem rubrica conforme solicitação
 };
