@@ -10,8 +10,8 @@ import { Patient, UserProfile, UserRole, NavigationTab } from '../types';
 import { OfficialLetterhead } from './OfficialLetterhead';
 import { AdminUsersView } from './AdminUsersView';
 import { ChangeLogView } from './ChangeLogView';
-import { backupAllLocalToFirestore } from '../services/firestoreSync';
-import { triggerDatabaseBackup, fetchBackupList } from '../services/mariaDBSync';
+import { backupAllLocalToFirestore, syncDocToFirestore, FirestoreCollections } from '../services/firestoreSync';
+import { triggerDatabaseBackup, fetchBackupList, saveClinicConfigToMariaDB } from '../services/mariaDBSync';
 import { resizeImageToTarget } from '../utils/imageOptimizer';
 import { updateBrowserFavicon } from '../utils/faviconManager';
 import { 
@@ -137,6 +137,11 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
   const handleConfirmSave = () => {
     onUpdateClinicConfig(tempConfig);
     localStorage.setItem('health_deglut_clinic_config', JSON.stringify(tempConfig));
+    
+    // Grava de forma permanente no banco de dados MariaDB e no Firestore (backup)
+    saveClinicConfigToMariaDB(tempConfig);
+    syncDocToFirestore(FirestoreCollections.CLINIC_CONFIG, 'global_settings', tempConfig);
+
     setHasPendingChanges(false);
     setShowConfirmModal(false);
     setSavedSuccess(true);
@@ -163,6 +168,12 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
       const updated = { ...tempConfig, logoUrl: optimizedBase64 };
       setTempConfig(updated);
       setHasPendingChanges(true);
+
+      // Auto-gravação imediata no localStorage e estado global para impedir perda no F5
+      onUpdateClinicConfig(updated);
+      localStorage.setItem('health_deglut_clinic_config', JSON.stringify(updated));
+      saveClinicConfigToMariaDB(updated);
+      syncDocToFirestore(FirestoreCollections.CLINIC_CONFIG, 'global_settings', updated);
     } catch {
       alert('Erro ao processar imagem da logomarca.');
     }
@@ -172,6 +183,10 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
     const updated = { ...tempConfig, logoUrl: undefined };
     setTempConfig(updated);
     setHasPendingChanges(true);
+    onUpdateClinicConfig(updated);
+    localStorage.setItem('health_deglut_clinic_config', JSON.stringify(updated));
+    saveClinicConfigToMariaDB(updated);
+    syncDocToFirestore(FirestoreCollections.CLINIC_CONFIG, 'global_settings', updated);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -188,6 +203,13 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
       const updated = { ...tempConfig, faviconUrl: optimizedSquareBase64 };
       setTempConfig(updated);
       setHasPendingChanges(true);
+
+      // Auto-gravação imediata no localStorage e estado global para impedir perda no F5
+      onUpdateClinicConfig(updated);
+      localStorage.setItem('health_deglut_clinic_config', JSON.stringify(updated));
+      saveClinicConfigToMariaDB(updated);
+      syncDocToFirestore(FirestoreCollections.CLINIC_CONFIG, 'global_settings', updated);
+      updateBrowserFavicon(optimizedSquareBase64);
     } catch {
       alert('Erro ao processar imagem do ícone.');
     }
@@ -197,6 +219,11 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
     const updated = { ...tempConfig, faviconUrl: undefined };
     setTempConfig(updated);
     setHasPendingChanges(true);
+    onUpdateClinicConfig(updated);
+    localStorage.setItem('health_deglut_clinic_config', JSON.stringify(updated));
+    saveClinicConfigToMariaDB(updated);
+    syncDocToFirestore(FirestoreCollections.CLINIC_CONFIG, 'global_settings', updated);
+    updateBrowserFavicon(undefined);
     if (faviconInputRef.current) {
       faviconInputRef.current.value = '';
     }
