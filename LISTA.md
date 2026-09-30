@@ -36,6 +36,7 @@ Este documento é a fonte de verdade para o acompanhamento contínuo de tarefas,
   - Implementado algoritmo de **Auto-Trim** (`autoTrimCanvas` em `imageOptimizer.ts`) que recorta automaticamente margens brancas/transparentes de imagens enviadas.
   - Favicon com preenchimento de borda a borda (**grande como o do Google AI Studio**), sem margens em branco na aba do navegador.
   - Implementado botão explícito "Salvar Alterações de Marca" com Janela Modal de Confirmação antes de efetivar e gravar permanentemente no banco.
+  - **Correção de Persistência no F5:** Implementada gravação imediata no `localStorage`, MariaDB e Firestore no exato momento do upload do arquivo, além de trava de segurança no `App.tsx` que impede que requisições assíncronas vazias sobrescrevam a logo customizada ao recarregar a página.
 - [x] **Manual do Usuário Integrado ao Topo com Restrições por Perfil (RBAC):**
   - Adicionado botão discreto ao lado esquerdo do sino de notificações com ícone de interrogação (`HelpCircle`).
   - Ao clicar, abre o **Manual do Usuário** (`UserManualModal.tsx`) contendo janelas e explicações operacionais detalhadas por módulo (O que faz, Como usar passo a passo, Dicas clínicas e Enquadramento regulatório).
