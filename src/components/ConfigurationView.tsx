@@ -13,6 +13,7 @@ import { ChangeLogView } from './ChangeLogView';
 import { backupAllLocalToFirestore } from '../services/firestoreSync';
 import { triggerDatabaseBackup, fetchBackupList } from '../services/mariaDBSync';
 import { resizeImageToTarget } from '../utils/imageOptimizer';
+import { updateBrowserFavicon } from '../utils/faviconManager';
 import { 
   Building2, 
   Users, 
@@ -105,21 +106,7 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
   // Sincronizar Favicon e Ícones do Navegador/PWA
   useEffect(() => {
     const iconSource = tempConfig.faviconUrl || tempConfig.logoUrl;
-    if (iconSource) {
-      let link: HTMLLinkElement | null = document.querySelector("link[rel*='icon']");
-      if (!link) {
-        link = document.createElement('link');
-        link.rel = 'shortcut icon';
-        document.getElementsByTagName('head')[0].appendChild(link);
-      }
-      link.href = iconSource;
-
-      // Também sincroniza com o apple-touch-icon
-      let appleLink: HTMLLinkElement | null = document.querySelector("link[rel='apple-touch-icon']");
-      if (appleLink) {
-        appleLink.href = iconSource;
-      }
-    }
+    updateBrowserFavicon(iconSource);
   }, [tempConfig.faviconUrl, tempConfig.logoUrl]);
 
   // Estados para novo cadastro robusto de Cuidador
@@ -157,20 +144,7 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
 
     // Sincroniza Favicon do navegador com a nova configuração confirmada
     const iconSource = tempConfig.faviconUrl || tempConfig.logoUrl;
-    if (iconSource) {
-      let link: HTMLLinkElement | null = document.querySelector("link[rel*='icon']");
-      if (!link) {
-        link = document.createElement('link');
-        link.rel = 'shortcut icon';
-        document.getElementsByTagName('head')[0].appendChild(link);
-      }
-      link.href = iconSource;
-
-      let appleLink: HTMLLinkElement | null = document.querySelector("link[rel='apple-touch-icon']");
-      if (appleLink) {
-        appleLink.href = iconSource;
-      }
-    }
+    updateBrowserFavicon(iconSource);
   };
 
   const handleSaveConfig = (e?: React.FormEvent) => {
@@ -178,14 +152,14 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
     setShowConfirmModal(true);
   };
 
-  // Upload da Logomarca (Exclusivo para Relatórios e Timbrados) com achatar/expandir para proporção ideal (500x200)
+  // Upload da Logomarca (Exclusivo para Relatórios e Timbrados) com achatar/expandir para proporção ideal sem margens vazias
   const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     try {
-      // Redimensiona/achata para resolução nítida de cabeçalho mantendo fidelidade
-      const optimizedBase64 = await resizeImageToTarget(file, 600, 240, 'contain');
+      // Redimensiona proporcionalmente para resolução nítida de cabeçalho sem barras vazias laterais
+      const optimizedBase64 = await resizeImageToTarget(file, 900, 360, 'contain-right');
       const updated = { ...tempConfig, logoUrl: optimizedBase64 };
       setTempConfig(updated);
       setHasPendingChanges(true);
