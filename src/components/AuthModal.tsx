@@ -154,7 +154,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       };
 
       if (keepConnected) {
-        // Grava timestamp de 5 minutos para permanência de sessão
+        // Grava timestamp de 15 minutos para permanência de sessão
         localStorage.setItem('health_deglut_keep_connected', Date.now().toString());
       } else {
         localStorage.removeItem('health_deglut_keep_connected');
@@ -258,7 +258,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       };
 
       if (keepConnected) {
-        // Grava timestamp de 5 minutos para permanência de sessão
+        // Grava timestamp de 15 minutos para permanência de sessão
         localStorage.setItem('health_deglut_keep_connected', Date.now().toString());
       } else {
         localStorage.removeItem('health_deglut_keep_connected');
