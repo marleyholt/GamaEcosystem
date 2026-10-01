@@ -265,174 +265,46 @@ export const ChangeLogView: React.FC<ChangeLogViewProps> = () => {
         </div>
 
         <div className="relative pl-6 space-y-6 before:content-[''] before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-[#382e27]">
-          {/* Versão v1.1.9 */}
-          <div className="relative space-y-2">
+          {/* Versão v1.2.0 - Unificada do dia 01/10/2026 */}
+          <div className="relative space-y-3">
             <div className="absolute -left-[21px] top-1.5 w-3 h-3 rounded-full bg-emerald-500 ring-4 ring-[#1f1a17]" />
             <div className="flex flex-wrap items-center gap-2.5">
               <span className="px-2.5 py-0.5 rounded-full bg-emerald-500 text-[#181513] font-bold text-xs">
-                v1.1.9
+                v1.2.0
               </span>
               <span className="text-xs font-semibold text-[#f4efe8]">
-                Sino de Pendências Clínicas, Ícone Ampliado e Permissão por E-mail
+                Consolidação Geral do GamaEcosystem (Notificações, Temas, Marca e Acessos)
               </span>
               <span className="text-[11px] text-[#a69a8f]">• 01/10/2026</span>
             </div>
-            <ul className="text-xs text-[#a69a8f] space-y-1 list-disc pl-4">
-              <li>Sino de notificações interativo com lista em tempo real de assinaturas pendentes e alertas RaDI.</li>
-              <li>Eliminado fluxo de aprovação manual; acesso validado automaticamente pelo e-mail cadastrado na equipe/cuidadores.</li>
-              <li>Ícone do GamaEcosystem ampliado e em alta definição ao lado do título.</li>
-            </ul>
-          </div>
-
-          {/* Versão v1.1.8 */}
-          <div className="relative space-y-2">
-            <div className="absolute -left-[21px] top-1.5 w-3 h-3 rounded-full bg-emerald-500 ring-4 ring-[#1f1a17]" />
-            <div className="flex flex-wrap items-center gap-2.5">
-              <span className="px-2.5 py-0.5 rounded-full bg-emerald-500 text-[#181513] font-bold text-xs">
-                v1.1.8
-              </span>
-              <span className="text-xs font-semibold text-[#f4efe8]">
-                Ajuste Fino de Submenus, Risco Moderado e Hovers do Tema Claro
-              </span>
-              <span className="text-[11px] text-[#a69a8f]">• 01/10/2026</span>
-            </div>
-            <ul className="text-xs text-[#a69a8f] space-y-1 list-disc pl-4">
-              <li>Removido botão extra do topo; alternância de tema permanece no perfil do usuário.</li>
-              <li>Submenus do menu lateral agora exibem o mesmo estilo dourado elegante com texto escuro ao passar o mouse.</li>
-              <li>Texto de "Risco Moderado" e escores RaDI escurecidos para contraste imediato no modo claro.</li>
-              <li>Eliminado escurecimento indesejado em linhas de tabelas e botões de abas inativas.</li>
-            </ul>
-          </div>
-
-          {/* Versão v1.1.7 */}
-          <div className="relative space-y-2">
-            <div className="absolute -left-[21px] top-1.5 w-3 h-3 rounded-full bg-emerald-500 ring-4 ring-[#1f1a17]" />
-            <div className="flex flex-wrap items-center gap-2.5">
-              <span className="px-2.5 py-0.5 rounded-full bg-emerald-500 text-[#181513] font-bold text-xs">
-                v1.1.7
-              </span>
-              <span className="text-xs font-semibold text-[#f4efe8]">
-                Harmonização Cromática e Contraste do Modo Claro (Light Mode)
-              </span>
-              <span className="text-[11px] text-[#a69a8f]">• 01/10/2026</span>
-            </div>
-            <ul className="text-xs text-[#a69a8f] space-y-1 list-disc pl-4">
-              <li>Mapeamento completo de contrastes e paletas para botões, inputs, tabelas e janelas.</li>
-              <li>Ajuste dos badges de status clínicos (verde, âmbar e vermelho) para leitura nítida sem letras apagadas.</li>
-              <li>Atalho direto no cabeçalho (ícone Sol/Lua) para alternância imediata entre Modo Claro e Escuro.</li>
-            </ul>
-          </div>
-
-          {/* Versão v1.1.6 */}
-          <div className="relative space-y-2">
-            <div className="absolute -left-[21px] top-1.5 w-3 h-3 rounded-full bg-emerald-500 ring-4 ring-[#1f1a17]" />
-            <div className="flex flex-wrap items-center gap-2.5">
-              <span className="px-2.5 py-0.5 rounded-full bg-emerald-500 text-[#181513] font-bold text-xs">
-                v1.1.6
-              </span>
-              <span className="text-xs font-semibold text-[#f4efe8]">
-                Despoluição Visual do Cabeçalho Superior
-              </span>
-              <span className="text-[11px] text-[#a69a8f]">• 01/10/2026</span>
-            </div>
-            <ul className="text-xs text-[#a69a8f] space-y-1 list-disc pl-4">
-              <li>Removidos os selos de texto fixos que poluíam a barra superior.</li>
-              <li>Layout minimalista e focado nos atalhos operacionais rápidos e perfil do usuário.</li>
-            </ul>
-          </div>
-
-          {/* Versão v1.1.5 */}
-          <div className="relative space-y-2">
-            <div className="absolute -left-[21px] top-1.5 w-3 h-3 rounded-full bg-emerald-500 ring-4 ring-[#1f1a17]" />
-            <div className="flex flex-wrap items-center gap-2.5">
-              <span className="px-2.5 py-0.5 rounded-full bg-emerald-500 text-[#181513] font-bold text-xs">
-                v1.1.5
-              </span>
-              <span className="text-xs font-semibold text-[#f4efe8]">
-                Remoção Definitiva de Menções ao Firebase na Interface
-              </span>
-              <span className="text-[11px] text-[#a69a8f]">• 01/10/2026</span>
-            </div>
-            <ul className="text-xs text-[#a69a8f] space-y-1 list-disc pl-4">
-              <li>Selo do cabeçalho superior alterado de "Firebase / OCI MariaDB Ready" para "MariaDB Dedicado Conectado".</li>
-              <li>Ajuste no painel de LGPD e Criptografia para consolidação exclusiva do MariaDB InnoDB.</li>
-              <li>Limpeza completa de estados e comentários obsoletos da transição.</li>
-            </ul>
-          </div>
-
-          {/* Versão v1.1.4 */}
-          <div className="relative space-y-2">
-            <div className="absolute -left-[21px] top-1.5 w-3 h-3 rounded-full bg-emerald-500 ring-4 ring-[#1f1a17]" />
-            <div className="flex flex-wrap items-center gap-2.5">
-              <span className="px-2.5 py-0.5 rounded-full bg-emerald-500 text-[#181513] font-bold text-xs">
-                v1.1.4
-              </span>
-              <span className="text-xs font-semibold text-[#f4efe8]">
-                Portal de Sobreposição do Manual e Guia Mobile PWA
-              </span>
-              <span className="text-[11px] text-[#a69a8f]">• 01/10/2026</span>
-            </div>
-            <ul className="text-xs text-[#a69a8f] space-y-1 list-disc pl-4">
-              <li>Manual renderizado diretamente no topo absoluto da tela (React Portal com z-index 9999).</li>
-              <li>Fechamento imediato com um clique ao clicar no fundo fora da janela.</li>
-              <li>Novo capítulo de suporte no manual: Passo a passo de instalação no Android (Chrome) e iOS (Safari).</li>
-            </ul>
-          </div>
-
-          {/* Versão v1.1.3 */}
-          <div className="relative space-y-2">
-            <div className="absolute -left-[21px] top-1.5 w-3 h-3 rounded-full bg-emerald-500 ring-4 ring-[#1f1a17]" />
-            <div className="flex flex-wrap items-center gap-2.5">
-              <span className="px-2.5 py-0.5 rounded-full bg-emerald-500 text-[#181513] font-bold text-xs">
-                v1.1.3
-              </span>
-              <span className="text-xs font-semibold text-[#f4efe8]">
-                Centralização do Manual do Usuário e Transição MariaDB
-              </span>
-              <span className="text-[11px] text-[#a69a8f]">• 01/10/2026</span>
-            </div>
-            <ul className="text-xs text-[#a69a8f] space-y-1 list-disc pl-4">
-              <li>Modal do Manual do Usuário centralizado no meio da tela com controle de altura responsivo.</li>
-              <li>Substituição dos painéis e links do Firebase pela aba dedicada "Banco de Dados & Servidor" (MariaDB).</li>
-              <li>Exibição em tempo real do status das 9 tabelas relacionais e rotina de backup sob demanda.</li>
-            </ul>
-          </div>
-
-          {/* Versão v1.1.2 */}
-          <div className="relative space-y-2">
-            <div className="absolute -left-[21px] top-1.5 w-3 h-3 rounded-full bg-emerald-500 ring-4 ring-[#1f1a17]" />
-            <div className="flex flex-wrap items-center gap-2.5">
-              <span className="px-2.5 py-0.5 rounded-full bg-emerald-500 text-[#181513] font-bold text-xs">
-                v1.1.2
-              </span>
-              <span className="text-xs font-semibold text-[#f4efe8]">
-                Seletor Suspenso de Pacientes na Visão Geral (Dashboard)
-              </span>
-              <span className="text-[11px] text-[#a69a8f]">• 01/10/2026</span>
-            </div>
-            <ul className="text-xs text-[#a69a8f] space-y-1 list-disc pl-4">
-              <li>Substituído o botão "Trocar" por menu suspenso (dropdown) estilizado com o paciente ativo em destaque.</li>
-              <li>Campo de busca instantânea integrado para localizar pacientes por nome, diagnóstico ou CPF.</li>
-              <li>Alternância imediata dos gráficos de risco e indicadores de alimentação ao selecionar qualquer paciente.</li>
-            </ul>
-          </div>
-
-          {/* Versão v1.1.1 */}
-          <div className="relative space-y-2">
-            <div className="absolute -left-[21px] top-1.5 w-3 h-3 rounded-full bg-emerald-500 ring-4 ring-[#1f1a17]" />
-            <div className="flex flex-wrap items-center gap-2.5">
-              <span className="px-2.5 py-0.5 rounded-full bg-emerald-500 text-[#181513] font-bold text-xs">
-                v1.1.1
-              </span>
-              <span className="text-xs font-semibold text-[#f4efe8]">
-                Blindagem Definitiva de Logomarca Oficial e Persistência no F5
-              </span>
-              <span className="text-[11px] text-[#a69a8f]">• 01/10/2026</span>
-            </div>
-            <ul className="text-xs text-[#a69a8f] space-y-1 list-disc pl-4">
-              <li>Embutida a logomarca oficial (Logo.PNG) no bundle compilado, impossibilitando ícone quebrado.</li>
-              <li>Blindada a sincronização do frontend para ignorar o caminho legado /logo-gama.png herdado do banco.</li>
-              <li>Adicionado tratamento de erro imediato com fallback para o papel timbrado e tela de configurações.</li>
+            <ul className="text-xs text-[#a69a8f] space-y-1.5 list-disc pl-4">
+              <li>
+                <strong className="text-[#f4efe8]">Sino de Notificações Integrado & Função Limpar:</strong> Dropdown com contagem em tempo real de assinaturas pendentes e alertas RaDI; botões "Limpar todas" e descarte individual com lixeira.
+              </li>
+              <li>
+                <strong className="text-[#f4efe8]">Autenticação Direta por E-mail:</strong> Eliminado fluxo e modais de aprovação manual; primeiro acesso liberado automaticamente para e-mails cadastrados na equipe ou cuidadores.
+              </li>
+              <li>
+                <strong className="text-[#f4efe8]">Ícone do App & Favicon Ampliado:</strong> Ícone aumentado para <code className="text-[#c8a88a]">w-12 h-12</code> com borda elegante ao lado do título GamaEcosystem.
+              </li>
+              <li>
+                <strong className="text-[#f4efe8]">Harmonização e Contraste do Tema Claro:</strong> Mais de 75 ajustes finos de contraste (WCAG AA), fundo Alabaster, badges legíveis e menus dourados no hover.
+              </li>
+              <li>
+                <strong className="text-[#f4efe8]">Despoluição do Topo:</strong> Removidos selos estáticos de texto do cabeçalho superior.
+              </li>
+              <li>
+                <strong className="text-[#f4efe8]">Manual do Usuário Centralizado & Guia PWA:</strong> Renderização por Portal React (z-[9999]), sem cortes na tela, e guia de instalação para Android e iOS.
+              </li>
+              <li>
+                <strong className="text-[#f4efe8]">Banco MariaDB & Eliminação do Firebase:</strong> Painel de monitoramento do MariaDB local e remoção de resquícios de interface.
+              </li>
+              <li>
+                <strong className="text-[#f4efe8]">Seletor de Pacientes no Dashboard:</strong> Troca ágil com busca instantânea por nome ou diagnóstico.
+              </li>
+              <li>
+                <strong className="text-[#f4efe8]">Blindagem da Logomarca Oficial:</strong> Embutida em Base64 para garantir carregamento instantâneo mesmo após F5.
+              </li>
             </ul>
           </div>
 
