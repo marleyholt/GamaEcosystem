@@ -87,6 +87,16 @@ Este documento é a fonte de verdade para o acompanhamento contínuo de tarefas,
 
 ## 📜 3. CHANGELOG (Histórico Cronológico de Entregas)
 
+### [v1.1.8] - 2026-10-01: Ajuste Fino do Tema Claro conforme Feedback Visual
+- **Remoção do Botão Adicional:** O botão rápido de Sol/Lua colocado no topo foi removido; a alternância de tema permanece exclusivamente dentro do modal de perfil do usuário.
+- **Menu Lateral (Drawer Sanduíche):**
+  - Subitens de atendimento clínico (PEP, RaDI, Registro Diário, Histórico, Chat) e Pacientes/Laudos agora utilizam o mesmo visual dourado (`bg-[#c8a88a] text-[#181513] font-bold`) ao passar o mouse (hover) que já possuíam quando selecionados ativos (como no botão "Visão Geral").
+  - O fundo dos submenus abertos não fica mais escuro/preto no tema claro.
+- **Risco Moderado (Score RaDI):**
+  - Substituída a cor amarela clara/apagada por um tom marrom âmbar escuro de alto contraste (`#804a00` / `text-amber-500` escurecido pelo CSS), permitindo leitura nítida de imediato sobre fundo creme/branco.
+- **Botões e Linhas de Seleção:**
+  - As abas da Central de Configurações (ex: "ChangeLog & Entregas") e linhas da tabela de Usuários e Permissões não ficam mais pretas ao passar o mouse; adotam fundo e texto claros e legíveis.
+
 ### [v1.1.7] - 2026-10-01: Harmonização Cromática e Acessibilidade do Tema Claro (Light Mode)
 - **Acessibilidade e Alto Contraste (WCAG AA):**
   - Auditoria cromática abrangente em mais de 75 variações de cores de fundo, bordas e textos aplicadas no ecossistema.
