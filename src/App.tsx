@@ -310,6 +310,20 @@ export default function App() {
           }
         }
 
+        if (dbData.users && Array.isArray(dbData.users) && dbData.users.length > 0) {
+          const mappedUsers: UserProfile[] = dbData.users.map((u: any) => ({
+            id: u.id,
+            email: u.email,
+            name: u.name,
+            role: u.role || 'fonoaudiologo',
+            approved: Boolean(u.approved),
+            crfaNumber: u.crfa_number,
+            allowedTabs: u.allowed_tabs ? (typeof u.allowed_tabs === 'string' ? JSON.parse(u.allowed_tabs) : u.allowed_tabs) : undefined,
+            createdAt: u.created_at || new Date().toISOString()
+          }));
+          setUsersList(mappedUsers);
+        }
+
         if (dbData.clinicConfig) {
           const cfg = dbData.clinicConfig;
           setClinicConfig(prev => {
