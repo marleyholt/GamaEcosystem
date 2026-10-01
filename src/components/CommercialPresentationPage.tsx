@@ -17,6 +17,7 @@ import {
   ArrowLeft
 } from 'lucide-react';
 import { Logo } from './Logo';
+import { ChangeLogView } from './ChangeLogView';
 
 interface CommercialPresentationPageProps {
   onBackToLogin: () => void;
@@ -482,6 +483,28 @@ export const CommercialPresentationPage: React.FC<CommercialPresentationPageProp
             </div>
           </div>
 
+        </section>
+
+        {/* SEÇÃO AUDITADA: HISTÓRICO DE ENTREGAS & CHANGELOG OFICIAL */}
+        <section className="p-6 sm:p-8 rounded-3xl bg-[#1c1815] border border-[#342b26] space-y-4 shadow-xl">
+          <div className="border-b border-[#342b26] pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <h2 className="text-xl font-bold font-serif text-[#f4efe8] flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-[#c8a88a]" />
+                Histórico de Versões, Auditoria Clínica & Evolução Contínua
+              </h2>
+              <p className="text-xs text-[#a69a8f] mt-0.5">
+                Transparência total sobre a arquitetura, segurança, auditoria dos módulos e conformidade regulatória.
+              </p>
+            </div>
+            <span className="px-3 py-1 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-bold self-start sm:self-auto">
+              Versão 1.2.0 Estável
+            </span>
+          </div>
+
+          <div className="pt-2">
+            <ChangeLogView />
+          </div>
         </section>
 
         {/* Rodapé com Botão de Voltar */}
