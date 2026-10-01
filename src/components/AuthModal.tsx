@@ -43,6 +43,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [loginPassword, setLoginPassword] = useState('');
   const [showLoginPassword, setShowLoginPassword] = useState(false);
   const [forgotPasswordSent, setForgotPasswordSent] = useState(false);
+  const [keepConnected, setKeepConnected] = useState(false);
 
   // Campos de Primeiro Acesso
   const [firstEmail, setFirstEmail] = useState('');
@@ -152,6 +153,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         createdAt: new Date().toISOString()
       };
 
+      if (keepConnected) {
+        // Grava timestamp de 5 minutos para permanência de sessão
+        localStorage.setItem('health_deglut_keep_connected', Date.now().toString());
+      } else {
+        localStorage.removeItem('health_deglut_keep_connected');
+      }
       onLoginSuccess(userProfile);
     } catch (err: any) {
       setErrorMessage(err.message || 'Erro ao realizar login.');
@@ -250,6 +257,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         createdAt: new Date().toISOString()
       };
 
+      if (keepConnected) {
+        // Grava timestamp de 5 minutos para permanência de sessão
+        localStorage.setItem('health_deglut_keep_connected', Date.now().toString());
+      } else {
+        localStorage.removeItem('health_deglut_keep_connected');
+      }
       onLoginSuccess(userProfile);
     } catch (err: any) {
       setErrorMessage(err.message || 'Erro ao registrar nova senha.');
