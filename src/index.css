@@ -1,92 +1,333 @@
 @import "tailwindcss";
 
 /* -------------------------------------------------------------
-   LIGHT THEME STYLING OVERRIDES (Clinical Clean Alabaster & Warm Ivory)
+   PALETA CROMÁTICA CLÍNICA - MODO CLARO (CLEAN ALABASTER & WARM IVORY)
+   Garante contraste WCAG AA, legibilidade perfeita de textos, botões e cartões.
    ------------------------------------------------------------- */
 
 html.theme-light,
 body.theme-light,
 .theme-light {
   color-scheme: light;
-  background-color: #f7f4ef !important;
-  color: #1c1714 !important;
+  background-color: #f6f3ee !important;
+  color: #1a1512 !important;
 }
 
-/* Base Surfaces & Backgrounds */
-.theme-light .bg-\[\#181513\] { background-color: #f7f4ef !important; }
-.theme-light .bg-\[\#1a1614\] { background-color: #ffffff !important; }
-.theme-light .bg-\[\#1c1815\] { background-color: #ffffff !important; }
-.theme-light .bg-\[\#1c1815\]\/95 { background-color: rgba(255, 255, 255, 0.95) !important; }
-.theme-light .bg-\[\#181513\]\/90 { background-color: rgba(247, 244, 239, 0.92) !important; }
-.theme-light .bg-\[\#181513\]\/80 { background-color: rgba(247, 244, 239, 0.85) !important; }
-.theme-light .bg-\[\#181513\]\/60 { background-color: rgba(247, 244, 239, 0.70) !important; }
-.theme-light .bg-\[\#221d1a\] { background-color: #ffffff !important; }
-.theme-light .bg-\[\#221d1a\]\/80 { background-color: rgba(255, 255, 255, 0.9) !important; }
-.theme-light .bg-\[\#221d1a\]\/50 { background-color: rgba(242, 236, 228, 0.6) !important; }
-.theme-light .bg-\[\#27211d\] { background-color: #f1ebd7 !important; }
-.theme-light .bg-\[\#27211d\]\/50 { background-color: rgba(241, 235, 215, 0.5) !important; }
-.theme-light .bg-\[\#2e2621\] { background-color: #ebe4d8 !important; }
-.theme-light .bg-\[\#342b26\] { background-color: #e5ddd0 !important; }
-.theme-light .bg-\[\#3a312c\] { background-color: #e0d7c8 !important; }
-.theme-light .bg-\[\#151210\] { background-color: #f3ede4 !important; }
-.theme-light .bg-\[\#120f0d\] { background-color: #ede5da !important; }
-.theme-light .bg-\[\#0f0c0a\] { background-color: #e7dfd3 !important; }
+/* 1. SUPERFÍCIES, CARTÕES E PLANOS DE FUNDO (SURFACES & BACKGROUNDS) */
+.theme-light .bg-\[\#181513\],
+.theme-light .bg-\[\#12100e\],
+.theme-light .bg-\[\#13100e\],
+.theme-light .bg-\[\#14110f\],
+.theme-light .bg-\[\#141110\],
+.theme-light .bg-\[\#151210\],
+.theme-light .bg-\[\#161210\],
+.theme-light .bg-\[\#161311\] {
+  background-color: #f6f3ee !important;
+}
 
-/* Interactive Hovers */
-.theme-light .hover\:bg-\[\#221d1a\]:hover { background-color: #f4eee6 !important; }
-.theme-light .hover\:bg-\[\#27211d\]:hover { background-color: #ede5d8 !important; }
-.theme-light .hover\:bg-\[\#2c2522\]:hover { background-color: #f3ece3 !important; }
-.theme-light .hover\:bg-\[\#342b26\]:hover { background-color: #e5ddd0 !important; }
-.theme-light .hover\:bg-\[\#3d332d\]:hover { background-color: #dfd6c7 !important; }
-.theme-light .hover\:bg-\[\#2e2621\]:hover { background-color: #e8e0d3 !important; }
-.theme-light .hover\:bg-\[\#251f1b\]:hover { background-color: #f2ebe1 !important; }
+.theme-light .bg-\[\#1a1614\],
+.theme-light .bg-\[\#1a1613\],
+.theme-light .bg-\[\#1a1412\],
+.theme-light .bg-\[\#1b1714\],
+.theme-light .bg-\[\#1c1815\],
+.theme-light .bg-\[\#1e1916\],
+.theme-light .bg-\[\#1e1917\],
+.theme-light .bg-\[\#1f1a17\] {
+  background-color: #ffffff !important;
+}
 
-/* Borders & Dividers */
-.theme-light .border-\[\#342b26\] { border-color: #e5ddd0 !important; }
-.theme-light .border-\[\#3a312c\] { border-color: #e0d7c8 !important; }
-.theme-light .border-\[\#3f342d\] { border-color: #dcd2c3 !important; }
-.theme-light .border-\[\#483a31\] { border-color: #d5c9b8 !important; }
-.theme-light .border-\[\#5a4a3f\] { border-color: #c9bbab !important; }
-.theme-light .border-\[\#2c2520\] { border-color: #eae3d7 !important; }
-.theme-light .border-\[\#27211d\] { border-color: #ebe3d6 !important; }
-.theme-light .border-\[\#c8a88a\]\/30 { border-color: rgba(162, 115, 71, 0.25) !important; }
-.theme-light .border-\[\#c8a88a\]\/40 { border-color: rgba(162, 115, 71, 0.35) !important; }
-.theme-light .border-\[\#c8a88a\]\/20 { border-color: rgba(162, 115, 71, 0.18) !important; }
+.theme-light .bg-\[\#201a16\],
+.theme-light .bg-\[\#201a17\],
+.theme-light .bg-\[\#211b17\],
+.theme-light .bg-\[\#221c18\],
+.theme-light .bg-\[\#221d1a\],
+.theme-light .bg-\[\#231d19\],
+.theme-light .bg-\[\#241a18\],
+.theme-light .bg-\[\#241d19\],
+.theme-light .bg-\[\#241e1a\],
+.theme-light .bg-\[\#241f1c\],
+.theme-light .bg-\[\#242018\],
+.theme-light .bg-\[\#251f1c\],
+.theme-light .bg-\[\#25201c\],
+.theme-light .bg-\[\#261f1b\],
+.theme-light .bg-\[\#26201c\] {
+  background-color: #ffffff !important;
+}
 
-/* Typography & Contrast */
-.theme-light .text-\[\#f4efe8\] { color: #1c1714 !important; }
-.theme-light .text-\[\#a69a8f\] { color: #5f5348 !important; }
-.theme-light .text-\[\#c8a88a\] { color: #8e5c30 !important; }
-.theme-light .hover\:text-\[\#f4efe8\]:hover { color: #0d0a09 !important; }
-.theme-light .hover\:text-\[\#c8a88a\]:hover { color: #764821 !important; }
-.theme-light .placeholder-\[\#a69a8f\]::placeholder { color: #8f8275 !important; }
+/* Superfícies secundárias, chips e botões cinza-quente */
+.theme-light .bg-\[\#27211d\],
+.theme-light .bg-\[\#28211c\],
+.theme-light .bg-\[\#28211d\],
+.theme-light .bg-\[\#29221d\],
+.theme-light .bg-\[\#2a201d\],
+.theme-light .bg-\[\#2a221b\],
+.theme-light .bg-\[\#2a221d\],
+.theme-light .bg-\[\#2a221e\],
+.theme-light .bg-\[\#2a231f\],
+.theme-light .bg-\[\#2b221d\],
+.theme-light .bg-\[\#2b2420\],
+.theme-light .bg-\[\#2c2420\],
+.theme-light .bg-\[\#2c2522\],
+.theme-light .bg-\[\#2d221d\],
+.theme-light .bg-\[\#2d241f\],
+.theme-light .bg-\[\#2d2420\],
+.theme-light .bg-\[\#2d2520\],
+.theme-light .bg-\[\#2d2622\],
+.theme-light .bg-\[\#2e241f\],
+.theme-light .bg-\[\#2e2621\],
+.theme-light .bg-\[\#2e2722\],
+.theme-light .bg-\[\#2f2722\] {
+  background-color: #ede7dc !important;
+}
 
-/* Inputs, Textareas & Selects in Light Theme */
+.theme-light .bg-\[\#312924\],
+.theme-light .bg-\[\#332a24\],
+.theme-light .bg-\[\#342b26\],
+.theme-light .bg-\[\#352c26\],
+.theme-light .bg-\[\#382b21\],
+.theme-light .bg-\[\#382b25\],
+.theme-light .bg-\[\#382c26\],
+.theme-light .bg-\[\#382e27\],
+.theme-light .bg-\[\#382f2a\],
+.theme-light .bg-\[\#3a302b\],
+.theme-light .bg-\[\#3d332d\],
+.theme-light .bg-\[\#3f342d\],
+.theme-light .bg-\[\#423730\],
+.theme-light .bg-\[\#433730\],
+.theme-light .bg-\[\#433830\],
+.theme-light .bg-\[\#452c1b\],
+.theme-light .bg-\[\#4a392d\],
+.theme-light .bg-\[\#52443a\] {
+  background-color: #e5ded2 !important;
+}
+
+/* Translucências no Light Mode */
+.theme-light .bg-\[\#1c1815\]\/95 { background-color: rgba(255, 255, 255, 0.96) !important; }
+.theme-light .bg-\[\#181513\]\/90 { background-color: rgba(246, 243, 238, 0.94) !important; }
+.theme-light .bg-\[\#181513\]\/80 { background-color: rgba(246, 243, 238, 0.88) !important; }
+.theme-light .bg-\[\#181513\]\/60 { background-color: rgba(246, 243, 238, 0.70) !important; }
+.theme-light .bg-\[\#221d1a\]\/80 { background-color: rgba(255, 255, 255, 0.92) !important; }
+.theme-light .bg-\[\#221d1a\]\/50 { background-color: rgba(237, 231, 220, 0.65) !important; }
+.theme-light .bg-\[\#27211d\]\/50 { background-color: rgba(237, 231, 220, 0.60) !important; }
+
+/* 2. HOVERS INTERATIVOS NO TEMA CLARO */
+.theme-light .hover\:bg-\[\#221d1a\]:hover,
+.theme-light .hover\:bg-\[\#251f1b\]:hover,
+.theme-light .hover\:bg-\[\#27211d\]:hover,
+.theme-light .hover\:bg-\[\#2c2522\]:hover {
+  background-color: #e3dccf !important;
+}
+
+.theme-light .hover\:bg-\[\#2e2621\]:hover,
+.theme-light .hover\:bg-\[\#342b26\]:hover,
+.theme-light .hover\:bg-\[\#3d332d\]:hover {
+  background-color: #d9d0c1 !important;
+}
+
+/* 3. BORDAS E DIVISORES (SUAVES E DEFINIDOS) */
+.theme-light .border-\[\#181513\],
+.theme-light .border-\[\#1f1a17\],
+.theme-light .border-\[\#27211d\],
+.theme-light .border-\[\#2a221d\],
+.theme-light .border-\[\#2b241f\],
+.theme-light .border-\[\#2c231e\],
+.theme-light .border-\[\#2c2420\],
+.theme-light .border-\[\#2c2520\],
+.theme-light .border-\[\#2d241f\],
+.theme-light .border-\[\#2e2621\],
+.theme-light .border-\[\#332a24\],
+.theme-light .border-\[\#342a22\],
+.theme-light .border-\[\#342b26\],
+.theme-light .border-\[\#382e27\],
+.theme-light .border-\[\#3a3028\],
+.theme-light .border-\[\#3a3029\],
+.theme-light .border-\[\#3a312c\],
+.theme-light .border-\[\#3c312a\],
+.theme-light .border-\[\#3d322a\],
+.theme-light .border-\[\#3d322b\],
+.theme-light .border-\[\#3e322a\],
+.theme-light .border-\[\#3e342e\],
+.theme-light .border-\[\#3f332c\],
+.theme-light .border-\[\#3f342d\],
+.theme-light .border-\[\#42362f\],
+.theme-light .border-\[\#433730\],
+.theme-light .border-\[\#44362d\],
+.theme-light .border-\[\#44372e\],
+.theme-light .border-\[\#443831\],
+.theme-light .border-\[\#453730\],
+.theme-light .border-\[\#483a31\],
+.theme-light .border-\[\#4a3c33\],
+.theme-light .border-\[\#4a3d34\],
+.theme-light .border-\[\#4a3d35\],
+.theme-light .border-\[\#4a3e37\],
+.theme-light .border-\[\#4c3f35\],
+.theme-light .border-\[\#4d3a2b\],
+.theme-light .border-\[\#4d3e34\],
+.theme-light .border-\[\#4d3e35\],
+.theme-light .border-\[\#4d3f37\],
+.theme-light .border-\[\#4d4036\],
+.theme-light .border-\[\#4f4239\],
+.theme-light .border-\[\#524134\],
+.theme-light .border-\[\#52443a\],
+.theme-light .border-\[\#52443b\],
+.theme-light .border-\[\#5a4231\],
+.theme-light .border-\[\#5a483c\],
+.theme-light .border-\[\#5a4a3f\],
+.theme-light .border-\[\#61544a\] {
+  border-color: #ded6c9 !important;
+}
+
+.theme-light .border-\[\#c8a88a\]\/40,
+.theme-light .border-\[\#c8a88a\]\/30,
+.theme-light .border-\[\#c8a88a\]\/20 {
+  border-color: rgba(142, 92, 48, 0.3) !important;
+}
+
+/* 4. TIPOGRAFIA, TEXTOS E CONTRASTE MÁXIMO (WCAG AA) */
+/* Textos principais escuros e nítidos */
+.theme-light .text-\[\#f4efe8\],
+.theme-light .text-\[\#fffdfa\],
+.theme-light .text-\[\#faf8f5\],
+.theme-light .text-\[\#faf5f0\],
+.theme-light .text-\[\#f7f4ef\],
+.theme-light .text-\[\#f5ede4\],
+.theme-light .text-\[\#ede1d3\],
+.theme-light .text-\[\#e8dfd5\],
+.theme-light .text-\[\#e0d3c5\] {
+  color: #1a1512 !important;
+}
+
+/* Textos secundários, legendas e descrições */
+.theme-light .text-\[\#d8cec4\],
+.theme-light .text-\[\#d6cdb7\],
+.theme-light .text-\[\#d6c7b9\],
+.theme-light .text-\[\#d6c7b7\],
+.theme-light .text-\[\#d5cbc0\],
+.theme-light .text-\[\#d4c8bd\],
+.theme-light .text-\[\#d1c7bc\],
+.theme-light .text-\[\#c5b8ac\],
+.theme-light .text-\[\#c2b6ab\],
+.theme-light .text-\[\#a69a8f\] {
+  color: #55483d !important;
+}
+
+/* Textos e ícones acentuados em Dourado/Terracota clínico */
+.theme-light .text-\[\#c8a88a\],
+.theme-light .text-\[\#d6bca3\],
+.theme-light .text-\[\#d6bc9f\],
+.theme-light .text-\[\#d6bba0\],
+.theme-light .text-\[\#b89574\] {
+  color: #8c5624 !important;
+}
+
+.theme-light .hover\:text-\[\#f4efe8\]:hover { color: #0a0705 !important; }
+.theme-light .hover\:text-\[\#c8a88a\]:hover { color: #6f4016 !important; }
+
+/* 5. CORREÇÃO CRÍTICA DE STATUS & BADGES NO MODO CLARO */
+/* Verde / Sucesso / Estável */
+.theme-light .bg-emerald-950,
+.theme-light .bg-emerald-950\/60,
+.theme-light .bg-emerald-950\/50,
+.theme-light .bg-emerald-950\/40,
+.theme-light .bg-emerald-950\/30,
+.theme-light .bg-emerald-900\/50 {
+  background-color: #e6f7ee !important;
+}
+.theme-light .text-emerald-400 {
+  color: #0d733d !important;
+}
+.theme-light .border-emerald-800\/40,
+.theme-light .border-emerald-800\/50,
+.theme-light .border-emerald-900\/50 {
+  border-color: #a7e2c0 !important;
+}
+
+/* Âmbar / Alerta / Em Progresso */
+.theme-light .bg-amber-950,
+.theme-light .bg-amber-950\/60,
+.theme-light .bg-amber-950\/50,
+.theme-light .bg-amber-950\/40,
+.theme-light .bg-amber-950\/30,
+.theme-light .bg-amber-900\/50 {
+  background-color: #fef7e6 !important;
+}
+.theme-light .text-amber-400 {
+  color: #92580a !important;
+}
+.theme-light .border-amber-800\/40,
+.theme-light .border-amber-800\/50,
+.theme-light .border-amber-900\/50 {
+  border-color: #f4d38c !important;
+}
+
+/* Vermelho / Rosa / Urgente / Risco Alto */
+.theme-light .bg-rose-950,
+.theme-light .bg-rose-950\/60,
+.theme-light .bg-rose-950\/50,
+.theme-light .bg-rose-950\/40,
+.theme-light .bg-rose-950\/30,
+.theme-light .bg-rose-900\/50,
+.theme-light .bg-red-950,
+.theme-light .bg-red-950\/60 {
+  background-color: #fdebee !important;
+}
+.theme-light .text-rose-400,
+.theme-light .text-red-400 {
+  color: #ab1d32 !important;
+}
+.theme-light .border-rose-800\/40,
+.theme-light .border-rose-800\/50,
+.theme-light .border-rose-900\/50,
+.theme-light .border-red-800\/40 {
+  border-color: #f6b3bc !important;
+}
+
+/* Azul / Info */
+.theme-light .bg-blue-950,
+.theme-light .bg-blue-950\/60,
+.theme-light .bg-blue-900\/50 {
+  background-color: #edf5ff !important;
+}
+.theme-light .text-blue-400 {
+  color: #125bb5 !important;
+}
+.theme-light .border-blue-800\/40,
+.theme-light .border-blue-900\/50 {
+  border-color: #b9d7fc !important;
+}
+
+/* 6. FORMULÁRIOS, INPUTS, TEXTAREAS E SELECTS */
 .theme-light input:not([type="checkbox"]):not([type="radio"]),
 .theme-light textarea,
 .theme-light select {
   background-color: #ffffff !important;
   border-color: #d8cec0 !important;
-  color: #1c1714 !important;
+  color: #1a1512 !important;
+}
+
+.theme-light input::placeholder,
+.theme-light textarea::placeholder {
+  color: #8c7e71 !important;
 }
 
 .theme-light input:focus,
 .theme-light textarea:focus,
 .theme-light select:focus {
-  border-color: #8e5c30 !important;
-  box-shadow: 0 0 0 1px #8e5c30 !important;
+  border-color: #8c5624 !important;
+  box-shadow: 0 0 0 1px #8c5624 !important;
 }
 
-/* Modals & Popovers Backdrop */
+/* 7. MODAIS, GAVETAS E POPUPS */
 .theme-light .fixed.inset-0.bg-black\/70,
 .theme-light .fixed.inset-0.bg-black\/60,
-.theme-light .fixed.inset-0.bg-black\/50 {
-  background-color: rgba(28, 23, 20, 0.5) !important;
+.theme-light .fixed.inset-0.bg-black\/50,
+.theme-light .fixed.inset-0.bg-black\/80 {
+  background-color: rgba(26, 21, 18, 0.45) !important;
   backdrop-filter: blur(4px);
 }
 
-/* Card Subtle Elevation in Light Theme */
+/* Elevação e sombra suave em cartões no modo claro */
 .theme-light .rounded-xl.border,
 .theme-light .rounded-2xl.border {
-  box-shadow: 0 2px 8px -2px rgba(90, 70, 50, 0.06), 0 1px 3px -1px rgba(90, 70, 50, 0.04);
+  box-shadow: 0 1px 3px 0 rgba(70, 50, 30, 0.05), 0 1px 2px -1px rgba(70, 50, 30, 0.05);
 }
