@@ -239,7 +239,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             currentRisk === 'Alto Risco' 
               ? 'bg-rose-950/50 text-rose-400 border border-rose-800/40'
               : currentRisk === 'Risco Moderado'
-              ? 'bg-amber-950/50 text-amber-400 border border-amber-800/40'
+              ? 'bg-amber-950/50 text-amber-500 border border-amber-800/40'
               : currentRisk === 'Baixo Risco'
               ? 'bg-emerald-950/50 text-emerald-400 border border-emerald-800/40'
               : 'bg-[#2d2622] text-[#a69a8f] border border-[#4a3e37]'
@@ -252,7 +252,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             </span>
             <h4 className={`text-2xl font-bold mt-1 ${
               currentRisk === 'Alto Risco' ? 'text-rose-400' :
-              currentRisk === 'Risco Moderado' ? 'text-amber-400' :
+              currentRisk === 'Risco Moderado' ? 'text-amber-500' :
               currentRisk === 'Baixo Risco' ? 'text-emerald-400' : 'text-[#f4efe8]'
             }`}>
               {currentRisk}
