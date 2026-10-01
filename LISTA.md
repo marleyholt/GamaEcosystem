@@ -21,9 +21,9 @@ Este documento é a fonte de verdade para o acompanhamento contínuo de tarefas,
 ## 📜 3. CHANGELOG (Histórico Cronológico de Entregas)
 
 ### [v1.2.0] - 2026-10-01: Consolidação Geral do GamaEcosystem (Notificações, Temas, Marca, Acessos e Apresentação Comercial)
-- **Alteração de Nome de Exibição no Perfil do Usuário:**
-  - Adicionada opção no pop-up flutuante do perfil (ao clicar no avatar/nome no topo) para alterar o nome de exibição do usuário ativo.
-  - Atualização instantânea com persistência local e no cadastro de usuários, refletindo no cabeçalho e em assinaturas clínicas.
+- **Consistência de Identidade & Nome de Exibição Fixo por Cadastro:**
+  - Regra estrita de auditoria: o nome de exibição exibido no sistema é estritamente o nome cadastrado no usuário (evitando inconsistências de assinatura ou adulteração de perfis clínicos).
+  - Configurado o usuário mestre/desenvolvedor `filipe.gama@hotmail.com` (e `leaog.8@gmail.com`) com nome de exibição fixado como `Filipe (DEV)` com privilégios administrativos.
 - **Segurança de Sessão, Contador Regressivo & Proteção Anti-Perda de Dados:**
   - Caixa de seleção "Permanecer conectado" (sem texto redundante de minutos), permitindo continuar conectado caso a aba/janela seja fechada e reaberta dentro de 15 minutos.
   - Sessão encerrada imediatamente se a aba for fechada sem a caixa marcada.
