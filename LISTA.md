@@ -49,10 +49,11 @@ Este documento é a fonte de verdade para o acompanhamento contínuo de tarefas,
     - Formulário seguro de troca de senha exigindo: **Senha Atual**, Nova Senha e Confirmação.
     - Botão de logout seguro.
   - Reposicionado o **Sino de Notificações** para o **lado esquerdo** do botão do usuário.
-- [x] **Sino de Notificações Integrado com Lista de Pendências Clínicas:**
+- [x] **Sino de Notificações Integrado com Lista de Pendências Clínicas & Função Limpar:**
   - Dropdown interativo de pendências clínicas em tempo real com contador dinâmico pulsante de pendências não lidas.
   - Rastreamento de evoluções aguardando assinatura de familiares e alertas prioritários de risco de deglutição (RaDI Alto/Moderado).
   - Acesso direto em 1 clique que já seleciona o paciente em questão e abre a aba correspondente.
+  - **Função de Limpar Notificações:** Botão "Limpar" no topo e rodapé para limpar todas as notificações de uma vez, além de ícone de lixeira individual para dispensar avisos pontuais.
 - [x] **Aba Visão Geral (Dashboard) - Seletor Suspenso de Pacientes:**
   - Substituído o botão "Trocar" por um seletor suspenso inteligente (`dropdown`) com indicador de paciente ativo, busca instantânea e troca em 1 clique do paciente em foco na Visão Geral.
 - [x] **Limpeza de Resquícios do Firebase na Interface:**
@@ -93,7 +94,9 @@ Este documento é a fonte de verdade para o acompanhamento contínuo de tarefas,
 ## 📜 3. CHANGELOG (Histórico Cronológico de Entregas)
 
 ### [v1.1.9] - 2026-10-01: Sino de Pendências Clínicas, Ícone Ampliado e Permissões por E-mail
-- **Sino de Notificações Integrado:**
+- **Sino de Notificações Integrado & Função Limpar:**
+  - Adicionado botão "Limpar" e "Limpar todas" para esvaziar a lista de notificações/pendências em 1 clique.
+  - Adicionado botão de descarte individual em cada item da lista (ícone de lixeira).
   - Implementado dropdown com contagem e alertas em tempo real ao clicar no sino do cabeçalho.
   - Lista evoluções clínicas pendentes de validação/assinatura e alertas de risco com atalhos de 1 clique para o prontuário.
 - **Autenticação Direta Vinculada a E-mails Cadastrados:**
