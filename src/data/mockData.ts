@@ -89,281 +89,44 @@ export const SYMPTOMS_LIST = [
 
 export const INITIAL_USERS: UserProfile[] = [
   {
+    id: 'user_filipe_dev',
+    name: 'Filipe (DEV)',
+    email: 'filipe.gama@hotmail.com',
+    role: 'admin',
+    approved: true,
+    crfaNumber: 'ADMIN-DEV',
+    allowedTabs: ['resumo', 'prontuario', 'radi', 'registro', 'historico', 'chat', 'pacientes', 'relatorios', 'configuracao'],
+    createdAt: new Date().toISOString()
+  },
+  {
+    id: 'user_master_dev',
+    name: 'Filipe (DEV)',
+    email: 'leaog.8@gmail.com',
+    role: 'admin',
+    approved: true,
+    crfaNumber: 'ADMIN-DEV',
+    allowedTabs: ['resumo', 'prontuario', 'radi', 'registro', 'historico', 'chat', 'pacientes', 'relatorios', 'configuracao'],
+    createdAt: new Date().toISOString()
+  },
+  {
     id: 'user_adriane',
     name: 'Adriane Gama',
     email: 'adrianepaesdagama@gmail.com',
     role: 'admin',
     approved: true,
     crfaNumber: 'CREFONO 9531-RJ',
-    allowedTabs: ['resumo', 'prontuario', 'radi', 'registro', 'historico', 'chat', 'pacientes', 'relatorios', 'seguranca', 'configuracao'],
+    allowedTabs: ['resumo', 'prontuario', 'radi', 'registro', 'historico', 'chat', 'pacientes', 'relatorios', 'configuracao'],
     createdAt: '2026-01-10T10:00:00Z'
-  },
-  {
-    id: 'user_zeca',
-    name: 'Zeca Souza',
-    email: 'zeca.cuidador@gmail.com',
-    role: 'cuidador',
-    approved: true,
-    createdAt: '2026-02-15T14:30:00Z'
-  },
-  {
-    id: 'user_pending',
-    name: 'Dra. Camila Torres',
-    email: 'camila.fono@saude.com.br',
-    role: 'fonoaudiologo',
-    approved: false,
-    crfaNumber: 'CRFa 3-18920',
-    createdAt: '2026-09-22T08:15:00Z'
   }
 ];
 
-export const INITIAL_PATIENTS: Patient[] = [
-  {
-    id: 'pat_1',
-    name: 'Salua Cozac',
-    cpf: '341.892.408-11',
-    birthDate: '1947-04-18',
-    gender: 'Feminino',
-    mainDiagnosis: 'Doença de Alzheimer (Estágio Moderado)',
-    diagnosis: 'Doença de Alzheimer (Estágio Moderado)',
-    guardianName: 'Marcelo Cozac',
-    receiptName: 'Marcelo Cozac',
-    email: 'familia.cozac@gmail.com',
-    address: 'Rua Trinta e Quatro, 195 - Curitiba, PR',
-    cep: '80240-000',
-    phone: '(41) 98822-1049',
-    secondaryPhone: '(41) 3244-1000',
-    medicalHistory: 'Hipertensão arterial controlada. Histórico de broncoaspiração leve há 4 meses. Em acompanhamento fonoaudiológico para readequação de consistência e manobras protetivas.',
-    currentMedications: 'Donepezila 10mg, Memantina 10mg, Losartana 50mg',
-    guardianPhone: '(41) 99123-4567',
-    guardianEmail: 'marcelo.cozac@gmail.com',
-    fonoaudiologistId: 'user_adriane',
-    fonoaudiologistName: 'Adriane Gama',
-    caregiverId: 'user_zeca',
-    caregiverName: 'Zeca Souza',
-    status: 'ativo',
-    createdAt: '2026-03-01T09:00:00Z',
-    updatedAt: '2026-09-23T14:00:00Z',
-    lgpdConsentAccepted: true,
-    lgpdConsentDate: '2026-03-01T09:30:00Z'
-  },
-  {
-    id: 'pat_2',
-    name: 'SML',
-    cpf: '012.784.992-05',
-    birthDate: '1921-08-12',
-    gender: 'Feminino',
-    mainDiagnosis: 'Demência Vascular (105 anos)',
-    diagnosis: 'Demência Vascular (105 anos)',
-    guardianName: 'Beatriz Leão',
-    receiptName: 'Beatriz Leão',
-    email: 'contato.sml@gmail.com',
-    address: 'Av. Sete de Setembro, 4200 - Curitiba, PR',
-    cep: '80250-210',
-    phone: '(41) 99771-0021',
-    secondaryPhone: '(41) 3322-8800',
-    medicalHistory: 'Idosa centenária em cuidados domiciliares. Fadiga precoce durante as refeições. Necessidade de espessamento em nível 3 para prevenir aspiração líquida.',
-    currentMedications: 'Quetiapina 25mg, Enalapril 10mg, Suplementação vitamínica',
-    guardianPhone: '(41) 98455-8910',
-    guardianEmail: 'beatriz.leao@gmail.com',
-    fonoaudiologistId: 'user_adriane',
-    fonoaudiologistName: 'Adriane Gama',
-    caregiverId: 'user_zeca',
-    caregiverName: 'Zeca Souza',
-    status: 'ativo',
-    createdAt: '2026-04-12T11:00:00Z',
-    updatedAt: '2026-09-20T16:00:00Z',
-    lgpdConsentAccepted: true,
-    lgpdConsentDate: '2026-04-12T11:20:00Z'
-  },
-  {
-    id: 'pat_3',
-    name: 'Maria do Roccio Bencke Gonçalves',
-    cpf: '519.330.189-72',
-    birthDate: '1962-11-04',
-    gender: 'Feminino',
-    mainDiagnosis: 'Demência Precoce',
-    diagnosis: 'Demência Precoce',
-    guardianName: 'Eduardo Gonçalves',
-    receiptName: 'Eduardo Gonçalves',
-    email: 'm.roccio@gmail.com',
-    address: 'Rua Brigadeiro Franco, 1102 - Curitiba, PR',
-    cep: '80430-210',
-    phone: '(41) 99654-3210',
-    secondaryPhone: '(41) 98877-6655',
-    medicalHistory: 'Quadro de declínio cognitivo com apraxia de deglutição em momentos de agitação. Orientada a consistência pastosa homogênea e postura de queixo para baixo durante a deglutição.',
-    currentMedications: 'Galantamina 16mg, Sertralina 50mg',
-    guardianPhone: '(41) 99881-2233',
-    guardianEmail: 'eduardo.goncalves@gmail.com',
-    fonoaudiologistId: 'user_adriane',
-    fonoaudiologistName: 'Adriane Gama',
-    caregiverId: 'user_zeca',
-    caregiverName: 'Zeca Souza',
-    status: 'ativo',
-    createdAt: '2026-05-18T15:00:00Z',
-    updatedAt: '2026-09-22T10:00:00Z',
-    lgpdConsentAccepted: true,
-    lgpdConsentDate: '2026-05-18T15:15:00Z'
-  },
-  {
-    id: 'pat_4',
-    name: 'TESTE - Carlos Eduardo Ferreira',
-    cpf: '887.432.190-34',
-    birthDate: '1959-02-14',
-    gender: 'Masculino',
-    mainDiagnosis: 'Disfagia Neurogênica Pós-AVC Isquêmico',
-    diagnosis: 'Disfagia Neurogênica Pós-AVC Isquêmico',
-    guardianName: 'Regina Ferreira',
-    receiptName: 'Regina Ferreira',
-    email: 'carlos.eduardo@teste.com',
-    address: 'Rua Desembargador Motta, 880 - Curitiba, PR',
-    cep: '80250-060',
-    phone: '(41) 99222-1100',
-    secondaryPhone: '(41) 3222-3344',
-    medicalHistory: 'AVC há 6 meses com hemiparesia à direita e disfagia moderada para líquidos finos. Apresenta boa resposta com manobra de esforço e espessamento em nível 2.',
-    currentMedications: 'AAS 100mg, Atorvastatina 40mg',
-    guardianPhone: '(41) 99777-6655',
-    guardianEmail: 'regina.ferreira@teste.com',
-    fonoaudiologistId: 'user_adriane',
-    fonoaudiologistName: 'Adriane Gama',
-    caregiverId: 'user_zeca',
-    caregiverName: 'Zeca Souza',
-    status: 'ativo',
-    createdAt: '2026-08-01T14:00:00Z',
-    updatedAt: '2026-09-15T09:00:00Z',
-    lgpdConsentAccepted: true,
-    lgpdConsentDate: '2026-08-01T14:10:00Z'
-  }
-];
+export const INITIAL_PATIENTS: Patient[] = [];
 
-export const INITIAL_RADI_ASSESSMENTS: RadiAssessment[] = [
-  {
-    id: 'radi_1',
-    patientId: 'pat_1',
-    patientName: 'Salua Cozac',
-    evaluatorId: 'user_adriane',
-    evaluatorName: 'Adriane Gama',
-    evaluatorRole: 'Fonoaudióloga (CRFa 3-12894)',
-    date: '2026-09-18',
-    answers: { 1: true, 2: false, 3: false, 4: true, 5: false, 6: true, 7: false, 8: false, 9: false },
-    score: 3,
-    riskLevel: 'Risco Moderado',
-    clinicalRecommendations: 'Manter consistência Macia e Picada (IDDSI 6). Introduzir pausas regulares durante a refeição. Fracionar refeições para reduzir tempo superior a 45 minutos. Cuidadores instruídos sobre postura ereta a 90 graus.',
-    createdAt: '2026-09-18T11:00:00Z',
-    verificationHash: 'HD-9C8E7F6A1B2C3D4E'
-  },
-  {
-    id: 'radi_2',
-    patientId: 'pat_2',
-    patientName: 'SML',
-    evaluatorId: 'user_adriane',
-    evaluatorName: 'Adriane Gama',
-    evaluatorRole: 'Fonoaudióloga (CRFa 3-12894)',
-    date: '2026-09-15',
-    answers: { 1: true, 2: true, 3: false, 4: true, 5: true, 6: true, 7: true, 8: true, 9: true },
-    score: 8,
-    riskLevel: 'Alto Risco',
-    clinicalRecommendations: 'Alto risco de broncoaspiração identificado. Proibido uso de líquido fino sem espessamento. Dieta exclusivamente pastosa (IDDSI 4) e líquidos moderadamente espessados (IDDSI 3). Supervisão 100% assistida e higiene oral rigorosa após cada ingestão.',
-    createdAt: '2026-09-15T15:30:00Z',
-    verificationHash: 'HD-F1A2B3C4D5E67890'
-  }
-];
+export const INITIAL_RADI_ASSESSMENTS: RadiAssessment[] = [];
 
-export const INITIAL_MEAL_PHOTOS: MealPhoto[] = [
-  {
-    id: 'photo_1',
-    patientId: 'pat_1',
-    mealType: 'almoço',
-    photoUrl: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80',
-    date: '2026-09-23',
-    notes: 'Purê de abóbora com peito de frango desfiado úmido (IDDSI 5)',
-    uploadedAt: '2026-09-23T12:30:00Z'
-  },
-  {
-    id: 'photo_2',
-    patientId: 'pat_1',
-    mealType: 'café',
-    photoUrl: 'https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?auto=format&fit=crop&w=600&q=80',
-    date: '2026-09-23',
-    notes: 'Mingau de aveia morno com mamão amassado e chá espessado',
-    uploadedAt: '2026-09-23T08:15:00Z'
-  },
-  {
-    id: 'photo_3',
-    patientId: 'pat_1',
-    mealType: 'lanche1',
-    photoUrl: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=600&q=80',
-    date: '2026-09-22',
-    notes: 'Frutas cozidas e amassadas em consistência pastosa',
-    uploadedAt: '2026-09-22T10:45:00Z'
-  },
-  {
-    id: 'photo_4',
-    patientId: 'pat_1',
-    mealType: 'jantar',
-    photoUrl: 'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=600&q=80',
-    date: '2026-09-22',
-    notes: 'Sopa cremosa de legumes batida e coada com carne desfiada',
-    uploadedAt: '2026-09-22T19:30:00Z'
-  },
-  {
-    id: 'photo_5',
-    patientId: 'pat_1',
-    mealType: 'suco',
-    photoUrl: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=600&q=80',
-    date: '2026-09-21',
-    notes: 'Suco de maçã com espessante nível 2 (Resource ThickenUp Clear)',
-    uploadedAt: '2026-09-21T15:00:00Z'
-  },
-  {
-    id: 'photo_6',
-    patientId: 'pat_1',
-    mealType: 'ceia',
-    photoUrl: 'https://images.unsplash.com/photo-1505253716362-afaea1d3d1af?auto=format&fit=crop&w=600&q=80',
-    date: '2026-09-21',
-    notes: 'Iogurte natural espessado com geleia de frutas sem sementes',
-    uploadedAt: '2026-09-21T21:10:00Z'
-  }
-];
+export const INITIAL_MEAL_PHOTOS: MealPhoto[] = [];
 
-export const INITIAL_DAILY_LOGS: DailyFeedingLog[] = [
-  {
-    id: 'log_1',
-    patientId: 'pat_1',
-    patientName: 'Salua Cozac',
-    caregiverId: 'user_zeca',
-    caregiverName: 'Zeca Souza',
-    date: '2026-09-23',
-    foodConsistency: 'Macio e Picado (Nível 6)',
-    foodConsistencyLevel: 6,
-    liquidConsistency: 'Extremamente Espessado (Nível 4)',
-    liquidConsistencyLevel: 4,
-    liquidBrandDose: 'Resource ThickenUp Clear - 2 colheres-medida para 150ml de água/chá',
-    symptoms: ['degluticao_lenta', 'residuo_boca'],
-    observations: 'Paciente alimentou-se bem no almoço. Apresentou leve acúmulo de resíduo em vestíbulo oral direito, removido com manobra de limpeza fonoaudiológica. Sem episódios de tosse ou engasgo.',
-    photos: INITIAL_MEAL_PHOTOS.filter(p => p.date === '2026-09-23'),
-    createdAt: '2026-09-23T13:00:00Z',
-    isEncrypted: true
-  },
-  {
-    id: 'log_2',
-    patientId: 'pat_1',
-    patientName: 'Salua Cozac',
-    caregiverId: 'user_zeca',
-    caregiverName: 'Zeca Souza',
-    date: '2026-09-22',
-    foodConsistency: 'Macio e Picado (Nível 6)',
-    foodConsistencyLevel: 6,
-    liquidConsistency: 'Moderadamente Espessado (Nível 3)',
-    liquidConsistencyLevel: 3,
-    liquidBrandDose: 'ThickenUp Clear - 1 sachê para 100ml de suco',
-    symptoms: ['degluticao_lenta'],
-    observations: 'Alimentação calma com postura correta em cadeira a 90°. Aceitou bem a porção de legumes e proteína úmida.',
-    photos: INITIAL_MEAL_PHOTOS.filter(p => p.date === '2026-09-22'),
-    createdAt: '2026-09-22T19:40:00Z',
-    isEncrypted: true
-  }
-];
+export const INITIAL_DAILY_LOGS: DailyFeedingLog[] = [];
 
 export const FOIS_SCALE = [
   { level: 1, label: 'Nível 1 - Nada por via oral (SNE/GTT exclusiva)' },
