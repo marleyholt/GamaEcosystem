@@ -87,8 +87,7 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
     setTempConfig(clinicConfig);
   }, [clinicConfig]);
   const [savedSuccess, setSavedSuccess] = useState(false);
-  const [isSyncingFirebase, setIsSyncingFirebase] = useState(false);
-  const [syncStatusMsg, setSyncStatusMsg] = useState<string | null>(null);
+    const [syncStatusMsg, setSyncStatusMsg] = useState<string | null>(null);
   const [previewTherapistId, setPreviewTherapistId] = useState<string>(''); // Vazio = Usar dados da Clínica & RT
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -1226,7 +1225,7 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
         </div>
       )}
 
-      {/* Conteúdo da Tab 6: Status & Conexão do Projeto Firebase (GAMAECOSYSTEM) */}
+      {/* Conteúdo da Sub-Aba: Banco de Dados MariaDB & Infraestrutura Local */}
       {activeTab === 'database' && (
         <div className="bg-[#1f1a17] border border-[#382e27] rounded-2xl p-6 space-y-6 shadow-sm">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#382e27] pb-4">
