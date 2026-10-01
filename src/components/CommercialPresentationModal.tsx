@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { 
   X, 
   Building2, 
@@ -122,8 +123,8 @@ export const CommercialPresentationModal: React.FC<CommercialPresentationModalPr
   const annualNetProfit = totalAnnualGrossRevenue - totalAnnualInfraCost;
   const profitMarginPercent = totalAnnualGrossRevenue > 0 ? ((annualNetProfit / totalAnnualGrossRevenue) * 100).toFixed(1) : '0';
 
-  return (
-    <div className="fixed inset-0 z-[99999] flex items-center justify-center p-3 sm:p-6 bg-black/85 backdrop-blur-md overflow-y-auto animate-in fade-in duration-200">
+  const modalContent = (
+    <div className="fixed inset-0 z-[9999999] flex items-center justify-center p-3 sm:p-6 bg-black/85 backdrop-blur-md overflow-y-auto animate-in fade-in duration-200">
       <div className="relative w-full max-w-5xl rounded-3xl bg-[#1c1815] border border-[#3f342d] shadow-2xl text-[#f4efe8] overflow-hidden my-auto max-h-[92vh] flex flex-col">
         
         {/* Cabeçalho do Modal com Logo e Selo Oficial */}
@@ -551,4 +552,6 @@ export const CommercialPresentationModal: React.FC<CommercialPresentationModalPr
       </div>
     </div>
   );
+
+  return typeof document !== 'undefined' ? createPortal(modalContent, document.body) : null;
 };
