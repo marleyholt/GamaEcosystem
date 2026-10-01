@@ -81,17 +81,7 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Right: User Status & Actions */}
         <div className="flex items-center gap-2 sm:gap-3">
-          {/* Security & LGPD Indicator */}
-          <div className="hidden xl:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#27211d] border border-[#3f342d] text-xs text-[#c8a88a]">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-            <span className="font-mono text-[11px]">LGPD & Criptografia Ativa</span>
-          </div>
 
-          {/* Database Indicator */}
-          <div className="hidden 2xl:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#27211d] border border-[#3f342d] text-xs text-[#a69a8f]">
-            <Database className="w-3.5 h-3.5 text-emerald-400" />
-            <span className="text-[11px] text-emerald-300/90 font-medium">MariaDB Dedicado Conectado</span>
-          </div>
 
           {/* Pending Users Notification */}
           {pendingUsersCount > 0 && (
