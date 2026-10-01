@@ -289,7 +289,7 @@ export const AdminUsersView: React.FC<AdminUsersViewProps> = ({
                       const isAllowed = (userPermissions[selectedUser.id] || []).includes(mod.id);
                       const Icon = mod.icon;
                       return (
-                        <tr key={mod.id} className="hover:bg-[#1f1a17] transition-colors">
+                        <tr key={mod.id} className="hover:bg-[#27211d] transition-colors">
                           <td className="py-3 px-2 font-medium text-[#f4efe8]">
                             <div className="flex items-center gap-2.5">
                               <div className={`p-1.5 rounded-lg ${isAllowed ? 'bg-[#c8a88a]/20 text-[#c8a88a]' : 'bg-[#181513] text-[#6d635a]'}`}>
