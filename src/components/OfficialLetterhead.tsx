@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ClinicConfig, DEFAULT_CLINIC_CONFIG, Therapist, getEffectiveTherapistProfile } from '../types/clinicConfig';
+import { DEFAULT_OFFICIAL_LOGO_BASE64 } from '../data/defaultLogo';
 import { Phone, Mail, Instagram, ShieldCheck } from 'lucide-react';
 
 interface LetterheadProps {
@@ -27,6 +28,12 @@ export const OfficialLetterhead: React.FC<LetterheadProps> = ({
 }) => {
   // Obter perfil efetivo: dados da terapeuta com fallback automático para os dados da clínica e RT
   const profile = getEffectiveTherapistProfile(therapist, config);
+  const [imageError, setImageError] = useState(false);
+
+  // Fonte da imagem garantida: usa a configurada, ou se falhar/estiver vazia, usa o Base64 embutido
+  const resolvedLogoSrc = (imageError || !config.logoUrl || config.logoUrl.trim() === '' || config.logoUrl === '/logo-gama.png')
+    ? DEFAULT_OFFICIAL_LOGO_BASE64
+    : config.logoUrl;
 
   return (
     <div className={`relative bg-white text-neutral-900 shadow-xl rounded-sm print:shadow-none print:m-0 print:p-0 print:border-none w-full max-w-[210mm] mx-auto min-h-[297mm] flex flex-col justify-between overflow-hidden border border-neutral-200 ${className}`}>
@@ -58,35 +65,14 @@ export const OfficialLetterhead: React.FC<LetterheadProps> = ({
 
           {/* Área da Logomarca Proporcional à Altura do Título (-30% do tamanho anterior) Justificada à Direita */}
           <div className="w-[50%] sm:w-[52%] flex items-center justify-end select-none pl-2">
-            {(config.logoUrl || '/assets/logo.png') ? (
-              <div className="w-full flex justify-end items-center">
-                <img 
-                  src={config.logoUrl || '/assets/logo.png'} 
-                  alt={config.clinicName || 'Logomarca Oficial'} 
-                  className="max-h-20 sm:max-h-24 md:max-h-28 w-auto max-w-full object-contain object-right drop-shadow-sm ml-auto" 
-                />
-              </div>
-            ) : (
-              <div className="flex items-center justify-end gap-5 h-full">
-                {/* Símbolo do Monograma g° com Dimensões Dobradas */}
-                <div className="relative">
-                  <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-[4px] border-[#7a5937] flex items-center justify-center font-serif text-[#7a5937] font-bold text-5xl sm:text-6xl leading-none shadow-sm">
-                    g
-                  </div>
-                  {/* Pequena esfera superior do expoente do monograma dobrada */}
-                  <span className="absolute -top-1.5 -right-1.5 w-6 h-6 rounded-full bg-[#7a5937] border-3 border-white shadow-xs" />
-                </div>
-                {/* Tipografia Clássica GAMA FONOAUDIOLOGIA Dobrada */}
-                <div className="flex flex-col text-right">
-                  <span className="text-3xl sm:text-4xl lg:text-5xl font-serif font-black tracking-[0.2em] text-[#2b2420] uppercase leading-none">
-                    {config.clinicName ? config.clinicName.replace(' FONOAUDIOLOGIA', '') : 'GAMA'}
-                  </span>
-                  <span className="text-xs sm:text-sm font-sans font-bold tracking-[0.35em] text-[#7a5937] uppercase leading-tight mt-2">
-                    FONOAUDIOLOGIA
-                  </span>
-                </div>
-              </div>
-            )}
+            <div className="w-full flex justify-end items-center">
+              <img 
+                src={resolvedLogoSrc} 
+                alt={config.clinicName || 'Logomarca Oficial'} 
+                onError={() => setImageError(true)}
+                className="max-h-20 sm:max-h-24 md:max-h-28 w-auto max-w-full object-contain object-right drop-shadow-sm ml-auto" 
+              />
+            </div>
           </div>
         </header>
 
