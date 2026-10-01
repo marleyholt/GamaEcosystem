@@ -544,14 +544,18 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       </div>
 
       {/* Botão Discreto Temporário de Apresentação Comercial & Técnica */}
-      <div className="mt-4 text-center">
+      <div className="mt-4 text-center relative z-20">
         <button
           type="button"
-          onClick={() => setIsCommercialOpen(true)}
-          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#1c1815]/90 hover:bg-[#27211d] text-[#c8a88a] hover:text-[#f4efe8] border border-[#3f342d] text-xs font-semibold shadow-sm transition-all cursor-pointer group active:scale-95"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setIsCommercialOpen(true);
+          }}
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#221d1a] hover:bg-[#2e2621] text-[#c8a88a] hover:text-[#deb887] border border-[#3f342d] hover:border-[#c8a88a]/50 text-xs font-bold shadow-md transition-all cursor-pointer group active:scale-95"
           title="Abrir Apresentação Técnica & Dossiê Comercial"
         >
-          <span className="w-2 h-2 rounded-full bg-amber-400 group-hover:animate-ping" />
+          <span className="w-2 h-2 rounded-full bg-amber-400 group-hover:scale-125 transition-transform" />
           <span>Apresentação Comercial & Técnica</span>
         </button>
       </div>
