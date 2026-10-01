@@ -7,7 +7,9 @@ import { UserManualModal } from './UserManualModal';
 import { 
   Bell, 
   HelpCircle,
-  Timer, 
+  Timer,
+  ShieldAlert,
+  RefreshCw, 
   Menu,
   FileSignature,
   AlertTriangle,
@@ -77,6 +79,18 @@ export const Header: React.FC<HeaderProps> = ({
     return left > 0 ? left : 0;
   });
 
+  // Modal de Renovação de Sessão (Evita perda de dados digitados)
+  const [showSessionRenewModal, setShowSessionRenewModal] = useState<boolean>(false);
+
+  // Função para renovar a sessão por mais 15 minutos sem recarregar ou perder dados
+  const handleRenewSession = () => {
+    const nowMs = Date.now().toString();
+    localStorage.setItem('health_deglut_session_start', nowMs);
+    sessionStorage.setItem('health_deglut_session_start', nowMs);
+    setRemainingSeconds(15 * 60);
+    setShowSessionRenewModal(false);
+  };
+
   useEffect(() => {
     const interval = setInterval(() => {
       const sessionStart = localStorage.getItem('health_deglut_session_start') || sessionStorage.getItem('health_deglut_session_start');
@@ -86,19 +100,19 @@ export const Header: React.FC<HeaderProps> = ({
       }
       const elapsedSec = Math.floor((Date.now() - Number(sessionStart)) / 1000);
       const left = (15 * 60) - elapsedSec;
+
       if (left <= 0) {
         setRemainingSeconds(0);
-        // Dispara logout automático ao zerar os 15 minutos
-        if (onLogout) {
-          onLogout();
-        }
+        // Se a janela estiver aberta, NUNCA fecha tudo abruptamente.
+        // Abre o pop-up de renovação para preservar formulários e dados não salvos.
+        setShowSessionRenewModal(true);
       } else {
         setRemainingSeconds(left);
       }
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [onLogout]);
+  }, []);
 
   // Formata MM:SS
   const formatTime = (totalSeconds: number) => {
@@ -515,7 +529,58 @@ export const Header: React.FC<HeaderProps> = ({
           onOpenSettings={onOpenSettings}
         />
 
-        {/* Modal de Manual do Usuário & Guia Operacional */}
+        {/* MODAL DE RENOVAÇÃO DE SESSÃO (PROTEÇÃO DE DADOS NÃO SALVOS) */}
+        {showSessionRenewModal && (
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
+            <div className="w-full max-w-md bg-[#1e1915] border-2 border-[#c8a88a] rounded-3xl p-6 sm:p-7 shadow-2xl space-y-5 text-center">
+              <div className="w-16 h-16 rounded-2xl bg-[#c8a88a]/10 border border-[#c8a88a]/30 flex items-center justify-center mx-auto text-[#c8a88a] shadow-inner">
+                <ShieldAlert className="w-9 h-9" />
+              </div>
+
+              <div className="space-y-2">
+                <span className="px-3 py-1 rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/20 text-[11px] font-bold uppercase tracking-wider">
+                  Sessão Prestes a Expirar
+                </span>
+                <h3 className="text-xl font-bold font-serif text-[#f4efe8]">
+                  Deseja renovar sua sessão?
+                </h3>
+                <p className="text-xs text-[#a69a8f] leading-relaxed">
+                  Os 15 minutos da sua sessão clínica se encerraram. Para sua comodidade e <strong className="text-[#f4efe8]">evitar que você perca dados digitados em prontuários ou evoluções</strong>, clique em <strong className="text-[#c8a88a]">"Renovar por +15 minutos"</strong> para continuar exatamente de onde parou.
+                </p>
+              </div>
+
+              <div className="p-3.5 rounded-2xl bg-[#14110f] border border-[#3e342e] text-left flex items-center gap-3">
+                <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
+                <p className="text-[11px] text-[#f4efe8]/90 leading-tight">
+                  <span className="font-semibold text-emerald-400">Seus dados estão seguros:</span> nada foi apagado ou recarregado.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowSessionRenewModal(false);
+                    if (onLogout) onLogout();
+                  }}
+                  className="w-full py-3 px-4 rounded-xl border border-[#4a3e35] hover:bg-[#2a221d] text-[#a69a8f] hover:text-[#f4efe8] text-xs font-bold transition-all cursor-pointer"
+                >
+                  Encerrar Sessão
+                </button>
+                <button
+                  type="button"
+                  onClick={handleRenewSession}
+                  className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-[#c8a88a] to-[#d6bca3] hover:from-[#d6bca3] hover:to-[#e2cdb8] text-[#181513] text-xs font-bold shadow-lg transition-all cursor-pointer flex items-center justify-center gap-2"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                  Renovar (+15 min)
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+                {/* Modal de Manual do Usuário & Guia Operacional */}
         <UserManualModal
           isOpen={isManualModalOpen}
           onClose={() => setIsManualModalOpen(false)}
