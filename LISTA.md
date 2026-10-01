@@ -56,8 +56,10 @@ Este documento é a fonte de verdade para o acompanhamento contínuo de tarefas,
   - Substituído o botão "Trocar" por um seletor suspenso inteligente (`dropdown`) com indicador de paciente ativo, busca instantânea e troca em 1 clique do paciente em foco na Visão Geral.
 - [x] **Limpeza de Resquícios do Firebase na Interface:**
   - Substituída a antiga aba de Firebase pela sub-aba definitiva "Banco de Dados & Servidor" na Central de Configurações, monitorando a conexão local do MariaDB (`gamaecosystem_db`), rotinas de backup e API REST Express.
-- [ ] **Correção Cromática e Contraste do Modo Claro (Light Mode):**
-  - Revisar botões, badges e fundos pretos com texto escuro/verde que comprometem a legibilidade no tema claro, garantindo alto contraste e elegância visual.
+- [x] **Correção Cromática e Contraste do Modo Claro (Light Mode):**
+  - Mapeamento abrangente de todas as cores hexadecimais em `index.css` para superfícies limpas Alabaster (`#f6f3ee`) e cartões brancos com sombras sutis.
+  - Badges de alerta e status (verde, âmbar, vermelho, azul) convertidos para tons pastéis suaves com textos escuros de alto contraste (WCAG AA).
+  - Botão de alternância rápida de Modo Claro/Escuro (Sol/Lua) posicionado diretamente no cabeçalho superior para fácil acesso com 1 clique.
 - [ ] **Auditoria Completa dos Módulos para Apresentação Comercial:**
   - Revisão de ponta a ponta em todos os módulos (Pacientes, PEP, RaDI, Diário, Evoluções, Relatórios, Usuários), eliminando lixo e refinando mensagens para demonstração executiva a clientes.
 
@@ -84,6 +86,14 @@ Este documento é a fonte de verdade para o acompanhamento contínuo de tarefas,
 ---
 
 ## 📜 3. CHANGELOG (Histórico Cronológico de Entregas)
+
+### [v1.1.7] - 2026-10-01: Harmonização Cromática e Acessibilidade do Tema Claro (Light Mode)
+- **Acessibilidade e Alto Contraste (WCAG AA):**
+  - Auditoria cromática abrangente em mais de 75 variações de cores de fundo, bordas e textos aplicadas no ecossistema.
+  - Resolução do problema clássico de legibilidade em badges de status: fundos escuros (`bg-emerald-950`, `bg-amber-950`, `bg-rose-950`) agora recebem tons claros e elegantes no tema claro (`#e6f7ee`, `#fef7e6`, `#fdebee`), e as fontes verdes/âmbar/vermelhas passam a ter alto contraste (`#0d733d`, `#92580a`, `#ab1d32`), permitindo leitura imediata sem esforço visual.
+  - Cartões clínicos convertidos para branco puro (`#ffffff`) sobre fundo Alabaster (`#f6f3ee`), com bordas suaves e caixas de texto com foco dourado.
+- **Botão de Acesso Rápido ao Tema no Cabeçalho:**
+  - Adicionado botão direto com ícones de Sol / Lua no topo ao lado do botão de ajuda, permitindo alternar de modo instantaneamente com 1 toque.
 
 ### [v1.1.6] - 2026-10-01: Despoluição Visual do Cabeçalho Superior
 - **Design & Usabilidade (Header.tsx):**
