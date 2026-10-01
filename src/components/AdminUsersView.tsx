@@ -23,8 +23,8 @@ import {
 
 interface AdminUsersViewProps {
   users: UserProfile[];
-  onApproveUser: (userId: string) => void;
-  onRejectUser: (userId: string) => void;
+  onApproveUser?: (userId: string) => void;
+  onRejectUser?: (userId: string) => void;
   onChangeRole: (userId: string, role: UserRole) => void;
   onUpdateUserPermissions?: (userId: string, allowedTabs: NavigationTab[]) => void;
 }
@@ -132,7 +132,6 @@ export const AdminUsersView: React.FC<AdminUsersViewProps> = ({
     setTimeout(() => setSavedFeedback(false), 3000);
   };
 
-  const pendingUsers = users.filter(u => !u.approved);
 
   return (
     <div className="space-y-6">
@@ -156,42 +155,7 @@ export const AdminUsersView: React.FC<AdminUsersViewProps> = ({
         )}
       </div>
 
-      {/* Seção de Usuários Pendentes */}
-      {pendingUsers.length > 0 && (
-        <div className="p-4 rounded-2xl bg-amber-950/30 border border-amber-800/50 space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-amber-300">
-              Novos Cadastros Aguardando Aprovação ({pendingUsers.length})
-            </span>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {pendingUsers.map(u => (
-              <div key={u.id} className="p-3 rounded-xl bg-[#1c1815] border border-amber-900/40 flex items-center justify-between gap-2">
-                <div>
-                  <p className="text-xs font-bold text-[#f4efe8]">{u.name}</p>
-                  <p className="text-[11px] text-[#a69a8f]">{u.email} • {u.role}</p>
-                </div>
-                <div className="flex items-center gap-1">
-                  <button
-                    onClick={() => onApproveUser(u.id)}
-                    className="p-1.5 rounded-lg bg-emerald-950/80 text-emerald-400 border border-emerald-800 hover:bg-emerald-900 transition-colors"
-                    title="Aprovar Usuário"
-                  >
-                    <Check className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={() => onRejectUser(u.id)}
-                    className="p-1.5 rounded-lg bg-rose-950/80 text-rose-400 border border-rose-800 hover:bg-rose-900 transition-colors"
-                    title="Recusar"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+
 
       {/* Estrutura Principal: Seletor de Usuários + Tabela Matriz de Janelas */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
