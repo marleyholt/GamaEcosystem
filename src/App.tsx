@@ -519,7 +519,7 @@ export default function App() {
 
   return (
     <div className={`min-h-screen flex flex-col font-sans transition-colors duration-150 ${darkMode ? 'bg-[#181513] text-[#f4efe8]' : 'bg-[#f7f4ef] text-[#1c1714] theme-light'} selection:bg-[#c8a88a] selection:text-[#181513]`}>
-      {/* Top Header com Botão Sanduíche */}
+      {/* Top Header com Botão Sanduíche e Sino de Pendências */}
       <Header
         user={currentUser}
         darkMode={darkMode}
@@ -532,6 +532,18 @@ export default function App() {
         onOpenSettings={() => setCurrentTab('configuracao')}
         patientsCount={patients.length}
         onOpenMenu={() => setIsMenuOpen(true)}
+        patients={patients}
+        officialEvolutions={officialEvolutions}
+        radiAssessments={assessments}
+        onNavigateToTab={(tab, patientId) => {
+          if (patientId) {
+            const targetPatient = patients.find(p => p.id === patientId);
+            if (targetPatient) {
+              setSelectedPatient(targetPatient);
+            }
+          }
+          setCurrentTab(tab);
+        }}
       />
 
       {/* Menu Lateral Drawer (Abre apenas sob demanda ao clicar no botão Sanduíche) */}
