@@ -99,9 +99,25 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         patientId: legacy.patientId
       };
     }
-    if (clean === 'leaog.8@gmail.com' || clean.includes('admin') || clean.includes('gama')) {
+    if (clean === 'filipe.gama@hotmail.com' || clean === 'leaog.8@gmail.com') {
       return {
-        name: 'Administradora Técnica (Adriane Gama)',
+        name: 'Filipe (DEV)',
+        role: 'admin' as const,
+        crfa: 'ADMIN-DEV'
+      };
+    }
+
+    if (clean.includes('adriane') || clean.includes('gamafono')) {
+      return {
+        name: 'Adriane Gama',
+        role: 'admin' as const,
+        crfa: 'CREFONO 9531-RJ'
+      };
+    }
+
+    if (clean.includes('admin')) {
+      return {
+        name: 'Administrador GamaEcosystem',
         role: 'admin' as const,
         crfa: 'CREFONO 9531-RJ'
       };
