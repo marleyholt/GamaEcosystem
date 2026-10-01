@@ -49,9 +49,10 @@ Este documento é a fonte de verdade para o acompanhamento contínuo de tarefas,
     - Formulário seguro de troca de senha exigindo: **Senha Atual**, Nova Senha e Confirmação.
     - Botão de logout seguro.
   - Reposicionado o **Sino de Notificações** para o **lado esquerdo** do botão do usuário.
-- [ ] **Sino de Notificações Integrado com Lista de Pendências Clínicas:**
-  - Exibir pop-up/dropdown ao clicar no sino listando todas as pendências do usuário autenticado (assinaturas de evoluções pendentes, familiares aguardando retorno, mensagens não lidas no chat).
-  - Incluir links diretos de 1 clique para abrir os respectivos modais e prontuários.
+- [x] **Sino de Notificações Integrado com Lista de Pendências Clínicas:**
+  - Dropdown interativo de pendências clínicas em tempo real com contador dinâmico pulsante de pendências não lidas.
+  - Rastreamento de evoluções aguardando assinatura de familiares e alertas prioritários de risco de deglutição (RaDI Alto/Moderado).
+  - Acesso direto em 1 clique que já seleciona o paciente em questão e abre a aba correspondente.
 - [x] **Aba Visão Geral (Dashboard) - Seletor Suspenso de Pacientes:**
   - Substituído o botão "Trocar" por um seletor suspenso inteligente (`dropdown`) com indicador de paciente ativo, busca instantânea e troca em 1 clique do paciente em foco na Visão Geral.
 - [x] **Limpeza de Resquícios do Firebase na Interface:**
@@ -63,6 +64,10 @@ Este documento é a fonte de verdade para o acompanhamento contínuo de tarefas,
 - [ ] **Auditoria Completa dos Módulos para Apresentação Comercial:**
   - Revisão de ponta a ponta em todos os módulos (Pacientes, PEP, RaDI, Diário, Evoluções, Relatórios, Usuários), eliminando lixo e refinando mensagens para demonstração executiva a clientes.
 
+- [x] **Remoção de Modal de Aprovação Manual de Usuários:**
+  - O cadastro e primeiro acesso de novos profissionais e cuidadores é vinculado à presença prévia de seus e-mails na aba de Cuidadores ou Equipe/Fonoaudiólogos, dispensando modais manuais de aprovação pendente.
+- [x] **Ícone do App & Favicon Ampliado ao Lado do Título GamaEcosystem:**
+  - O ícone circular/quadrado do aplicativo no cabeçalho superior e no menu retrátil foi ampliado (`w-12 h-12`), com moldura nítida e renderização em alta definição para perfeita visualização ao lado do título.
 ### 🟡 Média Prioridade
 - [x] **Módulo de Relatórios e Exportação em Lote:**
   - Implementado o componente `BatchReportsExportModal.tsx` com suporte a seleção granular de pacientes.
@@ -86,6 +91,16 @@ Este documento é a fonte de verdade para o acompanhamento contínuo de tarefas,
 ---
 
 ## 📜 3. CHANGELOG (Histórico Cronológico de Entregas)
+
+### [v1.1.9] - 2026-10-01: Sino de Pendências Clínicas, Ícone Ampliado e Permissões por E-mail
+- **Sino de Notificações Integrado:**
+  - Implementado dropdown com contagem e alertas em tempo real ao clicar no sino do cabeçalho.
+  - Lista evoluções clínicas pendentes de validação/assinatura e alertas de risco com atalhos de 1 clique para o prontuário.
+- **Autenticação Direta Vinculada a E-mails Cadastrados:**
+  - Removido fluxo de aprovação manual de usuários pendentes.
+  - O acesso é autenticado diretamente com base na lista de e-mails cadastrados na aba de Cuidadores ou Terapeutas.
+- **Favicon & Ícone do App Nítido e Ampliado:**
+  - Aumentado o tamanho do ícone ao lado do título GamaEcosystem (`Logo.tsx`) para perfeita visualização e destaque visual no cabeçalho e menu.
 
 ### [v1.1.8] - 2026-10-01: Ajuste Fino do Tema Claro conforme Feedback Visual
 - **Remoção do Botão Adicional:** O botão rápido de Sol/Lua colocado no topo foi removido; a alternância de tema permanece exclusivamente dentro do modal de perfil do usuário.
