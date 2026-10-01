@@ -96,6 +96,22 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
           )}
 
+          {/* Botão Rápido de Alternar Tema Claro / Escuro */}
+          {setDarkMode && (
+            <button
+              onClick={() => setDarkMode(!darkMode)}
+              className="p-2 rounded-xl bg-[#27211d] hover:bg-[#342b26] text-[#a69a8f] hover:text-[#f4efe8] border border-[#3f342d] transition-all cursor-pointer group active:scale-95"
+              title={darkMode ? "Mudar para Modo Claro" : "Mudar para Modo Escuro"}
+              aria-label="Alternar tema claro e escuro"
+            >
+              {darkMode ? (
+                <Sun className="w-4 h-4 text-amber-400 group-hover:rotate-45 transition-transform" />
+              ) : (
+                <Moon className="w-4 h-4 text-indigo-500 group-hover:-rotate-12 transition-transform" />
+              )}
+            </button>
+          )}
+
           {/* Botão Discreto de Manual do Usuário com Símbolo de Interrogação */}
           <button 
             onClick={() => setIsManualModalOpen(true)}
