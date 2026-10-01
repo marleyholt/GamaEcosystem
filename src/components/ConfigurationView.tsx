@@ -11,7 +11,6 @@ import { Patient, UserProfile, UserRole, NavigationTab } from '../types';
 import { OfficialLetterhead } from './OfficialLetterhead';
 import { AdminUsersView } from './AdminUsersView';
 import { ChangeLogView } from './ChangeLogView';
-import { backupAllLocalToFirestore, syncDocToFirestore, FirestoreCollections } from '../services/firestoreSync';
 import { triggerDatabaseBackup, fetchBackupList, saveClinicConfigToMariaDB } from '../services/mariaDBSync';
 import { resizeImageToTarget } from '../utils/imageOptimizer';
 import { updateBrowserFavicon } from '../utils/faviconManager';
@@ -80,7 +79,7 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
   onChangeRole = () => {},
   onUpdateUserPermissions
 }) => {
-  const [activeTab, setActiveTab] = useState<'geral' | 'marca' | 'cuidadores' | 'terapeutas' | 'usuarios' | 'firebase' | 'changelog'>('geral');
+  const [activeTab, setActiveTab] = useState<'geral' | 'marca' | 'cuidadores' | 'terapeutas' | 'usuarios' | 'database' | 'changelog'>('geral');
   const [tempConfig, setTempConfig] = useState<ClinicConfig>(clinicConfig);
 
   // Mantém tempConfig sempre sincronizado quando clinicConfig for atualizado
@@ -141,7 +140,7 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
     
     // Grava de forma permanente no banco de dados MariaDB e no Firestore (backup)
     saveClinicConfigToMariaDB(tempConfig);
-    syncDocToFirestore(FirestoreCollections.CLINIC_CONFIG, 'global_settings', tempConfig);
+    // Salvo no MariaDB via saveClinicConfigToMariaDB
 
     setHasPendingChanges(false);
     setShowConfirmModal(false);
@@ -174,7 +173,7 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
       onUpdateClinicConfig(updated);
       localStorage.setItem('health_deglut_clinic_config', JSON.stringify(updated));
       saveClinicConfigToMariaDB(updated);
-      syncDocToFirestore(FirestoreCollections.CLINIC_CONFIG, 'global_settings', updated);
+      // Sincronizado com MariaDB
     } catch {
       alert('Erro ao processar imagem da logomarca.');
     }
@@ -187,7 +186,7 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
     onUpdateClinicConfig(updated);
     localStorage.setItem('health_deglut_clinic_config', JSON.stringify(updated));
     saveClinicConfigToMariaDB(updated);
-    syncDocToFirestore(FirestoreCollections.CLINIC_CONFIG, 'global_settings', updated);
+    // Sincronizado com MariaDB
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -209,7 +208,7 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
       onUpdateClinicConfig(updated);
       localStorage.setItem('health_deglut_clinic_config', JSON.stringify(updated));
       saveClinicConfigToMariaDB(updated);
-      syncDocToFirestore(FirestoreCollections.CLINIC_CONFIG, 'global_settings', updated);
+      // Sincronizado com MariaDB
       updateBrowserFavicon(optimizedSquareBase64);
     } catch {
       alert('Erro ao processar imagem do ícone.');
@@ -223,7 +222,7 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
     onUpdateClinicConfig(updated);
     localStorage.setItem('health_deglut_clinic_config', JSON.stringify(updated));
     saveClinicConfigToMariaDB(updated);
-    syncDocToFirestore(FirestoreCollections.CLINIC_CONFIG, 'global_settings', updated);
+    // Sincronizado com MariaDB
     updateBrowserFavicon('/assets/logo.png');
     if (faviconInputRef.current) {
       faviconInputRef.current.value = '';
@@ -387,17 +386,17 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
           <span>Gestão de Usuários & Telas ({users.length})</span>
         </button>
 
-        {/* SUB-ABA: Conexão Firebase / Banco de Dados GAMAECOSYSTEM */}
+        {/* SUB-ABA: Banco de Dados MariaDB & Infraestrutura */}
         <button
-          onClick={() => setActiveTab('firebase')}
+          onClick={() => setActiveTab('database')}
           className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-            activeTab === 'firebase'
+            activeTab === 'database'
               ? 'bg-[#c8a88a] text-[#181513] shadow-md font-bold'
               : 'text-[#a69a8f] hover:text-[#f4efe8] hover:bg-[#25201c]'
           }`}
         >
-          <Flame className="w-4 h-4 text-amber-500 shrink-0" />
-          <span>Projeto Firebase & Banco</span>
+          <Database className="w-4 h-4 text-emerald-400 shrink-0" />
+          <span>Banco de Dados & Servidor</span>
         </button>
 
         {/* SUB-ABA: ChangeLog & Transparência Técnica (LISTA.md) */}
@@ -1228,129 +1227,82 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
       )}
 
       {/* Conteúdo da Tab 6: Status & Conexão do Projeto Firebase (GAMAECOSYSTEM) */}
-      {activeTab === 'firebase' && (
+      {activeTab === 'database' && (
         <div className="bg-[#1f1a17] border border-[#382e27] rounded-2xl p-6 space-y-6 shadow-sm">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#382e27] pb-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400">
-                <Flame className="w-5 h-5" />
+              <div className="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400">
+                <Database className="w-5 h-5" />
               </div>
               <div>
                 <h2 className="text-base font-bold font-serif text-[#f4efe8]">
-                  Projeto Firebase & Banco de Dados
+                  Banco de Dados MariaDB & Infraestrutura Local
                 </h2>
                 <p className="text-xs text-[#a69a8f]">
-                  Configuração de autenticação, banco de dados Cloud Firestore e armazenamento seguro
+                  Servidor próprio dedicado com MariaDB/MySQL (`gamaecosystem_db`) e Express REST API
                 </p>
               </div>
             </div>
 
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#27211d] border border-[#3f342d] text-xs text-[#c8a88a] self-start sm:self-auto">
-              <Database className="w-4 h-4 text-emerald-400" />
-              <span>Projeto ID: <strong>gamaecosystem</strong></span>
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span>Instância: <strong>gamaecosystem_db</strong></span>
             </div>
           </div>
 
-          {/* Cards de Status */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Status do Projeto */}
-            <div className="p-4 rounded-xl bg-[#181513] border border-[#342b26] space-y-3">
+          {/* Cards de Status da Infraestrutura */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Status do MariaDB */}
+            <div className="p-4 rounded-xl bg-[#181513] border border-[#342b26] space-y-2">
               <span className="text-[10px] font-bold uppercase tracking-wider text-[#a69a8f] block">
-                Projeto Ativo e Conectado
+                Motor de Banco Relacional
               </span>
               <div className="flex items-center justify-between">
                 <div>
-                  <span className="text-base font-bold text-[#f4efe8] block">GAMAECOSYSTEM</span>
-                  <span className="text-xs text-[#85796f]">App ID: 1:303494382042:web:cd52a8e6bad425562900e3</span>
+                  <span className="text-sm font-bold text-[#f4efe8] block">MariaDB 10.3+</span>
+                  <span className="text-xs text-[#85796f]">Porta interna 3306 (Local)</span>
                 </div>
-                <span className="px-2.5 py-1 rounded-full bg-emerald-950/70 border border-emerald-500/40 text-emerald-400 text-xs font-semibold flex items-center gap-1">
-                  <CheckCircle className="w-3.5 h-3.5" /> Vinculado 100%
+                <span className="px-2 py-0.5 rounded-full bg-emerald-950/70 border border-emerald-500/40 text-emerald-400 text-xs font-semibold flex items-center gap-1">
+                  <CheckCircle className="w-3.5 h-3.5" /> Conectado
                 </span>
               </div>
             </div>
 
-            {/* Acesso ao Console */}
-            <div className="p-4 rounded-xl bg-[#181513] border border-[#342b26] space-y-3">
+            {/* Status da API REST */}
+            <div className="p-4 rounded-xl bg-[#181513] border border-[#342b26] space-y-2">
               <span className="text-[10px] font-bold uppercase tracking-wider text-[#a69a8f] block">
-                Painel do Firebase Console (GAMAECOSYSTEM)
+                API Backend REST Express
               </span>
-              <p className="text-xs text-[#a69a8f]">
-                Gerencie usuários no Authentication, banco Cloud Firestore e regras de acesso.
-              </p>
-              <a
-                href="https://console.firebase.google.com/project/gamaecosystem/overview"
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#c8a88a] hover:text-[#f4efe8]"
-              >
-                <span>Abrir Console do GAMAECOSYSTEM</span>
-                <ExternalLink className="w-3.5 h-3.5" />
-              </a>
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="text-sm font-bold text-[#f4efe8] block">server_prod.cjs</span>
+                  <span className="text-xs text-[#85796f]">Porta interna 3005 (PM2)</span>
+                </div>
+                <span className="px-2 py-0.5 rounded-full bg-emerald-950/70 border border-emerald-500/40 text-emerald-400 text-xs font-semibold flex items-center gap-1">
+                  <CheckCircle className="w-3.5 h-3.5" /> Online
+                </span>
+              </div>
+            </div>
+
+            {/* Domínio & SSL */}
+            <div className="p-4 rounded-xl bg-[#181513] border border-[#342b26] space-y-2">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#a69a8f] block">
+                Domínio Seguro HTTPS
+              </span>
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="text-sm font-bold text-[#f4efe8] block">gamaecosystem.duckdns.org</span>
+                  <span className="text-xs text-[#85796f]">Nginx SSL Let's Encrypt</span>
+                </div>
+                <span className="px-2 py-0.5 rounded-full bg-emerald-950/70 border border-emerald-500/40 text-emerald-400 text-xs font-semibold flex items-center gap-1">
+                  <CheckCircle className="w-3.5 h-3.5" /> Ativo
+                </span>
+              </div>
             </div>
           </div>
-
-          {/* Botão de Envio Forçado de Toda a Base Local para o Firestore */}
-          <div className="p-5 rounded-xl bg-[#1b1714] border border-[#3d322a] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="space-y-1">
-              <h3 className="text-sm font-bold text-[#f4efe8] flex items-center gap-2">
-                <CloudUpload className="w-4 h-4 text-[#c8a88a]" />
-                Sincronizar Todos os Dados para o Firebase Firestore
-              </h3>
-              <p className="text-xs text-[#a69a8f]">
-                Envia imediatamente todos os pacientes ({patients.length}), cuidadores ({caregivers.length}), terapeutas ({therapists.length}) e prontuários para a sua base no console.
-              </p>
-            </div>
-
-            <button
-              type="button"
-              disabled={isSyncingFirebase}
-              onClick={async () => {
-                setIsSyncingFirebase(true);
-                setSyncStatusMsg(null);
-                try {
-                  const count = await backupAllLocalToFirestore({
-                    patients,
-                    caregivers,
-                    therapists,
-                    evolutions: [],
-                    assessments: [],
-                    dailyLogs: [],
-                    medicalRecords: [],
-                    clinicConfig: tempConfig,
-                    users
-                  });
-                  setSyncStatusMsg(`Sincronização concluída! ${count} registros enviados para o Cloud Firestore.`);
-                } catch (err: any) {
-                  setSyncStatusMsg(`Erro ao sincronizar: ${err?.message || 'Falha na conexão'}`);
-                } finally {
-                  setIsSyncingFirebase(false);
-                }
-              }}
-              className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#c8a88a] hover:bg-[#d6bc9f] text-[#181513] font-bold text-xs shadow-md transition-all cursor-pointer disabled:opacity-50 shrink-0"
-            >
-              {isSyncingFirebase ? (
-                <>
-                  <RefreshCw className="w-4 h-4 animate-spin" />
-                  <span>Enviando Dados...</span>
-                </>
-              ) : (
-                <>
-                  <CloudUpload className="w-4 h-4" />
-                  <span>Sincronizar Base Agora</span>
-                </>
-              )}
-            </button>
-          </div>
-
-          {syncStatusMsg && (
-            <div className="p-3 rounded-xl bg-emerald-950/60 border border-emerald-500/40 text-emerald-300 text-xs flex items-center gap-2">
-              <CheckCircle className="w-4 h-4 shrink-0" />
-              <span>{syncStatusMsg}</span>
-            </div>
-          )}
 
           {/* CARD DE BACKUP AUTOMÁTICO & SOB DEMANDA DO MARIADB (PRODUÇÃO) */}
-          <div className="p-5 rounded-xl bg-[#1b1714] border border-[#3d322a] space-y-4">
+          <div className="p-5 rounded-xl bg-[#181513] border border-[#3d322a] space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="space-y-1">
                 <h3 className="text-sm font-bold text-[#f4efe8] flex items-center gap-2">
@@ -1358,7 +1310,7 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
                   Backup Automático do Banco MariaDB (`gamaecosystem_db`)
                 </h3>
                 <p className="text-xs text-[#a69a8f]">
-                  Rotina diária às 03:00 com retenção de 7 dias e compactação Gzip no servidor OCI. Você também pode acionar um dump manual imediato.
+                  Rotina diária automática às 03:00 com retenção de 7 dias e compactação Gzip no servidor Ubuntu. Você também pode acionar um dump manual imediato.
                 </p>
               </div>
 
@@ -1427,23 +1379,27 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
             )}
           </div>
 
-          {/* Instruções para Transferência Completa das Credenciais do Web App */}
-          <div className="p-4 rounded-xl bg-[#241e1a] border border-[#44362d] space-y-3 text-xs">
-            <div className="flex items-start gap-2.5">
-              <Info className="w-5 h-5 text-[#c8a88a] shrink-0 mt-0.5" />
-              <div className="space-y-1">
-                <p className="font-bold text-[#f4efe8]">
-                  Transferência do Portal de Acesso e Credenciais do Projeto GAMAECOSYSTEM:
-                </p>
-                <p className="text-[#a69a8f] leading-relaxed">
-                  No seu print do Firebase, você está na tela inicial do projeto <strong>GAMAECOSYSTEM</strong> no Firebase Console com o botão <strong className="text-white">"Criar banco de dados"</strong>. Para ativar plenamente o banco no console:
-                </p>
-                <ol className="list-decimal list-inside text-[#c8a88a] space-y-1.5 pt-1 font-medium">
-                  <li>Clique no botão amarelo <strong>"Criar banco de dados"</strong> na sua tela do Firebase.</li>
-                  <li>Escolha o identificador do banco como <strong>(default)</strong> ou <strong>gamaecosystem</strong> e selecione a região recomendada (ex: <code>southamerica-east1</code> para São Paulo ou <code>us-central1</code>).</li>
-                  <li>Em <strong>Configurações do Projeto</strong> (ícone de engrenagem no menu lateral esquerdo), vá até a seção <em>"Seus aplicativos"</em> e crie um app Web (ícone <code>&lt;/&gt;</code>) com o nome <strong>GamaEcosystem Web</strong>.</li>
-                  <li>Copie as chaves geradas (<code>apiKey</code>, <code>authDomain</code>, <code>projectId</code>) caso queira apontar diretamente para este novo ID de projeto.</li>
-                </ol>
+          {/* Dados das Tabelas Relacionais Ativas */}
+          <div className="p-4 rounded-xl bg-[#181513] border border-[#342b26] space-y-3">
+            <span className="text-xs font-bold text-[#f4efe8] block">
+              Tabelas Relacionais Ativas no MariaDB (`gamaecosystem_db`):
+            </span>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+              <div className="p-2.5 rounded-lg bg-[#221d1a] border border-[#382e27]">
+                <span className="text-[#a69a8f] block text-[10px]">Pacientes:</span>
+                <strong className="text-[#c8a88a] font-mono text-sm">{patients.length}</strong>
+              </div>
+              <div className="p-2.5 rounded-lg bg-[#221d1a] border border-[#382e27]">
+                <span className="text-[#a69a8f] block text-[10px]">Cuidadores:</span>
+                <strong className="text-[#c8a88a] font-mono text-sm">{caregivers.length}</strong>
+              </div>
+              <div className="p-2.5 rounded-lg bg-[#221d1a] border border-[#382e27]">
+                <span className="text-[#a69a8f] block text-[10px]">Fonoaudiólogos:</span>
+                <strong className="text-[#c8a88a] font-mono text-sm">{therapists.length}</strong>
+              </div>
+              <div className="p-2.5 rounded-lg bg-[#221d1a] border border-[#382e27]">
+                <span className="text-[#a69a8f] block text-[10px]">Usuários / Acessos:</span>
+                <strong className="text-[#c8a88a] font-mono text-sm">{users.length}</strong>
               </div>
             </div>
           </div>
