@@ -52,8 +52,8 @@ Este documento é a fonte de verdade para o acompanhamento contínuo de tarefas,
 - [ ] **Sino de Notificações Integrado com Lista de Pendências Clínicas:**
   - Exibir pop-up/dropdown ao clicar no sino listando todas as pendências do usuário autenticado (assinaturas de evoluções pendentes, familiares aguardando retorno, mensagens não lidas no chat).
   - Incluir links diretos de 1 clique para abrir os respectivos modais e prontuários.
-- [ ] **Aba Visão Geral (Dashboard) - Seletor Suspenso de Pacientes:**
-  - Substituir o botão inoperante "Trocar" por uma lista suspensa (dropdown/select) com a lista dos pacientes cadastrados, permitindo alternar instantaneamente o paciente em foco na Visão Geral.
+- [x] **Aba Visão Geral (Dashboard) - Seletor Suspenso de Pacientes:**
+  - Substituído o botão "Trocar" por um seletor suspenso inteligente (`dropdown`) com indicador de paciente ativo, busca instantânea e troca em 1 clique do paciente em foco na Visão Geral.
 - [ ] **Limpeza de Resquícios do Firebase na Interface:**
   - Refatorar a aba "Projeto Firebase & Banco", removendo os cards e botões legados do Firebase Console e Firestore, transformando-a em painel exclusivo de "Banco de Dados MariaDB & Infraestrutura".
 - [ ] **Correção Cromática e Contraste do Modo Claro (Light Mode):**
@@ -83,6 +83,12 @@ Este documento é a fonte de verdade para o acompanhamento contínuo de tarefas,
 ---
 
 ## 📜 3. CHANGELOG (Histórico Cronológico de Entregas)
+
+### [v1.1.2] - 2026-10-01: Seletor Suspenso de Pacientes na Visão Geral (Dashboard)
+- **Navegação Clínica Ágil (DashboardView):**
+  - Implementado seletor suspenso (`dropdown`) estilizado substituindo o antigo botão "Trocar".
+  - Adicionada caixa de busca em tempo real por nome e diagnóstico do paciente com fechamento automático ao clicar fora.
+  - Indicador visual do paciente atualmente ativo com contador dinâmico de pacientes cadastrados.
 
 ### [v1.1.1] - 2026-10-01: Blindagem Definitiva de Logomarca Oficial e Persistência no F5
 - **Identidade Visual e Logomarca Oficial Gama Fonoaudiologia:**
