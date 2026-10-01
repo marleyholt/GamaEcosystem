@@ -84,6 +84,13 @@ Este documento é a fonte de verdade para o acompanhamento contínuo de tarefas,
 
 ## 📜 3. CHANGELOG (Histórico Cronológico de Entregas)
 
+### [v1.1.1] - 2026-10-01: Blindagem Definitiva de Logomarca Oficial e Persistência no F5
+- **Identidade Visual e Logomarca Oficial Gama Fonoaudiologia:**
+  - Embutida a logomarca oficial (Logo.PNG) diretamente no bundle compilado (src/data/defaultLogo.ts), tornando impossivel a exibicao de icone quebrado.
+  - Blindada a sincronizacao do frontend para ignorar o caminho legado /logo-gama.png herdado do banco de dados antigo no boot da aplicacao.
+  - Aplicado tratamento com onError e fallback imediato no componente OfficialLetterhead.tsx e ConfigurationView.tsx.
+  - Atualizado o endpoint de configuração no banco MariaDB com script direto de sanitização via comando shell.
+
 ### [v1.1.0] - 2026-09-29: Migração para Servidor de Produção & Infraestrutura Isolada
 - **Infraestrutura Ubuntu 20 (Oracle Cloud):**
   - Realizada inspeção não-destrutiva sem afetar os dois outros projetos existentes (`telumak-server` e `pastelaria-argentino`).
