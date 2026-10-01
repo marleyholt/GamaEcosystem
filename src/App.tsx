@@ -65,7 +65,7 @@ import {
 
 export default function App() {
   // Authentication State: Força passagem pela tela de login, a menos que "Permanecer Conectado"
-  // tenha sido marcado nos últimos 5 minutos (300.000 ms).
+  // tenha sido marcado nos últimos 15 minutos (900.000 ms).
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(() => {
     const saved = localStorage.getItem('health_deglut_user');
     const keepConnectedTimestamp = localStorage.getItem('health_deglut_keep_connected');
@@ -75,15 +75,15 @@ export default function App() {
     }
 
     const elapsed = Date.now() - Number(keepConnectedTimestamp);
-    const FIVE_MINUTES_MS = 5 * 60 * 1000;
+    const FIFTEEN_MINUTES_MS = 15 * 60 * 1000;
 
-    // Se passou de 5 minutos, expira a sessão e exige login
-    if (elapsed > FIVE_MINUTES_MS) {
+    // Se passou de 15 minutos, expira a sessão e exige login
+    if (elapsed > FIFTEEN_MINUTES_MS) {
       localStorage.removeItem('health_deglut_keep_connected');
       return null;
     }
 
-    // Sessão válida dentro dos 5 minutos: restaura usuário com perfil seguro
+    // Sessão válida dentro dos 15 minutos: restaura usuário com perfil seguro
     try {
       let user: UserProfile = JSON.parse(saved);
       const isAdriane = 
