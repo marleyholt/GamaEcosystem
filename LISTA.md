@@ -14,102 +14,29 @@ Este documento é a fonte de verdade para o acompanhamento contínuo de tarefas,
 
 ## 📋 2. TO-DO LIST (Backlog de Tarefas por Prioridade)
 
-### 🔴 Alta Prioridade (Próximos Passos Imediatos)
-- [x] **API de Sincronização MariaDB Completa (CRUD de Produção):**
-  - Implementados endpoints no backend Express (`server_prod.cjs`) para persistir:
-    - Pacientes (`/api/patients`)
-    - Prontuários Médicos (`/api/medical-records`)
-    - Avaliações RaDI (`/api/radi`)
-    - Registros Diários de Alimentação (`/api/feeding-logs`)
-    - Configurações da Clínica (`/api/clinic-config`)
-    - Evoluções Oficiais (`/api/evolutions`)
-  - Conectado o frontend React (`src/services/mariaDBSync.ts` e `App.tsx`) para ler e gravar em tempo real no MariaDB com sincronização automática e resiliência local.
-- [x] **Script de Deploy Automatizado (One-Click Update via Shell Script):**
-  - Criado e configurado o script `/var/www/gamaecosystem/update.sh` com permissões de execução.
-  - Documentado oficialmente no `agents.md` para deploy automático em 1 clique.
-- [x] **Separação de Upload de Marca: Logomarca de Laudos vs Favicon/Ícone PWA:**
-  - Reformulada a aba **Configuração de Marca** em dois painéis independentes:
-    - Card 1: Logomarca para Relatórios e Laudos (exclusivo para PDFs e papel timbrado).
-    - Card 2: Favicon & Ícone do App PWA (para a aba do navegador e ícone de instalação no celular).
-  - Redução das distâncias verticais (topo e rodapé do cabeçalho) no papel timbrado (`OfficialLetterhead.tsx`), otimizando o aproveitamento da folha A4 e eliminando vácuos.
-  - Redução de ~30% no tamanho da imagem no relatório para **alinhar perfeitamente com a altura do texto do título** (`max-h-20 sm:max-h-24 md:max-h-28`), mantendo proporção ideal e estética profissional.
-  - Implementado algoritmo de **Auto-Trim** (`autoTrimCanvas` em `imageOptimizer.ts`) que recorta automaticamente margens brancas/transparentes de imagens enviadas.
-  - Favicon com preenchimento de borda a borda (**grande como o do Google AI Studio**), sem margens em branco na aba do navegador.
-  - Implementado botão explícito "Salvar Alterações de Marca" com Janela Modal de Confirmação antes de efetivar e gravar permanentemente no banco.
-  - **Correção de Persistência no F5:** Implementada gravação imediata no `localStorage`, MariaDB e Firestore no exato momento do upload do arquivo, além de trava de segurança no `App.tsx` que impede que requisições assíncronas vazias sobrescrevam a logo customizada ao recarregar a página.
-- [x] **Manual do Usuário Integrado ao Topo com Restrições por Perfil (RBAC):**
-  - Adicionado botão discreto ao lado esquerdo do sino de notificações com ícone de interrogação (`HelpCircle`).
-  - Ao clicar, abre o **Manual do Usuário** (`UserManualModal.tsx`) contendo janelas e explicações operacionais detalhadas por módulo (O que faz, Como usar passo a passo, Dicas clínicas e Enquadramento regulatório).
-  - Segue estritamente a mesma regra de permissão dos módulos: se o usuário não tem acesso ao módulo (ex: PEP, Laudos, Configurações), a respectiva janela do manual não é exibida para ele. Administradores e RT (Adriane Gama) têm acesso irrestrito ao manual completo.
-- [x] **Pop-up de Usuário no Topo Estilo Google (Troca de Senha com Senha Atual, Tema e Configurações):**
-  - Removido o botão de logout solto e botão de tema da barra superior.
-  - Ao clicar no badge do usuário logado, abre um pop-up flutuante contendo:
-    - Alternador de Tema Claro e Escuro.
-    - Botão de atalho para "Configurações Gerais".
-    - Formulário seguro de troca de senha exigindo: **Senha Atual**, Nova Senha e Confirmação.
-    - Botão de logout seguro.
-  - Reposicionado o **Sino de Notificações** para o **lado esquerdo** do botão do usuário.
-- [x] **Sino de Notificações Integrado com Lista de Pendências Clínicas & Função Limpar:**
-  - Dropdown interativo de pendências clínicas em tempo real com contador dinâmico pulsante de pendências não lidas.
-  - Rastreamento de evoluções aguardando assinatura de familiares e alertas prioritários de risco de deglutição (RaDI Alto/Moderado).
-  - Acesso direto em 1 clique que já seleciona o paciente em questão e abre a aba correspondente.
-  - **Função de Limpar Notificações:** Botão "Limpar" no topo e rodapé para limpar todas as notificações de uma vez, além de ícone de lixeira individual para dispensar avisos pontuais.
-- [x] **Aba Visão Geral (Dashboard) - Seletor Suspenso de Pacientes:**
-  - Substituído o botão "Trocar" por um seletor suspenso inteligente (`dropdown`) com indicador de paciente ativo, busca instantânea e troca em 1 clique do paciente em foco na Visão Geral.
-- [x] **Limpeza de Resquícios do Firebase na Interface:**
-  - Substituída a antiga aba de Firebase pela sub-aba definitiva "Banco de Dados & Servidor" na Central de Configurações, monitorando a conexão local do MariaDB (`gamaecosystem_db`), rotinas de backup e API REST Express.
-- [x] **Correção Cromática e Contraste do Modo Claro (Light Mode):**
-  - Mapeamento abrangente de todas as cores hexadecimais em `index.css` para superfícies limpas Alabaster (`#f6f3ee`) e cartões brancos com sombras sutis.
-  - Badges de alerta e status (verde, âmbar, vermelho, azul) convertidos para tons pastéis suaves com textos escuros de alto contraste (WCAG AA).
-  - Botão de alternância rápida de Modo Claro/Escuro (Sol/Lua) posicionado diretamente no cabeçalho superior para fácil acesso com 1 clique.
-- [x] **Limpeza de Dependências & Higienização do Repositório (Auditoria Fase 1):**
-  - Removidos pacotes desnecessários `@google/genai` e `motion` do `package.json`, reduzindo peso e dependências desnecessárias.
-  - Excluídos arquivos de imagem duplicados na raiz (`logo0.PNG` e `Logo.PNG`) preservando a logo em `public/logo.png` e Base64 seguro.
-  - Removido arquivo legado redundante `src/firebase.ts`, centralizando chamadas em `src/lib/firebase.ts`.
-- [x] **Changelog Integrado ao Dossiê Executivo de Solução Clínica:**
-  - Adicionada seção dedicada e auditada na página de apresentação (`CommercialPresentationPage.tsx`), exibindo o histórico de versões e conformidade técnica e clínica.
-- [x] **Política de Segurança de Sessão (Forçar Tela de Login & Tolerância de 15 Minutos):**
-  - Implementada caixa de seleção "Permanecer conectado (115 minutos de tolerância)" na tela de login.
-  - Se o usuário acessar a URL diretamente e não tiver marcado para permanecer conectado nos últimos 15 minutos (ou se o tempo tiver expirado), o sistema barra o acesso imediatamente e direciona para a tela de login.
-  - Bloqueia que usuários não autenticados acessem rotas internas copiando links diretos.
-- [x] **Auditoria Completa dos Módulos & Dossiê de Apresentação Técnica/Comercial:**
-  - Adicionado botão discreto na tela de login: **"Apresentação Comercial & Técnica"**.
-  - Criado o modal interativo `CommercialPresentationModal.tsx` com:
-    - **Apresentação do Produto & Pilares Clínicos:** RaDI, PEP/Evoluções oficiais, Diário de Alimentação Mobile PWA e Emissão de Laudos com Timbrado Oficial.
-    - **Simulador Interativo Comercial (Sliders):** Ajuste em tempo real de número de clínicas (1 a 30), pacientes por clínica (10 a 200), cuidadores por paciente e mensalidade proposta por clínica (R$ 600 a R$ 3.500/mês).
-    - **Cálculo Dinâmico de Usuários & Armazenamento:** Projeção automática de total de usuários e consumo anual de disco (fotos de refeições comprimidas + banco relacional MariaDB).
-    - **Dimensionamento Realista de Servidores (Pesquisa de Mercado Cloud):** Mapeamento de configuração necessária (vCPU, RAM, NVMe) e provedores homologados (Contabo, Hetzner, Oracle OCI, AWS Lightsail) com custos reais de hospedagem (R$ 45 a R$ 420/mês).
-    - **Projeção de Faturamento & ROI:** Cálculo instantâneo de receita de setup/implantação, MRR (faturamento mensal recorrente), custo anual de infraestrutura e margem de lucro líquido operacional (~90%+).
-
-- [x] **Remoção de Modal de Aprovação Manual de Usuários:**
-  - O cadastro e primeiro acesso de novos profissionais e cuidadores é vinculado à presença prévia de seus e-mails na aba de Cuidadores ou Equipe/Fonoaudiólogos, dispensando modais manuais de aprovação pendente.
-- [x] **Ícone do App & Favicon Ampliado ao Lado do Título GamaEcosystem:**
-  - O ícone circular/quadrado do aplicativo no cabeçalho superior e no menu retrátil foi ampliado (`w-12 h-12`), com moldura nítida e renderização em alta definição para perfeita visualização ao lado do título.
-### 🟡 Média Prioridade
-- [x] **Módulo de Relatórios e Exportação em Lote:**
-  - Implementado o componente `BatchReportsExportModal.tsx` com suporte a seleção granular de pacientes.
-  - Exportação em lote de laudos clínicos em PDF com timbrado, marca d'água oficial e chave criptográfica SEAL.
-  - Exportação consolidada de indicadores em planilha CSV formatada para prontuários e acompanhamento.
-- [x] **Otimização de Code Splitting / Chunking no Vite:**
-  - Configurado `manualChunks` no `vite.config.ts` para separar `vendor-pdf` (`jspdf`, `html2canvas`), `vendor-react` e `vendor-icons`, acelerando o carregamento inicial da aplicação.
-
-### 🟢 Baixa Prioridade / Melhorias Futuras
-- [x] **Rotinas de Backup Automático do Banco de Dados:**
-  - Criado o script `scripts/backup_db.sh` com dump consistente (`--single-transaction`), compressão Gzip e política de retenção de 7 dias.
-  - Agendado cronjob diário das 03:00 no Ubuntu.
-  - Implementada rota administrativa no Express (`/api/admin/backup` e `/api/admin/backups`) e interface visual na Central de Configurações para acionamento sob demanda.
-- [x] **PWA / Notificações no Dispositivo:**
-  - [x] Instruções operacionais completas adicionadas ao Manual do Usuário integrado para instalação no Android (Chrome) e iPhone/iPad (Safari).
-  - Criado o manifesto W3C (`manifest.json`) com ícones de alta resolução (192x192, 512x512, maskable e apple-touch-icon).
-  - Implementado Service Worker (`sw.js`) para carregamento instantâneo e resiliência offline do App Shell.
-  - Criado o componente inteligente `PWAInstallPrompt.tsx` com detecção de modo standalone, suporte nativo a prompt no Android/Desktop e instruções de instalação para iOS (Safari).
-  - Suporte à API nativa de Notificações do Navegador para lembretes clínicos e de alimentação.
+> **🎉 Todas as tarefas do backlog e auditoria foram concluídas e homologadas com sucesso!**  
+> Os itens finalizados foram integrados ao histórico do [Changelog](#-3-changelog-histórico-cronológico-de-entregas) abaixo, mantendo esta lista limpa e pronta para novos requisitos.
 
 ---
-
 ## 📜 3. CHANGELOG (Histórico Cronológico de Entregas)
 
 ### [v1.2.0] - 2026-10-01: Consolidação Geral do GamaEcosystem (Notificações, Temas, Marca, Acessos e Apresentação Comercial)
+- **Alteração de Nome de Exibição no Perfil do Usuário:**
+  - Adicionada opção no pop-up flutuante do perfil (ao clicar no avatar/nome no topo) para alterar o nome de exibição do usuário ativo.
+  - Atualização instantânea com persistência local e no cadastro de usuários, refletindo no cabeçalho e em assinaturas clínicas.
+- **Segurança de Sessão, Contador Regressivo & Proteção Anti-Perda de Dados:**
+  - Caixa de seleção "Permanecer conectado" (sem texto redundante de minutos), permitindo continuar conectado caso a aba/janela seja fechada e reaberta dentro de 15 minutos.
+  - Sessão encerrada imediatamente se a aba for fechada sem a caixa marcada.
+  - Com a janela aberta, contador regressivo em tempo real (`MM:SS`) exibido discretamente no topo ao lado do botão de Manual.
+  - Ao zerar os 15 minutos com a janela aberta, exibe Pop-up Nobre de Renovação que preserva 100% dos dados digitados na tela (evoluções, prontuários, laudos), evitando qualquer perda de trabalho em andamento.
+- **Relatórios & Exportação Consolidada em Lote:**
+  - Componente de exportação em lote de laudos em PDF oficial e planilhas de acompanhamento em CSV.
+- **Otimização de Code Splitting e Performance:**
+  - Separação de chunks no Vite para bibliotecas pesadas (PDF, ícones, React).
+- **Rotinas de Backup Automático do Banco MariaDB:**
+  - Script de backup agendado diariamente e interface administrativa de download/acionamento.
+- **Suporte Completo a PWA & Notificações:**
+  - Service Worker com App Shell offline, manifesto W3C e instruções para Android e iOS.
 - **Auditoria de Dependências & Segurança de Acesso:**
   - Desinstalação de dependências sem uso (`@google/genai`, `motion`).
   - Remoção de arquivos binários redundantes na raiz (`logo0.PNG`, `Logo.PNG`) e isolamento do Firebase legado.
