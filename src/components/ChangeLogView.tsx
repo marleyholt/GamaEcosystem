@@ -279,7 +279,7 @@ export const ChangeLogView: React.FC<ChangeLogViewProps> = () => {
             </div>
             <ul className="text-xs text-[#a69a8f] space-y-1.5 list-disc pl-4">
               <li>
-                <strong className="text-[#f4efe8]">Segurança de Acesso & Sessão com Tolerância de 5 Minutos:</strong> Bloqueio estrito de acesso direto a links internos. Se o usuário não tiver selecionado "Permanecer conectado" nos últimos 5 minutos, a tela de login é exigida obrigatoriamente.
+                <strong className="text-[#f4efe8]">Segurança de Acesso & Sessão com Tolerância de 15 Minutos:</strong> Bloqueio estrito de acesso direto a links internos. Se o usuário não tiver selecionado "Permanecer conectado" nos últimos 15 minutos, a tela de login é exigida obrigatoriamente.
               </li>
               <li>
                 <strong className="text-[#f4efe8]">Limpeza de Dependências & Higienização do Repositório:</strong> Remoção dos pacotes não utilizados (@google/genai, motion), eliminação de binários redundantes na raiz e integração do Changelog oficial ao Dossiê Comercial.
