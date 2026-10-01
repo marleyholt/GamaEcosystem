@@ -241,7 +241,7 @@ export const Navigation: React.FC<NavigationProps> = ({
                   className={`w-full flex items-center justify-between px-3.5 py-3 text-xs font-semibold cursor-pointer transition-colors ${
                     groupActive 
                       ? 'text-[#f4efe8] bg-[#27211d]' 
-                      : 'text-[#a69a8f] hover:text-[#f4efe8] hover:bg-[#25201c]'
+                      : 'text-[#a69a8f] hover:text-[#f4efe8] hover:bg-[#27211d]'
                   }`}
                 >
                   <div className="flex items-center gap-3 truncate">
@@ -277,14 +277,14 @@ export const Navigation: React.FC<NavigationProps> = ({
                         <button
                           key={sub.id}
                           onClick={() => handleSelectTab(sub.id)}
-                          className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-xs transition-all text-left cursor-pointer ${
+                          className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-xs transition-all text-left cursor-pointer group/sub ${
                             active
                               ? 'bg-[#c8a88a] text-[#181513] font-bold shadow-sm'
-                              : 'text-[#c2b6ab] hover:text-[#f4efe8] hover:bg-[#25201c]'
+                              : 'text-[#c2b6ab] hover:bg-[#c8a88a] hover:text-[#181513] hover:shadow-sm'
                           }`}
                         >
                           <div className="flex items-center gap-2.5 min-w-0 pr-1">
-                            <SubIcon className={`w-4 h-4 shrink-0 ${active ? 'text-[#181513]' : 'text-[#c8a88a]'}`} />
+                            <SubIcon className={`w-4 h-4 shrink-0 transition-colors ${active ? 'text-[#181513]' : 'text-[#c8a88a] group-hover/sub:text-[#181513]'}`} />
                             <span className="leading-snug break-words">{sub.label}</span>
                           </div>
                           {sub.badge && (
