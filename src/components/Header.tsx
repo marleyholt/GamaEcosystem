@@ -6,7 +6,8 @@ import { UserProfileModal } from './UserProfileModal';
 import { UserManualModal } from './UserManualModal';
 import { 
   Bell, 
-  HelpCircle, 
+  HelpCircle,
+  Timer, 
   Menu,
   FileSignature,
   AlertTriangle,
@@ -67,6 +68,45 @@ export const Header: React.FC<HeaderProps> = ({
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   
   // IDs marcadas como lidas
+    // Contador Regressivo de Sessão (15 minutos) sincronizado com o navegador
+  const [remainingSeconds, setRemainingSeconds] = useState<number>(() => {
+    const sessionStart = localStorage.getItem('health_deglut_session_start') || sessionStorage.getItem('health_deglut_session_start');
+    if (!sessionStart) return 15 * 60;
+    const elapsedSec = Math.floor((Date.now() - Number(sessionStart)) / 1000);
+    const left = (15 * 60) - elapsedSec;
+    return left > 0 ? left : 0;
+  });
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const sessionStart = localStorage.getItem('health_deglut_session_start') || sessionStorage.getItem('health_deglut_session_start');
+      if (!sessionStart) {
+        setRemainingSeconds(0);
+        return;
+      }
+      const elapsedSec = Math.floor((Date.now() - Number(sessionStart)) / 1000);
+      const left = (15 * 60) - elapsedSec;
+      if (left <= 0) {
+        setRemainingSeconds(0);
+        // Dispara logout automático ao zerar os 15 minutos
+        if (onLogout) {
+          onLogout();
+        }
+      } else {
+        setRemainingSeconds(left);
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [onLogout]);
+
+  // Formata MM:SS
+  const formatTime = (totalSeconds: number) => {
+    const mins = Math.floor(totalSeconds / 60);
+    const secs = totalSeconds % 60;
+    return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+  };
+
   const [readNotificationIds, setReadNotificationIds] = useState<string[]>(() => {
     try {
       const saved = localStorage.getItem('gama_read_notifications');
@@ -254,6 +294,21 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Right: Ações & Sino de Pendências */}
           <div className="flex items-center gap-2 sm:gap-3">
             
+            {/* Contador Regressivo Discreto de Sessão (15 minutos) */}
+            <div 
+              className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-mono font-medium transition-all select-none ${
+                remainingSeconds <= 120 
+                  ? 'bg-rose-500/10 border-rose-500/30 text-rose-400 animate-pulse' 
+                  : remainingSeconds <= 300
+                  ? 'bg-amber-500/10 border-amber-500/30 text-amber-400'
+                  : 'bg-[#27211d] border-[#3f342d] text-[#a69a8f]'
+              }`}
+              title={`Tempo restante de sessão ativa: ${formatTime(remainingSeconds)}. Ao zerar, novo login é exigido por segurança.`}
+            >
+              <Timer className={`w-3.5 h-3.5 ${remainingSeconds <= 120 ? 'text-rose-400' : 'text-[#c8a88a]'}`} />
+              <span className="text-[11px] tracking-wide">{formatTime(remainingSeconds)}</span>
+            </div>
+
             {/* Botão de Ajuda / Manual Operacional */}
             <button 
               onClick={() => setIsManualModalOpen(true)}
