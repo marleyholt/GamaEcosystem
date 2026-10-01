@@ -7,6 +7,8 @@ export interface UserProfile {
   role: UserRole;
   approved: boolean;
   crfaNumber?: string;
+  crfa?: string;
+  password?: string;
   patientId?: string;
   allowedTabs?: NavigationTab[]; // Controle granular de permissões e visibilidade de janelas
   createdAt: string;
