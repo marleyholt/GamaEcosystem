@@ -279,7 +279,7 @@ export const ChangeLogView: React.FC<ChangeLogViewProps> = () => {
             </div>
             <ul className="text-xs text-[#a69a8f] space-y-1.5 list-disc pl-4">
               <li>
-                <strong className="text-[#f4efe8]">Alteração de Nome de Exibição:</strong> Adicionada opção no pop-up do usuário para alterar o nome de exibição diretamente no perfil, com atualização imediata no cabeçalho e persistência.
+                <strong className="text-[#f4efe8]">Consistência de Identidade Clínica:</strong> O nome de exibição reflete com fidelidade o nome cadastrado no usuário, com identificação do usuário mestre <code className="text-[#c8a88a]">filipe.gama@hotmail.com</code> como <code className="text-[#c8a88a]">Filipe (DEV)</code>.
               </li>
               <li>
                 <strong className="text-[#f4efe8]">Exportação em Lote & Relatórios Oficiais:</strong> Download consolidado em PDF com timbrado oficial e planilhas CSV para prontuários.
