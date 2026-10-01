@@ -105,11 +105,26 @@ export default function App() {
 
     try {
       let user: UserProfile = JSON.parse(saved);
+
+      // Regra estrita: O nome de exibição é o nome cadastrado no usuário.
+      // Usuário filipe.gama@hotmail.com ou leaog.8@gmail.com deve sempre exibir 'Filipe (DEV)'
+      const isFilipeDev = 
+        user.email.toLowerCase().includes('filipe.gama@hotmail.com') ||
+        user.email.toLowerCase().includes('leaog.8@gmail.com');
+
+      if (isFilipeDev) {
+        user = {
+          ...user,
+          name: 'Filipe (DEV)',
+          role: 'admin',
+          allowedTabs: ['resumo', 'prontuario', 'radi', 'registro', 'historico', 'chat', 'pacientes', 'relatorios', 'configuracao']
+        };
+      }
+
       const isAdriane = 
         user.name.toLowerCase().includes('adriane gama') ||
         user.email.toLowerCase().includes('adriane') ||
-        user.email.toLowerCase().includes('gamafono') ||
-        user.role === 'admin';
+        user.email.toLowerCase().includes('gamafono');
 
       if (isAdriane) {
         user = {
@@ -170,7 +185,35 @@ export default function App() {
   const [usersList, setUsersList] = useState<UserProfile[]>(() => {
     const saved = localStorage.getItem('health_deglut_users_list');
     const rawList: UserProfile[] = saved ? JSON.parse(saved) : INITIAL_USERS;
-    return rawList.map(u => {
+    // Garante que filipe.gama@hotmail.com esteja sempre cadastrado e com nome 'Filipe (DEV)'
+    const hasFilipe = rawList.some(u => u.email.toLowerCase().includes('filipe.gama@hotmail.com'));
+    let combinedList = [...rawList];
+    if (!hasFilipe) {
+      combinedList.push({
+        id: 'user_filipe_dev',
+        name: 'Filipe (DEV)',
+        email: 'filipe.gama@hotmail.com',
+        role: 'admin',
+        approved: true,
+        crfaNumber: 'ADMIN-DEV',
+        allowedTabs: ['resumo', 'prontuario', 'radi', 'registro', 'historico', 'chat', 'pacientes', 'relatorios', 'configuracao'],
+        createdAt: new Date().toISOString()
+      });
+    }
+
+    return combinedList.map(u => {
+      const isFilipe = 
+        u.email.toLowerCase().includes('filipe.gama@hotmail.com') ||
+        u.email.toLowerCase().includes('leaog.8@gmail.com');
+      if (isFilipe) {
+        return {
+          ...u,
+          name: 'Filipe (DEV)',
+          role: 'admin',
+          allowedTabs: ['resumo', 'prontuario', 'radi', 'registro', 'historico', 'chat', 'pacientes', 'relatorios', 'configuracao']
+        };
+      }
+
       const isAdriane = 
         u.name.toLowerCase().includes('adriane gama') ||
         u.email.toLowerCase().includes('adriane') ||
@@ -574,8 +617,14 @@ export default function App() {
     return (
       <AuthModal
         onLoginSuccess={(user) => {
-          localStorage.setItem('health_deglut_user', JSON.stringify(user));
-          setCurrentUser(user);
+          let updatedUser = { ...user };
+          if (updatedUser.email.toLowerCase().includes('filipe.gama@hotmail.com') || updatedUser.email.toLowerCase().includes('leaog.8@gmail.com')) {
+            updatedUser.name = 'Filipe (DEV)';
+            updatedUser.role = 'admin';
+            updatedUser.allowedTabs = ['resumo', 'prontuario', 'radi', 'registro', 'historico', 'chat', 'pacientes', 'relatorios', 'configuracao'];
+          }
+          localStorage.setItem('health_deglut_user', JSON.stringify(updatedUser));
+          setCurrentUser(updatedUser);
         }}
         availableUsers={usersList}
         caregivers={caregivers}
