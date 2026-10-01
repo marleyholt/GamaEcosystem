@@ -62,6 +62,16 @@ Este documento é a fonte de verdade para o acompanhamento contínuo de tarefas,
   - Mapeamento abrangente de todas as cores hexadecimais em `index.css` para superfícies limpas Alabaster (`#f6f3ee`) e cartões brancos com sombras sutis.
   - Badges de alerta e status (verde, âmbar, vermelho, azul) convertidos para tons pastéis suaves com textos escuros de alto contraste (WCAG AA).
   - Botão de alternância rápida de Modo Claro/Escuro (Sol/Lua) posicionado diretamente no cabeçalho superior para fácil acesso com 1 clique.
+- [x] **Limpeza de Dependências & Higienização do Repositório (Auditoria Fase 1):**
+  - Removidos pacotes desnecessários `@google/genai` e `motion` do `package.json`, reduzindo peso e dependências desnecessárias.
+  - Excluídos arquivos de imagem duplicados na raiz (`logo0.PNG` e `Logo.PNG`) preservando a logo em `public/logo.png` e Base64 seguro.
+  - Removido arquivo legado redundante `src/firebase.ts`, centralizando chamadas em `src/lib/firebase.ts`.
+- [x] **Changelog Integrado ao Dossiê Executivo de Solução Clínica:**
+  - Adicionada seção dedicada e auditada na página de apresentação (`CommercialPresentationPage.tsx`), exibindo o histórico de versões e conformidade técnica e clínica.
+- [x] **Política de Segurança de Sessão (Forçar Tela de Login & Tolerância de 5 Minutos):**
+  - Implementada caixa de seleção "Permanecer conectado (5 minutos de tolerância)" na tela de login.
+  - Se o usuário acessar a URL diretamente e não tiver marcado para permanecer conectado nos últimos 5 minutos (ou se o tempo tiver expirado), o sistema barra o acesso imediatamente e direciona para a tela de login.
+  - Bloqueia que usuários não autenticados acessem rotas internas copiando links diretos.
 - [x] **Auditoria Completa dos Módulos & Dossiê de Apresentação Técnica/Comercial:**
   - Adicionado botão discreto na tela de login: **"Apresentação Comercial & Técnica"**.
   - Criado o modal interativo `CommercialPresentationModal.tsx` com:
@@ -100,6 +110,11 @@ Este documento é a fonte de verdade para o acompanhamento contínuo de tarefas,
 ## 📜 3. CHANGELOG (Histórico Cronológico de Entregas)
 
 ### [v1.2.0] - 2026-10-01: Consolidação Geral do GamaEcosystem (Notificações, Temas, Marca, Acessos e Apresentação Comercial)
+- **Auditoria de Dependências & Segurança de Acesso:**
+  - Desinstalação de dependências sem uso (`@google/genai`, `motion`).
+  - Remoção de arquivos binários redundantes na raiz (`logo0.PNG`, `Logo.PNG`) e isolamento do Firebase legado.
+  - Incorporação do ChangeLog oficial dentro da Apresentação Técnica & Comercial.
+  - Bloqueio estrito de links diretos: obrigatoriedade da tela de login exceto para sessões marcadas como 'permanecer conectado' nos últimos 5 minutos.
 - **Apresentação Técnica & Comercial com Simulador Interativo na Tela de Login:**
   - Botão discreto temporário abaixo do card de login para demonstração executiva a clientes e investidores.
   - Simulador com controles deslizantes para definir número de clínicas, pacientes e cuidadores, calculando automaticamente a volumetria de dados, consumo de disco e usuários.
