@@ -15,9 +15,7 @@ import {
   ChevronRight,
   Settings,
   Sun,
-  Moon,
-  Edit3,
-  UserCheck
+  Moon
 } from 'lucide-react';
 
 interface UserProfileModalProps {
@@ -209,63 +207,8 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
           </div>
         </div>
 
-        {/* Corpo: Alternância entre Visão Geral, Edição de Nome e Troca de Senha */}
-        {isEditingName ? (
-          <form onSubmit={handleSaveDisplayName} className="pt-4 space-y-3">
-            <div className="flex items-center justify-between pb-1">
-              <span className="text-xs font-bold text-[#c8a88a] flex items-center gap-1.5">
-                <Edit3 className="w-3.5 h-3.5" />
-                Alterar Nome de Exibição
-              </span>
-              <button
-                type="button"
-                onClick={() => {
-                  setIsEditingName(false);
-                  setDisplayName(user.name);
-                  setNameError('');
-                }}
-                className="text-[10px] text-[#a69a8f] hover:text-[#f4efe8] underline cursor-pointer"
-              >
-                Voltar
-              </button>
-            </div>
-
-            {nameError && (
-              <div className="p-2 rounded-lg bg-rose-950/60 border border-rose-900 text-rose-300 text-[11px]">
-                {nameError}
-              </div>
-            )}
-
-            {nameSuccess && (
-              <div className="p-2 rounded-lg bg-emerald-950/60 border border-emerald-900 text-emerald-300 text-[11px] flex items-center gap-1.5">
-                <Check className="w-3.5 h-3.5" />
-                Nome atualizado com sucesso!
-              </div>
-            )}
-
-            <div>
-              <label className="block text-[11px] text-[#a69a8f] mb-1 font-medium">Nome Completo / Exibição</label>
-              <div className="relative">
-                <input
-                  type="text"
-                  value={displayName}
-                  onChange={(e) => setDisplayName(e.target.value)}
-                  placeholder="Seu nome"
-                  className="w-full bg-[#181513] border border-[#3e342e] rounded-xl px-3.5 py-2.5 pl-9 text-xs text-[#f4efe8] focus:border-[#c8a88a] outline-none"
-                />
-                <User className="w-4 h-4 text-[#8e8073] absolute left-3 top-3" />
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              className="w-full py-2.5 rounded-xl bg-[#c8a88a] hover:bg-[#d6bca3] text-[#181513] text-xs font-bold shadow-md transition-all cursor-pointer flex items-center justify-center gap-1.5 mt-2"
-            >
-              <Check className="w-3.5 h-3.5" />
-              Salvar Novo Nome
-            </button>
-          </form>
-        ) : !isChangingPassword ? (
+        {/* Corpo: Alternância entre Visão Geral e Troca de Senha */}
+        {!isChangingPassword ? (
           <div className="pt-4 space-y-2.5">
             {/* Botão de Alternar Modo Claro / Escuro */}
             {setDarkMode && (
@@ -305,21 +248,6 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
                 <ChevronRight className="w-4 h-4 text-[#8e8073] group-hover:translate-x-0.5 transition-transform" />
               </button>
             )}
-
-            {/* Botão de Alterar Nome de Exibição */}
-            <button
-              onClick={() => {
-                setDisplayName(user.name);
-                setIsEditingName(true);
-              }}
-              className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-[#27211d] hover:bg-[#342b26] border border-[#382e27] text-xs font-semibold text-[#f4efe8] transition-all cursor-pointer group"
-            >
-              <div className="flex items-center gap-2.5">
-                <Edit3 className="w-4 h-4 text-[#c8a88a] group-hover:rotate-12 transition-transform" />
-                <span>Alterar Nome de Exibição</span>
-              </div>
-              <ChevronRight className="w-4 h-4 text-[#8e8073] group-hover:translate-x-0.5 transition-transform" />
-            </button>
 
             {/* Botão de Alterar Minha Senha */}
             <button
