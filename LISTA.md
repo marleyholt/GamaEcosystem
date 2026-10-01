@@ -54,8 +54,8 @@ Este documento é a fonte de verdade para o acompanhamento contínuo de tarefas,
   - Incluir links diretos de 1 clique para abrir os respectivos modais e prontuários.
 - [x] **Aba Visão Geral (Dashboard) - Seletor Suspenso de Pacientes:**
   - Substituído o botão "Trocar" por um seletor suspenso inteligente (`dropdown`) com indicador de paciente ativo, busca instantânea e troca em 1 clique do paciente em foco na Visão Geral.
-- [ ] **Limpeza de Resquícios do Firebase na Interface:**
-  - Refatorar a aba "Projeto Firebase & Banco", removendo os cards e botões legados do Firebase Console e Firestore, transformando-a em painel exclusivo de "Banco de Dados MariaDB & Infraestrutura".
+- [x] **Limpeza de Resquícios do Firebase na Interface:**
+  - Substituída a antiga aba de Firebase pela sub-aba definitiva "Banco de Dados & Servidor" na Central de Configurações, monitorando a conexão local do MariaDB (`gamaecosystem_db`), rotinas de backup e API REST Express.
 - [ ] **Correção Cromática e Contraste do Modo Claro (Light Mode):**
   - Revisar botões, badges e fundos pretos com texto escuro/verde que comprometem a legibilidade no tema claro, garantindo alto contraste e elegância visual.
 - [ ] **Auditoria Completa dos Módulos para Apresentação Comercial:**
@@ -83,6 +83,12 @@ Este documento é a fonte de verdade para o acompanhamento contínuo de tarefas,
 ---
 
 ## 📜 3. CHANGELOG (Histórico Cronológico de Entregas)
+
+### [v1.1.3] - 2026-10-01: Centralização do Manual do Usuário e Transição Completa MariaDB
+- **Interface & Experiência de Usuário:**
+  - Janela Modal do Manual do Usuário (`UserManualModal.tsx`) reestruturada para centralização perfeita no meio da tela (viewport), com `max-h-[88vh]` e bordas resguardadas para nunca mais cortar em nenhum dispositivo ou resolução.
+  - Substituição da aba "Projeto Firebase & Banco" pela aba **"Banco de Dados MariaDB & Infraestrutura"**, exibindo status ao vivo do MariaDB, API Express, domínio HTTPS e contadores das tabelas relacionais ativas.
+  - Sincronização automática dos usuários autenticados da tabela `users` do MariaDB na inicialização do aplicativo.
 
 ### [v1.1.2] - 2026-10-01: Seletor Suspenso de Pacientes na Visão Geral (Dashboard)
 - **Navegação Clínica Ágil (DashboardView):**
