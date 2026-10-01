@@ -1,3 +1,4 @@
+import { DEFAULT_OFFICIAL_LOGO_BASE64 } from '../data/defaultLogo';
 import React, { useState, useRef, useEffect } from 'react';
 import { 
   ClinicConfig, 
@@ -547,18 +548,19 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
                 {/* Prévia da Logomarca dos Relatórios */}
                 <div className="flex items-center gap-4 p-4 rounded-xl bg-[#181513] border border-[#2e2621]">
                   <div className="w-24 h-20 rounded-lg bg-white/5 border border-dashed border-[#44362d] flex items-center justify-center p-2 overflow-hidden shrink-0">
-                    {tempConfig.logoUrl ? (
-                      <img src={tempConfig.logoUrl} alt="Logo Relatórios" className="max-h-full max-w-full object-contain" />
+                    {(tempConfig.logoUrl && tempConfig.logoUrl !== '/logo-gama.png') ? (
+                      <img 
+                        src={tempConfig.logoUrl} 
+                        alt="Logo Relatórios" 
+                        onError={(e) => { (e.target as HTMLImageElement).src = DEFAULT_OFFICIAL_LOGO_BASE64; }} 
+                        className="max-h-full max-w-full object-contain" 
+                      />
                     ) : (
-                      <div className="flex flex-col items-center">
-                        <div className="relative mb-0.5">
-                          <div className="w-8 h-8 rounded-full border-2 border-[#7a5937] flex items-center justify-center font-serif text-[#7a5937] font-bold text-base leading-none">
-                            g
-                          </div>
-                          <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-[#7a5937]" />
-                        </div>
-                        <span className="text-[9px] font-serif font-black tracking-widest text-[#f4efe8]">GAMA</span>
-                      </div>
+                      <img 
+                        src={DEFAULT_OFFICIAL_LOGO_BASE64} 
+                        alt="Logo Oficial GAMA" 
+                        className="max-h-full max-w-full object-contain" 
+                      />
                     )}
                   </div>
 
