@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { 
   BookOpen, 
   X, 
@@ -15,7 +16,11 @@ import {
   ShieldCheck,
   CheckCircle2,
   HelpCircle,
-  ChevronRight
+  ChevronRight,
+  Smartphone,
+  Download,
+  Share,
+  MoreVertical
 } from 'lucide-react';
 import { UserProfile, NavigationTab } from '../types';
 
@@ -202,6 +207,25 @@ const ALL_MANUAL_SECTIONS: ManualSection[] = [
       'Consulte a aba de ChangeLog para verificar o histórico técnico de atualizações do ecossistema.'
     ],
     compliance: 'Acesso restrito a administradores e profissionais autorizados.'
+  },
+  {
+    id: 'pwa_install',
+    title: 'Instalação no Celular & Tablet (PWA)',
+    subtitle: 'Como instalar o GamaEcosystem como aplicativo nativo no Android e iOS (iPhone/iPad).',
+    icon: Smartphone,
+    overview: 'O GamaEcosystem foi desenvolvido com tecnologia Progressive Web App (PWA), permitindo ser instalado na tela de início de celulares e tablets sem necessidade de baixar pela Play Store ou App Store. Ele funciona em tela cheia, abre instantaneamente e tem ícone próprio.',
+    howToUse: [
+      'No Celular Android (Chrome): Acesse https://gamaecosystem.duckdns.org, toque no menu de 3 pontinhos (canto superior direito) e selecione "Instalar aplicativo" ou "Adicionar à tela inicial". Confirme tocando em "Instalar".',
+      'No iPhone / iPad (Safari): Acesse o link no Safari, toque no botão de Compartilhar (ícone do quadrado com a seta para cima na barra inferior), role para baixo e toque em "Adicionar à Tela de Início". Confirme em "Adicionar".',
+      'Pelo Banner Automático do App: Ao acessar pelo celular pela primeira vez, o próprio sistema exibe um aviso na parte inferior com o botão "Instalar Aplicativo". Basta tocar nele para instalar em 1 segundo.',
+      'Abertura Standalone: Após instalado, localize o ícone "GamaEcosystem" na sua tela de aplicativos. Ele abrirá sem barras do navegador, exatamente como um aplicativo nativo.'
+    ],
+    tips: [
+      'No iPhone, utilize sempre o navegador Safari para instalar na tela de início (o Chrome do iOS não oferece essa opção por restrição da Apple).',
+      'O aplicativo instalado continua sincronizado em tempo real com o banco MariaDB da clínica e funciona mesmo com oscilações temporárias de internet.',
+      'Você pode instalar no celular de cuidadores para que eles registrem refeições e intercorrências diretamente à beira do leito.'
+    ],
+    compliance: 'Tecnologia PWA em total conformidade com os padrões W3C e segurança HTTPS TLS 1.3.'
   }
 ];
 
@@ -240,9 +264,9 @@ export const UserManualModal: React.FC<UserManualModalProps> = ({
 
   const activeSection = allowedSections.find(s => s.id === selectedSectionId) || allowedSections[0];
 
-  return (
+  return createPortal(
     <div 
-      className="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-4 md:p-6 bg-black/80 backdrop-blur-sm overflow-hidden"
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-2 sm:p-4 md:p-6 bg-black/80 backdrop-blur-sm overflow-hidden"
       onClick={onClose}
     >
       <div 
@@ -421,6 +445,7 @@ export const UserManualModal: React.FC<UserManualModalProps> = ({
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
