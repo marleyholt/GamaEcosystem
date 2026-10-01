@@ -64,26 +64,45 @@ import {
 } from './services/mariaDBSync';
 
 export default function App() {
-  // Authentication State: Força passagem pela tela de login, a menos que "Permanecer Conectado"
-  // tenha sido marcado nos últimos 15 minutos (900.000 ms).
+  // Authentication State:
+  // Regras estritas de segurança de sessão:
+  // 1. Se a janela foi fechada e reaberta:
+  //    - Se logou com "Permanecer conectado" marcado e estiver dentro dos 15 minutos: continua logado.
+  //    - Se logou SEM a caixa marcada: sessionStorage foi perdido com o fechamento da aba, logo exige novo login.
+  // 2. Com a janela aberta:
+  //    - Marcada ou não a caixa, o usuário permanece conectado por 15 minutos antes de expirar a sessão.
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(() => {
     const saved = localStorage.getItem('health_deglut_user');
-    const keepConnectedTimestamp = localStorage.getItem('health_deglut_keep_connected');
+    if (!saved) return null;
 
-    if (!saved || !keepConnectedTimestamp) {
-      return null; // Exige login imediatamente
-    }
+    const isKeepConnected = localStorage.getItem('health_deglut_keep_connected') === 'true';
+    const isTabSessionActive = sessionStorage.getItem('health_deglut_session_active') === 'true';
 
-    const elapsed = Date.now() - Number(keepConnectedTimestamp);
-    const FIFTEEN_MINUTES_MS = 15 * 60 * 1000;
-
-    // Se passou de 15 minutos, expira a sessão e exige login
-    if (elapsed > FIFTEEN_MINUTES_MS) {
-      localStorage.removeItem('health_deglut_keep_connected');
+    // Se NÃO marcou a caixa e fechou a janela/aba (não tem sessionStorage), exige login
+    if (!isKeepConnected && !isTabSessionActive) {
       return null;
     }
 
-    // Sessão válida dentro dos 15 minutos: restaura usuário com perfil seguro
+    // Calcula tempo decorrido desde o login / início da sessão
+    const sessionStart = localStorage.getItem('health_deglut_session_start') || sessionStorage.getItem('health_deglut_session_start');
+    if (!sessionStart) return null;
+
+    const elapsed = Date.now() - Number(sessionStart);
+    const FIFTEEN_MINUTES_MS = 15 * 60 * 1000;
+
+    if (elapsed >= FIFTEEN_MINUTES_MS) {
+      // Expirou os 15 minutos
+      localStorage.removeItem('health_deglut_keep_connected');
+      localStorage.removeItem('health_deglut_session_start');
+      sessionStorage.removeItem('health_deglut_session_active');
+      sessionStorage.removeItem('health_deglut_session_start');
+      return null;
+    }
+
+    // Marca a aba atual como ativa caso tenha entrado via "permanecer conectado"
+    sessionStorage.setItem('health_deglut_session_active', 'true');
+    sessionStorage.setItem('health_deglut_session_start', sessionStart);
+
     try {
       let user: UserProfile = JSON.parse(saved);
       const isAdriane = 
@@ -575,6 +594,9 @@ export default function App() {
         onLogout={() => {
           localStorage.removeItem('health_deglut_user');
           localStorage.removeItem('health_deglut_keep_connected');
+          localStorage.removeItem('health_deglut_session_start');
+          sessionStorage.removeItem('health_deglut_session_active');
+          sessionStorage.removeItem('health_deglut_session_start');
           setCurrentUser(null);
         }}
         onUpdateUser={(updated) => {
