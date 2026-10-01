@@ -93,73 +93,34 @@ Este documento é a fonte de verdade para o acompanhamento contínuo de tarefas,
 
 ## 📜 3. CHANGELOG (Histórico Cronológico de Entregas)
 
-### [v1.1.9] - 2026-10-01: Sino de Pendências Clínicas, Ícone Ampliado e Permissões por E-mail
+### [v1.2.0] - 2026-10-01: Consolidação Geral do GamaEcosystem (Notificações, Temas, Marca e Acessos)
 - **Sino de Notificações Integrado & Função Limpar:**
-  - Adicionado botão "Limpar" e "Limpar todas" para esvaziar a lista de notificações/pendências em 1 clique.
-  - Adicionado botão de descarte individual em cada item da lista (ícone de lixeira).
-  - Implementado dropdown com contagem e alertas em tempo real ao clicar no sino do cabeçalho.
-  - Lista evoluções clínicas pendentes de validação/assinatura e alertas de risco com atalhos de 1 clique para o prontuário.
+  - Dropdown com contagem e alertas em tempo real ao clicar no sino do cabeçalho.
+  - Lista de pendências clínicas (evoluções aguardando assinatura do responsável e alertas de risco RaDI Alto/Moderado) com atalhos de 1 clique para o prontuário.
+  - Adicionado botão **"Limpar"** e **"Limpar todas"** para esvaziar a lista de notificações em 1 clique, além de botão de descarte individual (lixeira) por notificação.
+  - Persistência das notificações já limpas no navegador.
 - **Autenticação Direta Vinculada a E-mails Cadastrados:**
-  - Removido fluxo de aprovação manual de usuários pendentes.
-  - O acesso é autenticado diretamente com base na lista de e-mails cadastrados na aba de Cuidadores ou Terapeutas.
-- **Favicon & Ícone do App Nítido e Ampliado:**
-  - Aumentado o tamanho do ícone ao lado do título GamaEcosystem (`Logo.tsx`) para perfeita visualização e destaque visual no cabeçalho e menu.
-
-### [v1.1.8] - 2026-10-01: Ajuste Fino do Tema Claro conforme Feedback Visual
-- **Remoção do Botão Adicional:** O botão rápido de Sol/Lua colocado no topo foi removido; a alternância de tema permanece exclusivamente dentro do modal de perfil do usuário.
-- **Menu Lateral (Drawer Sanduíche):**
-  - Subitens de atendimento clínico (PEP, RaDI, Registro Diário, Histórico, Chat) e Pacientes/Laudos agora utilizam o mesmo visual dourado (`bg-[#c8a88a] text-[#181513] font-bold`) ao passar o mouse (hover) que já possuíam quando selecionados ativos (como no botão "Visão Geral").
-  - O fundo dos submenus abertos não fica mais escuro/preto no tema claro.
-- **Risco Moderado (Score RaDI):**
-  - Substituída a cor amarela clara/apagada por um tom marrom âmbar escuro de alto contraste (`#804a00` / `text-amber-500` escurecido pelo CSS), permitindo leitura nítida de imediato sobre fundo creme/branco.
-- **Botões e Linhas de Seleção:**
-  - As abas da Central de Configurações (ex: "ChangeLog & Entregas") e linhas da tabela de Usuários e Permissões não ficam mais pretas ao passar o mouse; adotam fundo e texto claros e legíveis.
-
-### [v1.1.7] - 2026-10-01: Harmonização Cromática e Acessibilidade do Tema Claro (Light Mode)
-- **Acessibilidade e Alto Contraste (WCAG AA):**
-  - Auditoria cromática abrangente em mais de 75 variações de cores de fundo, bordas e textos aplicadas no ecossistema.
-  - Resolução do problema clássico de legibilidade em badges de status: fundos escuros (`bg-emerald-950`, `bg-amber-950`, `bg-rose-950`) agora recebem tons claros e elegantes no tema claro (`#e6f7ee`, `#fef7e6`, `#fdebee`), e as fontes verdes/âmbar/vermelhas passam a ter alto contraste (`#0d733d`, `#92580a`, `#ab1d32`), permitindo leitura imediata sem esforço visual.
-  - Cartões clínicos convertidos para branco puro (`#ffffff`) sobre fundo Alabaster (`#f6f3ee`), com bordas suaves e caixas de texto com foco dourado.
-- **Botão de Acesso Rápido ao Tema no Cabeçalho:**
-  - Adicionado botão direto com ícones de Sol / Lua no topo ao lado do botão de ajuda, permitindo alternar de modo instantaneamente com 1 toque.
-
-### [v1.1.6] - 2026-10-01: Despoluição Visual do Cabeçalho Superior
-- **Design & Usabilidade (Header.tsx):**
-  - Removidos os selos estáticos de texto do cabeçalho ("LGPD & Criptografia Ativa" e "MariaDB Conectado").
-  - O topo agora fica limpo, elegante e direto ao ponto, destacando a logo, os controles de ação essenciais (Modo Escuro/Claro, Sino de Notificações, Manual) e o perfil do usuário ativo.
-
-### [v1.1.5] - 2026-10-01: Remoção de Resquícios Visuais do Firebase e Padronização MariaDB
-- **Eliminação Completa de Menções ao Firebase no Topo e Segurança:**
-  - O selo no cabeçalho superior (`Header.tsx`) que exibia *"Firebase / OCI MariaDB Ready"* foi atualizado para **"MariaDB Dedicado Conectado"** com indicador verde esmeralda.
-  - Tela de LGPD & Segurança (`LgpdSecurityView.tsx`) atualizada: removida a menção à transição provisória de Firestore, fixando como padrão definitivo o MariaDB InnoDB em produção.
-  - Limpeza de comentários internos e estados legados em `ConfigurationView.tsx`.
-
-### [v1.1.4] - 2026-10-01: Portal Overlay para Manual e Guia de Instalação Mobile PWA
-- **Renderização por Portal (React Portal):**
-  - O Modal do Manual do Usuário (`UserManualModal.tsx`) agora é renderizado via `createPortal` diretamente no `document.body` com `z-[9999]`.
-  - Isso garante que a janela sempre fique 100% sobreposta a qualquer componente, cabeçalho ou menu da página, sem risco de ser cortada ou ficar atrás de outros elementos.
-  - Fechamento imediato com 1 clique ao clicar no fundo escuro (backdrop) ou no botão X.
-- **Capítulo de Instalação PWA no Manual:**
-  - Adicionado novo módulo passo a passo no Manual explicando como instalar o aplicativo no Android (Google Chrome) e iPhone/iPad (Safari).
-
-### [v1.1.3] - 2026-10-01: Centralização do Manual do Usuário e Transição Completa MariaDB
-- **Interface & Experiência de Usuário:**
-  - Janela Modal do Manual do Usuário (`UserManualModal.tsx`) reestruturada para centralização perfeita no meio da tela (viewport), com `max-h-[88vh]` e bordas resguardadas para nunca mais cortar em nenhum dispositivo ou resolução.
-  - Substituição da aba "Projeto Firebase & Banco" pela aba **"Banco de Dados MariaDB & Infraestrutura"**, exibindo status ao vivo do MariaDB, API Express, domínio HTTPS e contadores das tabelas relacionais ativas.
-  - Sincronização automática dos usuários autenticados da tabela `users` do MariaDB na inicialização do aplicativo.
-
-### [v1.1.2] - 2026-10-01: Seletor Suspenso de Pacientes na Visão Geral (Dashboard)
-- **Navegação Clínica Ágil (DashboardView):**
-  - Implementado seletor suspenso (`dropdown`) estilizado substituindo o antigo botão "Trocar".
-  - Adicionada caixa de busca em tempo real por nome e diagnóstico do paciente com fechamento automático ao clicar fora.
-  - Indicador visual do paciente atualmente ativo com contador dinâmico de pacientes cadastrados.
-
-### [v1.1.1] - 2026-10-01: Blindagem Definitiva de Logomarca Oficial e Persistência no F5
-- **Identidade Visual e Logomarca Oficial Gama Fonoaudiologia:**
-  - Embutida a logomarca oficial (Logo.PNG) diretamente no bundle compilado (src/data/defaultLogo.ts), tornando impossivel a exibicao de icone quebrado.
-  - Blindada a sincronizacao do frontend para ignorar o caminho legado /logo-gama.png herdado do banco de dados antigo no boot da aplicacao.
-  - Aplicado tratamento com onError e fallback imediato no componente OfficialLetterhead.tsx e ConfigurationView.tsx.
-  - Atualizado o endpoint de configuração no banco MariaDB com script direto de sanitização via comando shell.
+  - Removido fluxo e modais de aprovação manual de usuários pendentes.
+  - Acesso e primeiro cadastro validados automaticamente pela presença prévia do e-mail na aba de Cuidadores ou Equipe/Fonoaudiólogos.
+- **Favicon & Ícone do App Ampliado e Nítido:**
+  - Aumentado o tamanho do ícone ao lado do título GamaEcosystem (`Logo.tsx`) para `w-12 h-12`, com moldura elegante e renderização em alta definição no cabeçalho e menu.
+- **Ajuste Fino e Harmonização do Tema Claro (Light Mode):**
+  - Mapeamento abrangente de mais de 75 combinações de cores para padrão visual Alabaster (`#f6f3ee`) e cartões brancos com sombras sutis.
+  - Badges de alerta e status (verde, âmbar, vermelho) convertidos para tons pastéis suaves com fontes escuras de alto contraste (WCAG AA).
+  - Subitens do menu lateral (PEP, RaDI, Diário, Histórico, Chat) e linhas de tabelas com efeito dourado ao passar o mouse sem escurecer o fundo no tema claro.
+  - Remoção de botões redundantes no topo: a alternância de tema permanece integrada ao modal do usuário.
+- **Despoluição Visual do Cabeçalho Superior:**
+  - Removidos selos estáticos de texto do cabeçalho; topo limpo, elegante e direto ao ponto com foco em ações essenciais.
+- **Transição Completa MariaDB & Eliminação de Menções ao Firebase:**
+  - Sub-aba definitiva "Banco de Dados & Servidor" na Central de Configurações, monitorando MariaDB (`gamaecosystem_db`), rotinas de backup e API REST Express.
+  - Remoção definitiva de menções legadas ao Firebase nas telas operacionais.
+- **Centralização do Manual do Usuário e Guia de Instalação Mobile PWA:**
+  - Modal do Manual renderizado via Portal (`document.body`) com centralização no meio da tela (`max-h-[88vh]`), sem risco de corte em nenhum dispositivo.
+  - Capítulo passo a passo explicando como instalar o aplicativo no Android (Chrome) e iPhone/iPad (Safari).
+- **Seletor Suspenso de Pacientes na Visão Geral (Dashboard):**
+  - Seletor inteligente com busca instantânea por nome/diagnóstico e troca em 1 clique do paciente em foco.
+- **Blindagem Definitiva da Logomarca Oficial:**
+  - Embutida a logomarca oficial em Base64 diretamente no bundle compilado, eliminando falhas ou links quebrados no recarregamento (F5).
 
 ### [v1.1.0] - 2026-09-29: Migração para Servidor de Produção & Infraestrutura Isolada
 - **Infraestrutura Ubuntu 20 (Oracle Cloud):**
