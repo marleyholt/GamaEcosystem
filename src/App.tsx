@@ -151,11 +151,17 @@ export default function App() {
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
+        const resolvedLogo = (parsed.logoUrl && parsed.logoUrl !== '/logo-gama.png' && parsed.logoUrl.trim() !== '') 
+          ? parsed.logoUrl 
+          : '/assets/logo.png';
+        const resolvedFavicon = (parsed.faviconUrl && parsed.faviconUrl !== '/logo-gama.png' && parsed.faviconUrl.trim() !== '') 
+          ? parsed.faviconUrl 
+          : '/assets/logo.png';
         return {
           ...DEFAULT_CLINIC_CONFIG,
           ...parsed,
-          logoUrl: (parsed.logoUrl && parsed.logoUrl.trim() !== '') ? parsed.logoUrl : '/assets/logo.png',
-          faviconUrl: (parsed.faviconUrl && parsed.faviconUrl.trim() !== '') ? parsed.faviconUrl : '/assets/logo.png'
+          logoUrl: resolvedLogo,
+          faviconUrl: resolvedFavicon
         };
       } catch {
         return DEFAULT_CLINIC_CONFIG;
@@ -307,9 +313,18 @@ export default function App() {
         if (dbData.clinicConfig) {
           const cfg = dbData.clinicConfig;
           setClinicConfig(prev => {
-            // Prioriza a imagem do banco, mas se o banco ainda estiver vazio, NÃO apaga a imagem já salva localmente
-            const effectiveLogo = (cfg.logo_url && cfg.logo_url.trim() !== '') ? cfg.logo_url : prev.logoUrl;
-            const effectiveFavicon = (cfg.favicon_url && cfg.favicon_url.trim() !== '') ? cfg.favicon_url : prev.faviconUrl;
+            // Se o logo vier do banco como o placeholder antigo inexistente ('/logo-gama.png'), substitui pelo /assets/logo.png
+            let rawLogo = cfg.logo_url;
+            if (rawLogo === '/logo-gama.png' || !rawLogo || rawLogo.trim() === '') {
+              rawLogo = prev.logoUrl || '/assets/logo.png';
+            }
+            const effectiveLogo = rawLogo;
+
+            let rawFavicon = cfg.favicon_url;
+            if (rawFavicon === '/logo-gama.png' || !rawFavicon || rawFavicon.trim() === '') {
+              rawFavicon = prev.faviconUrl || '/assets/logo.png';
+            }
+            const effectiveFavicon = rawFavicon;
 
             const updated: ClinicConfig = {
               ...prev,
@@ -369,11 +384,20 @@ export default function App() {
       if (remoteConfig && remoteConfig.length > 0) {
         const rc = remoteConfig[0];
         setClinicConfig(prev => {
+          let cleanLogo = rc.logoUrl;
+          if (cleanLogo === '/logo-gama.png' || !cleanLogo || cleanLogo.trim() === '') {
+            cleanLogo = prev.logoUrl || '/assets/logo.png';
+          }
+          let cleanFavicon = rc.faviconUrl;
+          if (cleanFavicon === '/logo-gama.png' || !cleanFavicon || cleanFavicon.trim() === '') {
+            cleanFavicon = prev.faviconUrl || '/assets/logo.png';
+          }
+
           const merged: ClinicConfig = {
             ...prev,
             ...rc,
-            logoUrl: (rc.logoUrl && rc.logoUrl.trim() !== '') ? rc.logoUrl : prev.logoUrl,
-            faviconUrl: (rc.faviconUrl && rc.faviconUrl.trim() !== '') ? rc.faviconUrl : prev.faviconUrl
+            logoUrl: cleanLogo,
+            faviconUrl: cleanFavicon
           };
           localStorage.setItem('health_deglut_clinic_config', JSON.stringify(merged));
           return merged;
