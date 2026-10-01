@@ -85,6 +85,12 @@ Este documento é a fonte de verdade para o acompanhamento contínuo de tarefas,
 
 ## 📜 3. CHANGELOG (Histórico Cronológico de Entregas)
 
+### [v1.1.5] - 2026-10-01: Remoção de Resquícios Visuais do Firebase e Padronização MariaDB
+- **Eliminação Completa de Menções ao Firebase no Topo e Segurança:**
+  - O selo no cabeçalho superior (`Header.tsx`) que exibia *"Firebase / OCI MariaDB Ready"* foi atualizado para **"MariaDB Dedicado Conectado"** com indicador verde esmeralda.
+  - Tela de LGPD & Segurança (`LgpdSecurityView.tsx`) atualizada: removida a menção à transição provisória de Firestore, fixando como padrão definitivo o MariaDB InnoDB em produção.
+  - Limpeza de comentários internos e estados legados em `ConfigurationView.tsx`.
+
 ### [v1.1.4] - 2026-10-01: Portal Overlay para Manual e Guia de Instalação Mobile PWA
 - **Renderização por Portal (React Portal):**
   - O Modal do Manual do Usuário (`UserManualModal.tsx`) agora é renderizado via `createPortal` diretamente no `document.body` com `z-[9999]`.
