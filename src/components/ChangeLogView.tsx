@@ -279,7 +279,7 @@ export const ChangeLogView: React.FC<ChangeLogViewProps> = () => {
             </div>
             <ul className="text-xs text-[#a69a8f] space-y-1.5 list-disc pl-4">
               <li>
-                <strong className="text-[#f4efe8]">Sessão Segura & Contador Regressivo no Topo:</strong> Caixa "Permanecer conectado" agora gerencia reconexão após fechar abas, janela ativa com 15 minutos de tolerância e contador em tempo real exibido discretamente no topo ao lado do Manual do Usuário.
+                <strong className="text-[#f4efe8]">Sessão Segura, Contador & Proteção Anti-Perda de Dados:</strong> Caixa "Permanecer conectado" gerencia reconexão ao fechar abas; com a janela aberta, ao término dos 15 minutos um Pop-up de Renovação permite estender o tempo por mais 15 minutos sem recarregar ou perder nenhum dado digitado em prontuários.
               </li>
               <li>
                 <strong className="text-[#f4efe8]">Limpeza de Dependências & Higienização do Repositório:</strong> Remoção dos pacotes não utilizados (@google/genai, motion), eliminação de binários redundantes na raiz e integração do Changelog oficial ao Dossiê Comercial.
