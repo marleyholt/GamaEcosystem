@@ -75,6 +75,7 @@ Este documento é a fonte de verdade para o acompanhamento contínuo de tarefas,
   - Agendado cronjob diário das 03:00 no Ubuntu.
   - Implementada rota administrativa no Express (`/api/admin/backup` e `/api/admin/backups`) e interface visual na Central de Configurações para acionamento sob demanda.
 - [x] **PWA / Notificações no Dispositivo:**
+  - [x] Instruções operacionais completas adicionadas ao Manual do Usuário integrado para instalação no Android (Chrome) e iPhone/iPad (Safari).
   - Criado o manifesto W3C (`manifest.json`) com ícones de alta resolução (192x192, 512x512, maskable e apple-touch-icon).
   - Implementado Service Worker (`sw.js`) para carregamento instantâneo e resiliência offline do App Shell.
   - Criado o componente inteligente `PWAInstallPrompt.tsx` com detecção de modo standalone, suporte nativo a prompt no Android/Desktop e instruções de instalação para iOS (Safari).
@@ -83,6 +84,14 @@ Este documento é a fonte de verdade para o acompanhamento contínuo de tarefas,
 ---
 
 ## 📜 3. CHANGELOG (Histórico Cronológico de Entregas)
+
+### [v1.1.4] - 2026-10-01: Portal Overlay para Manual e Guia de Instalação Mobile PWA
+- **Renderização por Portal (React Portal):**
+  - O Modal do Manual do Usuário (`UserManualModal.tsx`) agora é renderizado via `createPortal` diretamente no `document.body` com `z-[9999]`.
+  - Isso garante que a janela sempre fique 100% sobreposta a qualquer componente, cabeçalho ou menu da página, sem risco de ser cortada ou ficar atrás de outros elementos.
+  - Fechamento imediato com 1 clique ao clicar no fundo escuro (backdrop) ou no botão X.
+- **Capítulo de Instalação PWA no Manual:**
+  - Adicionado novo módulo passo a passo no Manual explicando como instalar o aplicativo no Android (Google Chrome) e iPhone/iPad (Safari).
 
 ### [v1.1.3] - 2026-10-01: Centralização do Manual do Usuário e Transição Completa MariaDB
 - **Interface & Experiência de Usuário:**
