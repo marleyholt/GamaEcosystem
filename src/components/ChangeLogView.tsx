@@ -279,6 +279,15 @@ export const ChangeLogView: React.FC<ChangeLogViewProps> = () => {
             </div>
             <ul className="text-xs text-[#a69a8f] space-y-1.5 list-disc pl-4">
               <li>
+                <strong className="text-[#f4efe8]">Alteração de Nome de Exibição:</strong> Adicionada opção no pop-up do usuário para alterar o nome de exibição diretamente no perfil, com atualização imediata no cabeçalho e persistência.
+              </li>
+              <li>
+                <strong className="text-[#f4efe8]">Exportação em Lote & Relatórios Oficiais:</strong> Download consolidado em PDF com timbrado oficial e planilhas CSV para prontuários.
+              </li>
+              <li>
+                <strong className="text-[#f4efe8]">Backups do Banco MariaDB & PWA Offline:</strong> Rotinas automáticas de backup diário no servidor e suporte completo à instalação PWA em celulares (Android/iOS).
+              </li>
+              <li>
                 <strong className="text-[#f4efe8]">Sessão Segura, Contador & Proteção Anti-Perda de Dados:</strong> Caixa "Permanecer conectado" gerencia reconexão ao fechar abas; com a janela aberta, ao término dos 15 minutos um Pop-up de Renovação permite estender o tempo por mais 15 minutos sem recarregar ou perder nenhum dado digitado em prontuários.
               </li>
               <li>
