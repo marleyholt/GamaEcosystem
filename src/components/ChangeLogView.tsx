@@ -279,6 +279,9 @@ export const ChangeLogView: React.FC<ChangeLogViewProps> = () => {
             </div>
             <ul className="text-xs text-[#a69a8f] space-y-1.5 list-disc pl-4">
               <li>
+                <strong className="text-[#f4efe8]">Apresentação Técnica/Comercial & Simulador de Servidor:</strong> Botão discreto temporário na tela de login com simulador interativo de clínicas, usuários, dimensionamento de hardware (vCPU/RAM/NVMe) e projeção de receita recorrente (SaaS B2B).
+              </li>
+              <li>
                 <strong className="text-[#f4efe8]">Sino de Notificações Integrado & Função Limpar:</strong> Dropdown com contagem em tempo real de assinaturas pendentes e alertas RaDI; botões "Limpar todas" e descarte individual com lixeira.
               </li>
               <li>
