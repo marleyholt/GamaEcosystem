@@ -62,8 +62,14 @@ Este documento é a fonte de verdade para o acompanhamento contínuo de tarefas,
   - Mapeamento abrangente de todas as cores hexadecimais em `index.css` para superfícies limpas Alabaster (`#f6f3ee`) e cartões brancos com sombras sutis.
   - Badges de alerta e status (verde, âmbar, vermelho, azul) convertidos para tons pastéis suaves com textos escuros de alto contraste (WCAG AA).
   - Botão de alternância rápida de Modo Claro/Escuro (Sol/Lua) posicionado diretamente no cabeçalho superior para fácil acesso com 1 clique.
-- [ ] **Auditoria Completa dos Módulos para Apresentação Comercial:**
-  - Revisão de ponta a ponta em todos os módulos (Pacientes, PEP, RaDI, Diário, Evoluções, Relatórios, Usuários), eliminando lixo e refinando mensagens para demonstração executiva a clientes.
+- [x] **Auditoria Completa dos Módulos & Dossiê de Apresentação Técnica/Comercial:**
+  - Adicionado botão discreto na tela de login: **"Apresentação Comercial & Técnica"**.
+  - Criado o modal interativo `CommercialPresentationModal.tsx` com:
+    - **Apresentação do Produto & Pilares Clínicos:** RaDI, PEP/Evoluções oficiais, Diário de Alimentação Mobile PWA e Emissão de Laudos com Timbrado Oficial.
+    - **Simulador Interativo Comercial (Sliders):** Ajuste em tempo real de número de clínicas (1 a 30), pacientes por clínica (10 a 200), cuidadores por paciente e mensalidade proposta por clínica (R$ 600 a R$ 3.500/mês).
+    - **Cálculo Dinâmico de Usuários & Armazenamento:** Projeção automática de total de usuários e consumo anual de disco (fotos de refeições comprimidas + banco relacional MariaDB).
+    - **Dimensionamento Realista de Servidores (Pesquisa de Mercado Cloud):** Mapeamento de configuração necessária (vCPU, RAM, NVMe) e provedores homologados (Contabo, Hetzner, Oracle OCI, AWS Lightsail) com custos reais de hospedagem (R$ 45 a R$ 420/mês).
+    - **Projeção de Faturamento & ROI:** Cálculo instantâneo de receita de setup/implantação, MRR (faturamento mensal recorrente), custo anual de infraestrutura e margem de lucro líquido operacional (~90%+).
 
 - [x] **Remoção de Modal de Aprovação Manual de Usuários:**
   - O cadastro e primeiro acesso de novos profissionais e cuidadores é vinculado à presença prévia de seus e-mails na aba de Cuidadores ou Equipe/Fonoaudiólogos, dispensando modais manuais de aprovação pendente.
@@ -93,7 +99,12 @@ Este documento é a fonte de verdade para o acompanhamento contínuo de tarefas,
 
 ## 📜 3. CHANGELOG (Histórico Cronológico de Entregas)
 
-### [v1.2.0] - 2026-10-01: Consolidação Geral do GamaEcosystem (Notificações, Temas, Marca e Acessos)
+### [v1.2.0] - 2026-10-01: Consolidação Geral do GamaEcosystem (Notificações, Temas, Marca, Acessos e Apresentação Comercial)
+- **Apresentação Técnica & Comercial com Simulador Interativo na Tela de Login:**
+  - Botão discreto temporário abaixo do card de login para demonstração executiva a clientes e investidores.
+  - Simulador com controles deslizantes para definir número de clínicas, pacientes e cuidadores, calculando automaticamente a volumetria de dados, consumo de disco e usuários.
+  - Mapeamento de hardware de mercado (Hetzner, Contabo, Oracle, AWS) com especificações de vCPU/RAM e custo estimado de hospedagem (de R$ 45 a R$ 420/mês).
+  - Projeção financeira completa: taxa de setup, mensalidade recorrente (MRR), margem de lucro operacional e argumentos de fechamento.
 - **Sino de Notificações Integrado & Função Limpar:**
   - Dropdown com contagem e alertas em tempo real ao clicar no sino do cabeçalho.
   - Lista de pendências clínicas (evoluções aguardando assinatura do responsável e alertas de risco RaDI Alto/Moderado) com atalhos de 1 clique para o prontuário.
