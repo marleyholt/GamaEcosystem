@@ -153,9 +153,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         createdAt: new Date().toISOString()
       };
 
+      const nowMs = Date.now().toString();
+      sessionStorage.setItem('health_deglut_session_active', 'true');
+      sessionStorage.setItem('health_deglut_session_start', nowMs);
+      localStorage.setItem('health_deglut_session_start', nowMs);
       if (keepConnected) {
-        // Grava timestamp de 15 minutos para permanência de sessão
-        localStorage.setItem('health_deglut_keep_connected', Date.now().toString());
+        localStorage.setItem('health_deglut_keep_connected', 'true');
       } else {
         localStorage.removeItem('health_deglut_keep_connected');
       }
@@ -257,9 +260,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         createdAt: new Date().toISOString()
       };
 
+      const nowMs = Date.now().toString();
+      sessionStorage.setItem('health_deglut_session_active', 'true');
+      sessionStorage.setItem('health_deglut_session_start', nowMs);
+      localStorage.setItem('health_deglut_session_start', nowMs);
       if (keepConnected) {
-        // Grava timestamp de 15 minutos para permanência de sessão
-        localStorage.setItem('health_deglut_keep_connected', Date.now().toString());
+        localStorage.setItem('health_deglut_keep_connected', 'true');
       } else {
         localStorage.removeItem('health_deglut_keep_connected');
       }
@@ -398,6 +404,20 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   {showLoginPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
+            </div>
+
+            {/* Checkbox: Permanecer conectado */}
+            <div className="flex items-center gap-2 pt-1 pb-1">
+              <input
+                type="checkbox"
+                id="keepConnected"
+                checked={keepConnected}
+                onChange={e => setKeepConnected(e.target.checked)}
+                className="w-4 h-4 rounded accent-[#c8a88a] bg-[#181513] border-[#3e342e] cursor-pointer"
+              />
+              <label htmlFor="keepConnected" className="text-xs text-[#a69a8f] select-none cursor-pointer hover:text-[#f4efe8] transition-colors">
+                Permanecer conectado
+              </label>
             </div>
 
             <button
