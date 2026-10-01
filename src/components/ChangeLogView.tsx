@@ -265,6 +265,25 @@ export const ChangeLogView: React.FC<ChangeLogViewProps> = () => {
         </div>
 
         <div className="relative pl-6 space-y-6 before:content-[''] before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-[#382e27]">
+          {/* Versão v1.1.4 */}
+          <div className="relative space-y-2">
+            <div className="absolute -left-[21px] top-1.5 w-3 h-3 rounded-full bg-emerald-500 ring-4 ring-[#1f1a17]" />
+            <div className="flex flex-wrap items-center gap-2.5">
+              <span className="px-2.5 py-0.5 rounded-full bg-emerald-500 text-[#181513] font-bold text-xs">
+                v1.1.4
+              </span>
+              <span className="text-xs font-semibold text-[#f4efe8]">
+                Portal de Sobreposição do Manual e Guia Mobile PWA
+              </span>
+              <span className="text-[11px] text-[#a69a8f]">• 01/10/2026</span>
+            </div>
+            <ul className="text-xs text-[#a69a8f] space-y-1 list-disc pl-4">
+              <li>Manual renderizado diretamente no topo absoluto da tela (React Portal com z-index 9999).</li>
+              <li>Fechamento imediato com um clique ao clicar no fundo fora da janela.</li>
+              <li>Novo capítulo de suporte no manual: Passo a passo de instalação no Android (Chrome) e iOS (Safari).</li>
+            </ul>
+          </div>
+
           {/* Versão v1.1.3 */}
           <div className="relative space-y-2">
             <div className="absolute -left-[21px] top-1.5 w-3 h-3 rounded-full bg-emerald-500 ring-4 ring-[#1f1a17]" />
