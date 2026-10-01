@@ -106,22 +106,55 @@ body.theme-light,
 .theme-light .bg-\[\#181513\]\/90 { background-color: rgba(246, 243, 238, 0.94) !important; }
 .theme-light .bg-\[\#181513\]\/80 { background-color: rgba(246, 243, 238, 0.88) !important; }
 .theme-light .bg-\[\#181513\]\/60 { background-color: rgba(246, 243, 238, 0.70) !important; }
+.theme-light .bg-\[\#1e1916\]\/60 { background-color: #f7f4ee !important; }
+.theme-light .bg-\[\#161311\]\/70 { background-color: #f1ebd7 !important; }
 .theme-light .bg-\[\#221d1a\]\/80 { background-color: rgba(255, 255, 255, 0.92) !important; }
 .theme-light .bg-\[\#221d1a\]\/50 { background-color: rgba(237, 231, 220, 0.65) !important; }
 .theme-light .bg-\[\#27211d\]\/50 { background-color: rgba(237, 231, 220, 0.60) !important; }
 
-/* 2. HOVERS INTERATIVOS NO TEMA CLARO */
+/* 2. HOVERS INTERATIVOS E SELEÇÕES NO TEMA CLARO */
+/* Garantia de que NENHUM hover fique escuro/preto no tema claro */
+.theme-light .hover\:bg-\[\#1f1a17\]:hover,
+.theme-light .hover\:bg-\[\#201a17\]:hover,
+.theme-light .hover\:bg-\[\#221c18\]:hover,
 .theme-light .hover\:bg-\[\#221d1a\]:hover,
-.theme-light .hover\:bg-\[\#251f1b\]:hover,
+.theme-light .hover\:bg-\[\#251f1c\]:hover,
+.theme-light .hover\:bg-\[\#25201c\]:hover,
+.theme-light .hover\:bg-\[\#26201c\]:hover,
 .theme-light .hover\:bg-\[\#27211d\]:hover,
-.theme-light .hover\:bg-\[\#2c2522\]:hover {
-  background-color: #e3dccf !important;
+.theme-light .hover\:bg-\[\#2a231f\]:hover,
+.theme-light .hover\:bg-\[\#2b2420\]:hover,
+.theme-light .hover\:bg-\[\#2c2420\]:hover,
+.theme-light .hover\:bg-\[\#2c2522\]:hover,
+.theme-light .hover\:bg-\[\#2d2520\]:hover,
+.theme-light .hover\:bg-\[\#2d2622\]:hover,
+.theme-light .hover\:bg-\[\#2e2621\]:hover,
+.theme-light .hover\:bg-\[\#2e2722\]:hover,
+.theme-light .hover\:bg-\[\#312924\]:hover,
+.theme-light .hover\:bg-\[\#342b26\]:hover,
+.theme-light .hover\:bg-\[\#382b25\]:hover,
+.theme-light .hover\:bg-\[\#382c26\]:hover,
+.theme-light .hover\:bg-\[\#382f2a\]:hover,
+.theme-light .hover\:bg-\[\#3a302b\]:hover,
+.theme-light .hover\:bg-\[\#3d332d\]:hover,
+.theme-light .hover\:bg-\[\#3f342d\]:hover,
+.theme-light .hover\:bg-\[\#423730\]:hover,
+.theme-light .hover\:bg-\[\#433730\]:hover,
+.theme-light .hover\:bg-\[\#433830\]:hover,
+.theme-light .hover\:bg-\[\#4a392d\]:hover {
+  background-color: #e5ded2 !important;
+  color: #1a1512 !important;
 }
 
-.theme-light .hover\:bg-\[\#2e2621\]:hover,
-.theme-light .hover\:bg-\[\#342b26\]:hover,
-.theme-light .hover\:bg-\[\#3d332d\]:hover {
-  background-color: #d9d0c1 !important;
+/* Hover dourado suave idêntico ao selecionado quando solicitado */
+.theme-light .hover\:bg-\[\#c8a88a\]:hover {
+  background-color: #c8a88a !important;
+  color: #181513 !important;
+}
+
+/* Linhas de tabelas ao passar o mouse */
+.theme-light tr:hover {
+  background-color: #f5efe6 !important;
 }
 
 /* 3. BORDAS E DIVISORES (SUAVES E DEFINIDOS) */
@@ -184,7 +217,6 @@ body.theme-light,
 }
 
 /* 4. TIPOGRAFIA, TEXTOS E CONTRASTE MÁXIMO (WCAG AA) */
-/* Textos principais escuros e nítidos */
 .theme-light .text-\[\#f4efe8\],
 .theme-light .text-\[\#fffdfa\],
 .theme-light .text-\[\#faf8f5\],
@@ -197,7 +229,7 @@ body.theme-light,
   color: #1a1512 !important;
 }
 
-/* Textos secundários, legendas e descrições */
+/* Textos secundários e legendas */
 .theme-light .text-\[\#d8cec4\],
 .theme-light .text-\[\#d6cdb7\],
 .theme-light .text-\[\#d6c7b9\],
@@ -226,6 +258,7 @@ body.theme-light,
 /* 5. CORREÇÃO CRÍTICA DE STATUS & BADGES NO MODO CLARO */
 /* Verde / Sucesso / Estável */
 .theme-light .bg-emerald-950,
+.theme-light .bg-emerald-950\/70,
 .theme-light .bg-emerald-950\/60,
 .theme-light .bg-emerald-950\/50,
 .theme-light .bg-emerald-950\/40,
@@ -233,7 +266,8 @@ body.theme-light,
 .theme-light .bg-emerald-900\/50 {
   background-color: #e6f7ee !important;
 }
-.theme-light .text-emerald-400 {
+.theme-light .text-emerald-400,
+.theme-light .text-emerald-300 {
   color: #0d733d !important;
 }
 .theme-light .border-emerald-800\/40,
@@ -242,26 +276,35 @@ body.theme-light,
   border-color: #a7e2c0 !important;
 }
 
-/* Âmbar / Alerta / Em Progresso */
+/* Âmbar / Alerta / Risco Moderado / Atenção */
+/* Garantia: Texto escuro ultra-legível (Marrom Âmbar Escuro #804a00), NUNCA amarelo claro */
 .theme-light .bg-amber-950,
+.theme-light .bg-amber-950\/70,
 .theme-light .bg-amber-950\/60,
 .theme-light .bg-amber-950\/50,
 .theme-light .bg-amber-950\/40,
 .theme-light .bg-amber-950\/30,
 .theme-light .bg-amber-900\/50 {
-  background-color: #fef7e6 !important;
+  background-color: #fef5e1 !important;
 }
-.theme-light .text-amber-400 {
-  color: #92580a !important;
+.theme-light .text-amber-500,
+.theme-light .text-amber-400,
+.theme-light .text-amber-300,
+.theme-light .text-amber-300\/90 {
+  color: #804a00 !important;
 }
-.theme-light .border-amber-800\/40,
+.theme-light .border-amber-800,
 .theme-light .border-amber-800\/50,
+.theme-light .border-amber-800\/40,
+.theme-light .border-amber-700\/50,
+.theme-light .border-amber-700\/40,
 .theme-light .border-amber-900\/50 {
-  border-color: #f4d38c !important;
+  border-color: #f4cf80 !important;
 }
 
 /* Vermelho / Rosa / Urgente / Risco Alto */
 .theme-light .bg-rose-950,
+.theme-light .bg-rose-950\/70,
 .theme-light .bg-rose-950\/60,
 .theme-light .bg-rose-950\/50,
 .theme-light .bg-rose-950\/40,
@@ -272,9 +315,11 @@ body.theme-light,
   background-color: #fdebee !important;
 }
 .theme-light .text-rose-400,
+.theme-light .text-rose-300,
 .theme-light .text-red-400 {
-  color: #ab1d32 !important;
+  color: #a81c30 !important;
 }
+.theme-light .border-rose-800,
 .theme-light .border-rose-800\/40,
 .theme-light .border-rose-800\/50,
 .theme-light .border-rose-900\/50,
