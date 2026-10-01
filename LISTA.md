@@ -85,6 +85,11 @@ Este documento é a fonte de verdade para o acompanhamento contínuo de tarefas,
 
 ## 📜 3. CHANGELOG (Histórico Cronológico de Entregas)
 
+### [v1.1.6] - 2026-10-01: Despoluição Visual do Cabeçalho Superior
+- **Design & Usabilidade (Header.tsx):**
+  - Removidos os selos estáticos de texto do cabeçalho ("LGPD & Criptografia Ativa" e "MariaDB Conectado").
+  - O topo agora fica limpo, elegante e direto ao ponto, destacando a logo, os controles de ação essenciais (Modo Escuro/Claro, Sino de Notificações, Manual) e o perfil do usuário ativo.
+
 ### [v1.1.5] - 2026-10-01: Remoção de Resquícios Visuais do Firebase e Padronização MariaDB
 - **Eliminação Completa de Menções ao Firebase no Topo e Segurança:**
   - O selo no cabeçalho superior (`Header.tsx`) que exibia *"Firebase / OCI MariaDB Ready"* foi atualizado para **"MariaDB Dedicado Conectado"** com indicador verde esmeralda.
