@@ -1,3 +1,5 @@
+import { DEFAULT_OFFICIAL_LOGO_BASE64 } from '../data/defaultLogo';
+
 export interface ClinicConfig {
   clinicName: string;
   subtitle: string;
@@ -57,8 +59,8 @@ export const DEFAULT_CLINIC_CONFIG: ClinicConfig = {
   email: 'gamafono@gamafono.com.br',
   instagram: '@gama_fonoaudiologia',
   addressLine: 'Rio de Janeiro - RJ • Atendimento Clínico e Domiciliar',
-  logoUrl: '/assets/logo.png',
-  faviconUrl: '/assets/logo.png',
+  logoUrl: DEFAULT_OFFICIAL_LOGO_BASE64,
+  faviconUrl: DEFAULT_OFFICIAL_LOGO_BASE64,
   useLetterheadByDefault: true,
   includeSignatureOnPrint: false // Modelo padrão: papel timbrado sem rubrica conforme solicitação
 };
