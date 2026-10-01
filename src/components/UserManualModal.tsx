@@ -241,9 +241,12 @@ export const UserManualModal: React.FC<UserManualModalProps> = ({
   const activeSection = allowedSections.find(s => s.id === selectedSectionId) || allowedSections[0];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-sm animate-fadeIn">
+    <div 
+      className="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-4 md:p-6 bg-black/80 backdrop-blur-sm overflow-hidden"
+      onClick={onClose}
+    >
       <div 
-        className="w-full max-w-5xl h-[90vh] max-h-[820px] bg-[#1a1614] border border-[#3e342e] rounded-2xl shadow-2xl flex flex-col overflow-hidden text-[#f4efe8]"
+        className="relative w-full max-w-5xl h-[88vh] max-h-[800px] bg-[#1a1614] border border-[#3e342e] rounded-2xl shadow-2xl flex flex-col overflow-hidden text-[#f4efe8] mx-auto my-auto animate-in fade-in zoom-in-95 duration-200"
         onClick={e => e.stopPropagation()}
       >
         {/* Cabeçalho do Manual */}
