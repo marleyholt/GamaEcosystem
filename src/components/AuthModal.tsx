@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Logo } from './Logo';
+import { CommercialPresentationModal } from './CommercialPresentationModal';
 import { UserProfile } from '../types';
 import { Caregiver, Therapist } from '../types/clinicConfig';
 import { 
@@ -37,6 +38,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 }) => {
   // Mode: 'login' (Email + Senha com Esqueceu Senha) ou 'first_access' (Definir Primeira Senha Forte)
   const [mode, setMode] = useState<'login' | 'first_access'>('login');
+  const [isCommercialOpen, setIsCommercialOpen] = useState(false);
 
   // Campos de Login Normal
   const [loginEmail, setLoginEmail] = useState('');
@@ -540,6 +542,25 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           </>
         )}
       </div>
+
+      {/* Botão Discreto Temporário de Apresentação Comercial & Técnica */}
+      <div className="mt-4 text-center">
+        <button
+          type="button"
+          onClick={() => setIsCommercialOpen(true)}
+          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#1c1815]/90 hover:bg-[#27211d] text-[#c8a88a] hover:text-[#f4efe8] border border-[#3f342d] text-xs font-semibold shadow-sm transition-all cursor-pointer group active:scale-95"
+          title="Abrir Apresentação Técnica & Dossiê Comercial"
+        >
+          <span className="w-2 h-2 rounded-full bg-amber-400 group-hover:animate-ping" />
+          <span>Apresentação Comercial & Técnica</span>
+        </button>
+      </div>
+
+      {/* Modal Interativo de Apresentação Técnica e Proposta Comercial */}
+      <CommercialPresentationModal
+        isOpen={isCommercialOpen}
+        onClose={() => setIsCommercialOpen(false)}
+      />
     </div>
   );
 };
