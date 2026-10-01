@@ -87,10 +87,10 @@ export const Header: React.FC<HeaderProps> = ({
             <span className="font-mono text-[11px]">LGPD & Criptografia Ativa</span>
           </div>
 
-          {/* Cloud Database Indicator */}
+          {/* Database Indicator */}
           <div className="hidden 2xl:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#27211d] border border-[#3f342d] text-xs text-[#a69a8f]">
-            <Database className="w-3.5 h-3.5 text-amber-400" />
-            <span className="text-[11px]">Firebase / OCI MariaDB Ready</span>
+            <Database className="w-3.5 h-3.5 text-emerald-400" />
+            <span className="text-[11px] text-emerald-300/90 font-medium">MariaDB Dedicado Conectado</span>
           </div>
 
           {/* Pending Users Notification */}
