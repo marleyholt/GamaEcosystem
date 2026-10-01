@@ -328,7 +328,7 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
           className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
             activeTab === 'geral'
               ? 'bg-[#c8a88a] text-[#181513] shadow-md font-bold'
-              : 'text-[#a69a8f] hover:text-[#f4efe8] hover:bg-[#25201c]'
+              : 'text-[#a69a8f] hover:text-[#181513] hover:bg-[#c8a88a] hover:shadow-xs group/tab'
           }`}
         >
           <Building2 className="w-4 h-4 shrink-0" />
@@ -341,7 +341,7 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
           className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
             activeTab === 'marca'
               ? 'bg-[#c8a88a] text-[#181513] shadow-md font-bold'
-              : 'text-[#a69a8f] hover:text-[#f4efe8] hover:bg-[#25201c]'
+              : 'text-[#a69a8f] hover:text-[#181513] hover:bg-[#c8a88a] hover:shadow-xs group/tab'
           }`}
         >
           <FileCheck2 className="w-4 h-4 shrink-0" />
@@ -353,7 +353,7 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
           className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
             activeTab === 'cuidadores'
               ? 'bg-[#c8a88a] text-[#181513] shadow-md font-bold'
-              : 'text-[#a69a8f] hover:text-[#f4efe8] hover:bg-[#25201c]'
+              : 'text-[#a69a8f] hover:text-[#181513] hover:bg-[#c8a88a] hover:shadow-xs group/tab'
           }`}
         >
           <Users className="w-4 h-4 shrink-0" />
@@ -365,7 +365,7 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
           className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
             activeTab === 'terapeutas'
               ? 'bg-[#c8a88a] text-[#181513] shadow-md font-bold'
-              : 'text-[#a69a8f] hover:text-[#f4efe8] hover:bg-[#25201c]'
+              : 'text-[#a69a8f] hover:text-[#181513] hover:bg-[#c8a88a] hover:shadow-xs group/tab'
           }`}
         >
           <UserCheck className="w-4 h-4 shrink-0" />
@@ -378,7 +378,7 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
           className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
             activeTab === 'usuarios'
               ? 'bg-[#c8a88a] text-[#181513] shadow-md font-bold'
-              : 'text-[#a69a8f] hover:text-[#f4efe8] hover:bg-[#25201c]'
+              : 'text-[#a69a8f] hover:text-[#181513] hover:bg-[#c8a88a] hover:shadow-xs group/tab'
           }`}
         >
           <UserCog className="w-4 h-4 shrink-0" />
@@ -391,7 +391,7 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
           className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
             activeTab === 'database'
               ? 'bg-[#c8a88a] text-[#181513] shadow-md font-bold'
-              : 'text-[#a69a8f] hover:text-[#f4efe8] hover:bg-[#25201c]'
+              : 'text-[#a69a8f] hover:text-[#181513] hover:bg-[#c8a88a] hover:shadow-xs group/tab'
           }`}
         >
           <Database className="w-4 h-4 text-emerald-400 shrink-0" />
@@ -404,7 +404,7 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
           className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
             activeTab === 'changelog'
               ? 'bg-[#c8a88a] text-[#181513] shadow-md font-bold'
-              : 'text-[#a69a8f] hover:text-[#f4efe8] hover:bg-[#25201c]'
+              : 'text-[#a69a8f] hover:text-[#181513] hover:bg-[#c8a88a] hover:shadow-xs group/tab'
           }`}
         >
           <ClipboardList className="w-4 h-4 text-emerald-400 shrink-0" />
