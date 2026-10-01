@@ -32,6 +32,7 @@ import { AdminUsersView } from './components/AdminUsersView';
 import { MedicalRecordView } from './components/MedicalRecordView';
 import { ConfigurationView } from './components/ConfigurationView';
 import { AuthModal } from './components/AuthModal';
+import { CommercialPresentationPage } from './components/CommercialPresentationPage';
 import { PWAInstallPrompt } from './components/PWAInstallPrompt';
 import { generateOfficialReportPDF } from './utils/pdfGenerator';
 import { updateBrowserFavicon } from './utils/faviconManager';
@@ -504,6 +505,29 @@ export default function App() {
       });
     }
   };
+
+  // Estado de rota para página dedicada de apresentação comercial
+  const [currentHash, setCurrentHash] = useState<string>(() => window.location.hash);
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      setCurrentHash(window.location.hash);
+    };
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
+  // Se a rota for #apresentacao, renderiza a Página Dedicada Comercial & Técnica
+  if (currentHash === '#apresentacao') {
+    return (
+      <CommercialPresentationPage
+        onBackToLogin={() => {
+          window.location.hash = '';
+          setCurrentHash('');
+        }}
+      />
+    );
+  }
 
   // If not authenticated, display login/register modal matching image.png
   if (!currentUser) {
