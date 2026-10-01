@@ -201,11 +201,11 @@ CREATE TABLE IF NOT EXISTS \`audit_trail\` (
             <h4 className="font-bold text-sm text-[#f4efe8]">Servidor Ubuntu & MariaDB</h4>
           </div>
           <p className="text-xs text-[#a69a8f] leading-relaxed">
-            Fase 1 com <strong>Firebase Firestore</strong> provisionado. Fase 2 com esquema relacional preparado para <strong>MariaDB InnoDB</strong> com alta disponibilidade.
+            Servidor corporativo dedicado operando com <strong>MariaDB InnoDB</strong> (`gamaecosystem_db`), chaves estrangeiras relacionais e alta disponibilidade.
           </p>
           <div className="pt-2">
-            <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-amber-950/60 text-amber-400 border border-amber-800/40">
-              Pronto para Migração
+            <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-950/60 text-emerald-400 border border-emerald-800/40">
+              100% Operacional em Produção
             </span>
           </div>
         </div>
