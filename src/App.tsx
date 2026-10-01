@@ -64,24 +64,45 @@ import {
 } from './services/mariaDBSync';
 
 export default function App() {
-  // Authentication State
+  // Authentication State: Força passagem pela tela de login, a menos que "Permanecer Conectado"
+  // tenha sido marcado nos últimos 5 minutos (300.000 ms).
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(() => {
     const saved = localStorage.getItem('health_deglut_user');
-    let user: UserProfile = saved ? JSON.parse(saved) : INITIAL_USERS[0];
-    // Se for a Adriane Gama ou admin, assegura acesso MASTER irrestrito a todos os módulos
-    const isAdriane = 
-      user.name.toLowerCase().includes('adriane gama') ||
-      user.email.toLowerCase().includes('adriane') ||
-      user.email.toLowerCase().includes('gamafono') ||
-      user.role === 'admin';
-    if (isAdriane) {
-      user = {
-        ...user,
-        role: 'admin',
-        allowedTabs: ['resumo', 'prontuario', 'radi', 'registro', 'historico', 'chat', 'pacientes', 'relatorios', 'configuracao']
-      };
+    const keepConnectedTimestamp = localStorage.getItem('health_deglut_keep_connected');
+
+    if (!saved || !keepConnectedTimestamp) {
+      return null; // Exige login imediatamente
     }
-    return user;
+
+    const elapsed = Date.now() - Number(keepConnectedTimestamp);
+    const FIVE_MINUTES_MS = 5 * 60 * 1000;
+
+    // Se passou de 5 minutos, expira a sessão e exige login
+    if (elapsed > FIVE_MINUTES_MS) {
+      localStorage.removeItem('health_deglut_keep_connected');
+      return null;
+    }
+
+    // Sessão válida dentro dos 5 minutos: restaura usuário com perfil seguro
+    try {
+      let user: UserProfile = JSON.parse(saved);
+      const isAdriane = 
+        user.name.toLowerCase().includes('adriane gama') ||
+        user.email.toLowerCase().includes('adriane') ||
+        user.email.toLowerCase().includes('gamafono') ||
+        user.role === 'admin';
+
+      if (isAdriane) {
+        user = {
+          ...user,
+          role: 'admin',
+          allowedTabs: ['resumo', 'prontuario', 'radi', 'registro', 'historico', 'chat', 'pacientes', 'relatorios', 'configuracao']
+        };
+      }
+      return user;
+    } catch {
+      return null;
+    }
   });
 
   // Navigation state
@@ -533,7 +554,10 @@ export default function App() {
   if (!currentUser) {
     return (
       <AuthModal
-        onLoginSuccess={(user) => setCurrentUser(user)}
+        onLoginSuccess={(user) => {
+          localStorage.setItem('health_deglut_user', JSON.stringify(user));
+          setCurrentUser(user);
+        }}
         availableUsers={usersList}
         caregivers={caregivers}
         therapists={therapists}
@@ -548,7 +572,11 @@ export default function App() {
         user={currentUser}
         darkMode={darkMode}
         setDarkMode={setDarkMode}
-        onLogout={() => setCurrentUser(null)}
+        onLogout={() => {
+          localStorage.removeItem('health_deglut_user');
+          localStorage.removeItem('health_deglut_keep_connected');
+          setCurrentUser(null);
+        }}
         onUpdateUser={(updated) => {
           setCurrentUser(updated);
           setUsersList(prev => prev.map(u => u.id === updated.id ? updated : u));
