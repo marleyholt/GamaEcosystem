@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Patient, RadiAssessment, DailyFeedingLog, UserProfile, NavigationTab } from '../types';
 import { 
   User, 
@@ -13,7 +13,10 @@ import {
   ArrowRight,
   TrendingUp,
   HeartPulse,
-  Stethoscope
+  Stethoscope,
+  ChevronDown,
+  Check,
+  Search
 } from 'lucide-react';
 
 export interface DashboardViewProps {
@@ -43,6 +46,26 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   dailyLogs = [],
   currentUser,
 }) => {
+  const [isSelectorOpen, setIsSelectorOpen] = useState(false);
+  const [patientSearchTerm, setPatientSearchTerm] = useState('');
+  const selectorRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (selectorRef.current && !selectorRef.current.contains(event.target as Node)) {
+        setIsSelectorOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const filteredPatients = patients.filter(p => 
+    p.name.toLowerCase().includes(patientSearchTerm.toLowerCase()) ||
+    (p.diagnosis && p.diagnosis.toLowerCase().includes(patientSearchTerm.toLowerCase())) ||
+    (p.cpf && p.cpf.includes(patientSearchTerm))
+  );
+
   const combinedAssessments = assessments.length > 0 ? assessments : propAllAssessments;
   const combinedLogs = dailyLogs.length > 0 ? dailyLogs : propRecentLogs;
 
@@ -58,18 +81,105 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
     <div className="space-y-6">
       {/* Paciente Selecionado Card (Matching the video) */}
       <div className="bg-[#221d1a] border border-[#3a312c] rounded-2xl p-5 sm:p-6 shadow-sm">
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-xl font-bold font-serif text-[#f4efe8]">
-            Paciente Selecionado
-          </h2>
-          {selectedPatient && (
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+          <div className="flex items-center gap-2">
+            <h2 className="text-xl font-bold font-serif text-[#f4efe8]">
+              Paciente Selecionado
+            </h2>
+            <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-[#2d2622] text-[#c8a88a] border border-[#4a3e37] font-medium hidden sm:inline-block">
+              {patients.length} {patients.length === 1 ? 'paciente' : 'pacientes'} cadastrados
+            </span>
+          </div>
+
+          {/* Seletor Suspenso de Pacientes Estilizado */}
+          <div className="relative" ref={selectorRef}>
             <button
-              onClick={onSelectPatientClick}
-              className="text-xs px-3 py-1 rounded-md bg-[#2d2622] hover:bg-[#3d332d] text-[#c8a88a] border border-[#4a3e37] transition-colors"
+              type="button"
+              onClick={() => setIsSelectorOpen(!isSelectorOpen)}
+              className="w-full sm:w-auto min-w-[240px] flex items-center justify-between gap-2.5 px-3.5 py-2 rounded-xl bg-[#26201c] hover:bg-[#312924] text-[#f4efe8] border border-[#4a3e37] hover:border-[#c8a88a]/50 text-xs font-medium shadow-sm transition-all cursor-pointer"
             >
-              Trocar
+              <div className="flex items-center gap-2 truncate">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                <span className="truncate text-left font-semibold text-[#c8a88a]">
+                  {selectedPatient ? selectedPatient.name : 'Selecionar Paciente'}
+                </span>
+              </div>
+              <ChevronDown className={`w-4 h-4 text-[#a69a8f] shrink-0 transition-transform duration-200 ${isSelectorOpen ? 'rotate-180 text-[#c8a88a]' : ''}`} />
             </button>
-          )}
+
+            {/* Menu Dropdown com Busca Rápida */}
+            {isSelectorOpen && (
+              <div className="absolute right-0 mt-2 w-full sm:w-80 bg-[#1c1815] border border-[#4a3e37] rounded-2xl shadow-2xl overflow-hidden z-40 animate-in fade-in zoom-in-95 duration-150">
+                {/* Campo de Busca Rápida */}
+                <div className="p-2.5 border-b border-[#382e27] bg-[#221d1a]">
+                  <div className="relative">
+                    <Search className="w-3.5 h-3.5 text-[#a69a8f] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    <input
+                      type="text"
+                      placeholder="Buscar por nome, diagnóstico..."
+                      value={patientSearchTerm}
+                      onChange={(e) => setPatientSearchTerm(e.target.value)}
+                      onClick={(e) => e.stopPropagation()}
+                      autoFocus
+                      className="w-full pl-8 pr-3 py-1.5 rounded-lg bg-[#181513] border border-[#382e27] text-xs text-[#f4efe8] placeholder-[#7d6f65] focus:outline-none focus:border-[#c8a88a]"
+                    />
+                  </div>
+                </div>
+
+                {/* Lista de Pacientes com Rolagem Suave */}
+                <div className="max-h-64 overflow-y-auto divide-y divide-[#2e2621] p-1">
+                  {filteredPatients.length > 0 ? (
+                    filteredPatients.map(patient => {
+                      const isSelected = selectedPatient?.id === patient.id;
+                      return (
+                        <button
+                          key={patient.id}
+                          type="button"
+                          onClick={() => {
+                            if (onSelectPatient) {
+                              onSelectPatient(patient);
+                            }
+                            setIsSelectorOpen(false);
+                            setPatientSearchTerm('');
+                          }}
+                          className={`w-full text-left p-2.5 rounded-xl flex items-center justify-between gap-3 transition-colors ${
+                            isSelected 
+                              ? 'bg-[#c8a88a]/15 text-[#f4efe8]' 
+                              : 'hover:bg-[#26201c] text-[#d6cdb7]'
+                          }`}
+                        >
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs shrink-0 ${
+                              isSelected 
+                                ? 'bg-[#c8a88a] text-[#181513]' 
+                                : 'bg-[#2d2622] text-[#c8a88a] border border-[#4a3e37]'
+                            }`}>
+                              {patient.name.charAt(0).toUpperCase()}
+                            </div>
+                            <div className="min-w-0">
+                              <p className={`text-xs font-semibold truncate ${isSelected ? 'text-[#c8a88a]' : 'text-[#f4efe8]'}`}>
+                                {patient.name}
+                              </p>
+                              <p className="text-[10px] text-[#a69a8f] truncate">
+                                {patient.diagnosis || patient.mainDiagnosis || 'Disfagia Orofaringea'}
+                              </p>
+                            </div>
+                          </div>
+                          {isSelected && (
+                            <Check className="w-4 h-4 text-[#c8a88a] shrink-0" />
+                          )}
+                        </button>
+                      );
+                    })
+                  ) : (
+                    <div className="p-4 text-center text-xs text-[#a69a8f]">
+                      Nenhum paciente encontrado.
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
         {selectedPatient ? (
