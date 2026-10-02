@@ -11,7 +11,7 @@ import { Patient, UserProfile, UserRole, NavigationTab } from '../types';
 import { OfficialLetterhead } from './OfficialLetterhead';
 import { AdminUsersView } from './AdminUsersView';
 import { ChangeLogView } from './ChangeLogView';
-import { triggerDatabaseBackup, fetchBackupList, saveClinicConfigToMariaDB } from '../services/mariaDBSync';
+import { triggerDatabaseBackup, fetchBackupList, saveClinicConfigToMariaDB, saveTherapistToMariaDB, deleteTherapistFromMariaDB, saveCaregiverToMariaDB, deleteCaregiverFromMariaDB, saveUserToMariaDB, deleteUserFromMariaDB } from '../services/mariaDBSync';
 import { resizeImageToTarget } from '../utils/imageOptimizer';
 import { updateBrowserFavicon } from '../utils/faviconManager';
 import { 
@@ -59,6 +59,7 @@ interface ConfigurationViewProps {
   onUpdateTherapists: (therapists: Therapist[]) => void;
   patients: Patient[];
   users?: UserProfile[];
+  onUpdateUsers?: (users: UserProfile[]) => void;
   onApproveUser?: (userId: string) => void;
   onRejectUser?: (userId: string) => void;
   onChangeRole?: (userId: string, role: UserRole) => void;
@@ -74,6 +75,7 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
   onUpdateTherapists,
   patients,
   users = [],
+  onUpdateUsers,
   onApproveUser = () => {},
   onRejectUser = () => {},
   onChangeRole = () => {},
@@ -137,9 +139,55 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
     onUpdateClinicConfig(tempConfig);
     localStorage.setItem('health_deglut_clinic_config', JSON.stringify(tempConfig));
     
-    // Grava de forma permanente no banco de dados MariaDB e no Firestore (backup)
+    // Grava de forma permanente no banco de dados MariaDB
     saveClinicConfigToMariaDB(tempConfig);
-    // Salvo no MariaDB via saveClinicConfigToMariaDB
+
+    // Sincroniza o Responsável Técnico na aba de Fonoaudiólogas & Equipe
+    const rtEmail = (tempConfig.email || '').trim().toLowerCase();
+    const rtTherapist: Therapist = {
+      id: 'th_rt',
+      name: tempConfig.technicalResponsible,
+      roleTitle: tempConfig.roleTitle || 'Fonoaudióloga',
+      crfa: tempConfig.crfa,
+      cpf: tempConfig.cpf,
+      phone: tempConfig.phoneWhatsapp,
+      email: rtEmail,
+      instagram: tempConfig.instagram,
+      specialty: 'Responsável Técnica & Fonoaudiologia',
+      active: true
+    };
+    const otherTherapists = therapists.filter(t => t.id !== 'th_rt' && t.name.toLowerCase() !== tempConfig.technicalResponsible.toLowerCase());
+    const updatedTherapists = [rtTherapist, ...otherTherapists];
+    onUpdateTherapists(updatedTherapists);
+    saveTherapistToMariaDB(rtTherapist);
+
+    // Sincroniza o RT na aba de Gestão de Usuários & Telas
+    if (rtEmail && onUpdateUsers) {
+      const existingUserIdx = users.findIndex(u => u.email.toLowerCase() === rtEmail);
+      if (existingUserIdx === -1) {
+        const newRtUser: UserProfile = {
+          id: 'user_rt',
+          email: rtEmail,
+          name: tempConfig.technicalResponsible,
+          role: 'admin',
+          approved: true,
+          crfaNumber: tempConfig.crfa,
+          allowedTabs: ['resumo', 'prontuario', 'radi', 'registro', 'historico', 'chat', 'pacientes', 'relatorios', 'configuracao'],
+          createdAt: new Date().toISOString()
+        };
+        const updatedUsers = [...users, newRtUser];
+        onUpdateUsers(updatedUsers);
+        saveUserToMariaDB(newRtUser);
+      } else {
+        const updatedUsers = users.map(u => u.email.toLowerCase() === rtEmail ? {
+          ...u,
+          name: tempConfig.technicalResponsible,
+          crfaNumber: tempConfig.crfa,
+          role: 'admin' as const
+        } : u);
+        onUpdateUsers(updatedUsers);
+      }
+    }
 
     setHasPendingChanges(false);
     setShowConfirmModal(false);
@@ -233,11 +281,13 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
       alert('Nome e E-mail do cuidador são obrigatórios (o e-mail será usado para o login no sistema).');
       return;
     }
+    const cleanEmail = newCaregiverEmail.trim().toLowerCase();
+    const newId = `cg_${Date.now()}`;
     const newCg: Caregiver = {
-      id: `cg_${Date.now()}`,
+      id: newId,
       name: newCaregiverName.trim(),
       cpf: newCaregiverCpf.trim(),
-      email: newCaregiverEmail.trim(),
+      email: cleanEmail,
       address: newCaregiverAddress.trim(),
       phone: newCaregiverPhone.trim() || '(21) 90000-0000',
       secondaryPhone: newCaregiverSecondaryPhone.trim() || undefined,
@@ -245,7 +295,31 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
       kinshipOrRole: newCaregiverRole,
       assignedPatientIds: newCaregiverPatientId ? [newCaregiverPatientId] : []
     };
-    onUpdateCaregivers([...caregivers, newCg]);
+
+    const updatedCaregivers = [...caregivers, newCg];
+    onUpdateCaregivers(updatedCaregivers);
+    saveCaregiverToMariaDB(newCg);
+
+    // Sincroniza imediatamente na aba de Gestão de Usuários & Telas
+    if (onUpdateUsers) {
+      const existingUserIdx = users.findIndex(u => u.email.toLowerCase() === cleanEmail);
+      if (existingUserIdx === -1) {
+        const newUser: UserProfile = {
+          id: `user_${newId}`,
+          email: cleanEmail,
+          name: newCaregiverName.trim(),
+          role: 'cuidador',
+          approved: true,
+          patientId: newCaregiverPatientId || undefined,
+          allowedTabs: ['registro', 'chat', 'historico'],
+          createdAt: new Date().toISOString()
+        };
+        const updatedUsers = [...users, newUser];
+        onUpdateUsers(updatedUsers);
+        saveUserToMariaDB(newUser);
+      }
+    }
+
     // Limpeza de campos
     setNewCaregiverName('');
     setNewCaregiverCpf('');
@@ -258,23 +332,58 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
   };
 
   const handleDeleteCaregiver = (id: string) => {
+    const cgToDelete = caregivers.find(c => c.id === id);
     onUpdateCaregivers(caregivers.filter(c => c.id !== id));
+    deleteCaregiverFromMariaDB(id);
+
+    // Opcionalmente desativa / remove o usuário correspondente
+    if (cgToDelete?.email && onUpdateUsers) {
+      const remainingUsers = users.filter(u => u.email.toLowerCase() !== cgToDelete.email.toLowerCase());
+      onUpdateUsers(remainingUsers);
+      deleteUserFromMariaDB(`user_${id}`);
+    }
   };
 
   const handleAddTherapist = () => {
     if (!newTherapistName.trim() || !newTherapistCrfa.trim()) return;
+    const cleanEmail = (newTherapistEmail.trim() || '').toLowerCase();
+    const newId = `th_${Date.now()}`;
     const newTh: Therapist = {
-      id: `th_${Date.now()}`,
+      id: newId,
       name: newTherapistName.trim(),
       crfa: newTherapistCrfa.trim(),
       cpf: newTherapistCpf.trim() || undefined,
       phone: newTherapistPhone.trim() || undefined,
-      email: newTherapistEmail.trim() || undefined,
+      email: cleanEmail || undefined,
       instagram: newTherapistInstagram.trim() || undefined,
       specialty: newTherapistSpecialty,
       active: true
     };
-    onUpdateTherapists([...therapists, newTh]);
+
+    const updatedTherapists = [...therapists, newTh];
+    onUpdateTherapists(updatedTherapists);
+    saveTherapistToMariaDB(newTh);
+
+    // Sincroniza imediatamente na aba de Gestão de Usuários & Telas
+    if (cleanEmail && onUpdateUsers) {
+      const existingUserIdx = users.findIndex(u => u.email.toLowerCase() === cleanEmail);
+      if (existingUserIdx === -1) {
+        const newUser: UserProfile = {
+          id: `user_${newId}`,
+          email: cleanEmail,
+          name: newTherapistName.trim(),
+          role: 'fonoaudiologo',
+          approved: true,
+          crfaNumber: newTherapistCrfa.trim(),
+          allowedTabs: ['resumo', 'prontuario', 'radi', 'registro', 'historico', 'chat', 'pacientes', 'relatorios'],
+          createdAt: new Date().toISOString()
+        };
+        const updatedUsers = [...users, newUser];
+        onUpdateUsers(updatedUsers);
+        saveUserToMariaDB(newUser);
+      }
+    }
+
     setNewTherapistName('');
     setNewTherapistCrfa('');
     setNewTherapistCpf('');
@@ -284,9 +393,16 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
   };
 
   const handleDeleteTherapist = (id: string) => {
+    const thToDelete = therapists.find(t => t.id === id);
     onUpdateTherapists(therapists.filter(t => t.id !== id));
-  };
+    deleteTherapistFromMariaDB(id);
 
+    if (thToDelete?.email && onUpdateUsers) {
+      const remainingUsers = users.filter(u => u.email.toLowerCase() !== thToDelete.email.toLowerCase());
+      onUpdateUsers(remainingUsers);
+      deleteUserFromMariaDB(`user_${id}`);
+    }
+  };
   const handlePrintSampleLetterhead = () => {
     window.print();
   };
@@ -1196,7 +1312,7 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
                     </div>
                   </div>
 
-                  {th.name !== 'Adriane Gama' ? (
+                  {th.id !== 'th_rt' && th.name.toLowerCase() !== tempConfig.technicalResponsible.toLowerCase() ? (
                     <button
                       type="button"
                       onClick={() => handleDeleteTherapist(th.id)}
@@ -1208,7 +1324,7 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
                     </button>
                   ) : (
                     <span className="text-[10px] px-2.5 py-1 rounded-lg bg-amber-950/60 text-amber-300 border border-amber-800/40 font-semibold shrink-0">
-                      RT Responsável
+                      Responsável Técnica (RT)
                     </span>
                   )}
                 </div>
