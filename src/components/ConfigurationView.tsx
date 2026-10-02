@@ -70,7 +70,7 @@ interface ConfigurationViewProps {
 // Helper para gravar no localStorage de forma resiliente
 const safeLocalStorageSetItem = (key: string, value: string) => {
   try {
-    safeLocalStorageSetItem(key, value);
+    localStorage.setItem(key, value);
   } catch (e) {
     console.warn(`Aviso: Limite do LocalStorage atingido para ${key}. Dados salvos apenas no MariaDB.`);
   }
