@@ -139,3 +139,45 @@ export const INITIAL_THERAPISTS: Therapist[] = [
     active: true
   }
 ];
+
+
+/**
+ * Garante que a Responsável Técnica (RT) definida em ClinicConfig
+ * esteja sempre presente e sincronizada na lista de Terapeutas / Fono & Equipe.
+ */
+export function syncTherapistsWithRT(currentTherapists: Therapist[], config: ClinicConfig): Therapist[] {
+  const rtEmail = (config.email || '').trim().toLowerCase();
+  const rtName = (config.technicalResponsible || 'Responsável Técnica').trim();
+  const rtCrfa = (config.crfa || '').trim();
+  const rtCpf = (config.cpf || '').trim();
+  const rtPhone = (config.phoneWhatsapp || '').trim();
+  const rtInstagram = (config.instagram || '').trim();
+
+  // Verifica se já existe um registro para a RT pelo email ou id especial ou nome
+  const index = currentTherapists.findIndex(t => 
+    t.id === 'th_rt' || 
+    (rtEmail && t.email && t.email.trim().toLowerCase() === rtEmail) ||
+    t.name.trim().toLowerCase() === rtName.toLowerCase()
+  );
+
+  const rtTherapist: Therapist = {
+    id: index >= 0 ? currentTherapists[index].id : 'th_rt',
+    name: rtName,
+    roleTitle: config.roleTitle || 'Fonoaudióloga',
+    crfa: rtCrfa || 'CREFONO 9531-RJ',
+    cpf: rtCpf || undefined,
+    phone: rtPhone || undefined,
+    email: config.email?.trim() || undefined,
+    instagram: rtInstagram || undefined,
+    specialty: index >= 0 ? currentTherapists[index].specialty : 'Responsável Técnica & Fonoaudiologia Clínica',
+    active: true
+  };
+
+  if (index >= 0) {
+    const updated = [...currentTherapists];
+    updated[index] = { ...updated[index], ...rtTherapist };
+    return updated;
+  } else {
+    return [rtTherapist, ...currentTherapists];
+  }
+}
