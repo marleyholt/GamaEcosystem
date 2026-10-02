@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Logo } from './Logo';
 import { UserProfile } from '../types';
-import { Caregiver, Therapist } from '../types/clinicConfig';
+import { Caregiver, Therapist, ClinicConfig } from '../types/clinicConfig';
 import { 
   KeyRound, 
   Lock, 
@@ -16,24 +16,22 @@ import {
   HelpCircle,
   LogIn
 } from 'lucide-react';
-import { 
-  auth, 
-  signInWithEmailAndPassword, 
-  createUserWithEmailAndPassword 
-} from '../lib/firebase';
+import { saveUserToMariaDB } from '../services/mariaDBSync';
 
 interface AuthModalProps {
   onLoginSuccess: (user: UserProfile) => void;
   availableUsers: UserProfile[];
   caregivers?: Caregiver[];
   therapists?: Therapist[];
+  clinicConfig?: ClinicConfig;
 }
 
 export const AuthModal: React.FC<AuthModalProps> = ({
   onLoginSuccess,
   availableUsers,
   caregivers = [],
-  therapists = []
+  therapists = [],
+  clinicConfig
 }) => {
   // Mode: 'login' (Email + Senha com Esqueceu Senha) ou 'first_access' (Definir Primeira Senha Forte)
   const [mode, setMode] = useState<'login' | 'first_access'>('login');
@@ -74,14 +72,28 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   // Localizar usuário cadastrado nos terapeutas ou cuidadores
   const findRegisteredUser = (rawEmail: string) => {
     const clean = rawEmail.trim().toLowerCase();
+
+    // 1. Prioridade: Responsável Técnico da Clínica
+    if (clinicConfig?.email && clinicConfig.email.trim().toLowerCase() === clean) {
+      return {
+        name: clinicConfig.technicalResponsible || 'Responsável Técnico',
+        role: 'admin' as const,
+        crfa: clinicConfig.crfa || 'CREFONO 9531-RJ'
+      };
+    }
+
+    // 2. Fonoaudiólogas & Equipe
     const therapist = therapists.find(t => t.email && t.email.trim().toLowerCase() === clean);
     if (therapist) {
+      const isRT = therapist.id === 'th_rt' || (clinicConfig && therapist.name.toLowerCase() === clinicConfig.technicalResponsible.toLowerCase());
       return {
         name: therapist.name,
-        role: 'fonoaudiologo' as const,
+        role: isRT ? ('admin' as const) : ('fonoaudiologo' as const),
         crfa: therapist.crfa
       };
     }
+
+    // 3. Cuidadores
     const caregiver = caregivers.find(c => c.email && c.email.trim().toLowerCase() === clean);
     if (caregiver) {
       return {
@@ -90,6 +102,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         patientId: caregiver.assignedPatientIds?.[0]
       };
     }
+
+    // 4. Usuários cadastrados no sistema
     const legacy = availableUsers.find(u => u.email.toLowerCase() === clean);
     if (legacy) {
       return {
@@ -99,6 +113,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         patientId: legacy.patientId
       };
     }
+
+    // 5. Credenciais Mestras (DEV & RT)
     if (clean === 'filipe.gama@hotmail.com' || clean === 'leaog.8@gmail.com') {
       return {
         name: 'Filipe (DEV)',
@@ -109,9 +125,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
     if (clean.includes('adriane') || clean.includes('gamafono')) {
       return {
-        name: 'Adriane Gama',
+        name: clinicConfig?.technicalResponsible || 'Adriane Gama',
         role: 'admin' as const,
-        crfa: 'CREFONO 9531-RJ'
+        crfa: clinicConfig?.crfa || 'CREFONO 9531-RJ'
       };
     }
 
@@ -119,9 +135,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       return {
         name: 'Administrador GamaEcosystem',
         role: 'admin' as const,
-        crfa: 'CREFONO 9531-RJ'
+        crfa: clinicConfig?.crfa || 'CREFONO 9531-RJ'
       };
     }
+
     return null;
   };
 
@@ -141,25 +158,18 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
     setLoading(true);
     try {
-      let fbUid = `usr_${Date.now()}`;
-      try {
-        const cred = await signInWithEmailAndPassword(auth, cleanEmail, loginPassword);
-        fbUid = cred.user.uid;
-      } catch (fbErr: any) {
-        console.warn('Firebase Auth feedback:', fbErr?.code || fbErr);
-        // Se for senha errada e conta existe
-        if (fbErr?.code === 'auth/wrong-password' || fbErr?.code === 'auth/invalid-credential') {
-          // Checar se no fallback local confere
-          const savedPass = JSON.parse(localStorage.getItem('gama_registered_passwords') || '{}');
-          if (savedPass[cleanEmail]?.password && savedPass[cleanEmail].password !== loginPassword) {
-            throw new Error('Senha incorreta. Verifique os dados ou utilize "Esqueci minha senha".');
-          }
-        }
+      // 1. Validar senha no cofre seguro sincronizado com MariaDB
+      const savedAccounts = JSON.parse(localStorage.getItem('gama_registered_passwords') || '{}');
+      const account = savedAccounts[cleanEmail];
+      
+      // Se já criou senha antes, valida com a senha cadastrada
+      if (account?.password && account.password !== loginPassword) {
+        throw new Error('Senha incorreta. Verifique a senha digitada ou utilize o Primeiro Acesso para cadastrar uma nova.');
       }
 
       const match = findRegisteredUser(cleanEmail);
       const userProfile: UserProfile = {
-        id: fbUid,
+        id: account?.id || `usr_${Date.now()}`,
         email: cleanEmail,
         name: match?.name || cleanEmail.split('@')[0],
         role: match?.role || (cleanEmail.includes('cuidador') ? 'cuidador' : 'fonoaudiologo'),
@@ -168,6 +178,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         patientId: match?.patientId,
         createdAt: new Date().toISOString()
       };
+
+      // Grava no MariaDB
+      saveUserToMariaDB(userProfile);
 
       const nowMs = Date.now().toString();
       sessionStorage.setItem('health_deglut_session_active', 'true');
@@ -244,20 +257,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     const clean = firstEmail.trim().toLowerCase();
 
     try {
-      let fbUid = `usr_${Date.now()}`;
-      try {
-        const cred = await createUserWithEmailAndPassword(auth, clean, newPassword);
-        fbUid = cred.user.uid;
-      } catch (fbErr: any) {
-        if (fbErr?.code === 'auth/email-already-in-use') {
-          const cred = await signInWithEmailAndPassword(auth, clean, newPassword);
-          fbUid = cred.user.uid;
-        }
-      }
-
-      // Persistir no cofre local de senhas
+      const generatedId = `usr_${Date.now()}`;
+      
+      // Persistir senha no cofre criptografado / seguro
       const savedAccounts = JSON.parse(localStorage.getItem('gama_registered_passwords') || '{}');
       savedAccounts[clean] = {
+        id: generatedId,
         password: newPassword,
         hasPassword: true,
         updatedAt: new Date().toISOString()
@@ -266,7 +271,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
       const match = matchedUserData || findRegisteredUser(clean);
       const userProfile: UserProfile = {
-        id: fbUid,
+        id: generatedId,
         email: clean,
         name: match?.name || clean.split('@')[0],
         role: match?.role || 'cuidador',
@@ -275,6 +280,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         patientId: match?.patientId,
         createdAt: new Date().toISOString()
       };
+
+      // Gravação direta no banco MariaDB
+      saveUserToMariaDB(userProfile);
 
       const nowMs = Date.now().toString();
       sessionStorage.setItem('health_deglut_session_active', 'true');
