@@ -68,9 +68,22 @@ app.get('/api/sync/all', (req, res) => {
 app.post('/api/clinic-config', (req, res) => {
   const config = req.body;
   const db = readDB();
-  db.clinicConfig = config;
+  db.clinicConfig = {
+    ...db.clinicConfig,
+    ...config,
+    clinicName: config.clinicName || config.clinic_name || db.clinicConfig?.clinicName || 'GAMA FONOAUDIOLOGIA',
+    technicalResponsible: config.technicalResponsible || config.technical_manager_name || db.clinicConfig?.technicalResponsible || 'Adriane Gama',
+    crfa: config.crfa || config.technical_manager_crfa || db.clinicConfig?.crfa || 'CREFONO 9531-RJ',
+    cpf: config.cpf || db.clinicConfig?.cpf,
+    phoneWhatsapp: config.phoneWhatsapp || config.phone || db.clinicConfig?.phoneWhatsapp,
+    addressLine: config.addressLine || config.address || db.clinicConfig?.addressLine,
+    email: config.email || db.clinicConfig?.email,
+    instagram: config.instagram || db.clinicConfig?.instagram,
+    logoUrl: config.logoUrl || config.logo_url || db.clinicConfig?.logoUrl,
+    faviconUrl: config.faviconUrl || config.favicon_url || db.clinicConfig?.faviconUrl
+  };
   writeDB(db);
-  res.json({ success: true, message: 'Configuração salva com sucesso no MariaDB.' });
+  res.json({ success: true, message: 'Configuração salva com sucesso no MariaDB.', clinicConfig: db.clinicConfig });
 });
 
 // Usuários
