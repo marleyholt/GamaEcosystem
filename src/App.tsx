@@ -233,17 +233,9 @@ export default function App() {
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        const resolvedLogo = (parsed.logoUrl && parsed.logoUrl !== '/logo-gama.png' && parsed.logoUrl.trim() !== '') 
-          ? parsed.logoUrl 
-          : '/assets/logo.png';
-        const resolvedFavicon = (parsed.faviconUrl && parsed.faviconUrl !== '/logo-gama.png' && parsed.faviconUrl.trim() !== '') 
-          ? parsed.faviconUrl 
-          : '/assets/logo.png';
         return {
           ...DEFAULT_CLINIC_CONFIG,
-          ...parsed,
-          logoUrl: resolvedLogo,
-          faviconUrl: resolvedFavicon
+          ...parsed
         };
       } catch {
         return DEFAULT_CLINIC_CONFIG;
@@ -397,14 +389,6 @@ export default function App() {
         let freshClinicConfig = clinicConfig;
         if (dbData.clinicConfig) {
           const cfg = dbData.clinicConfig;
-          let rawLogo = cfg.logo_url || cfg.logoUrl;
-          if (rawLogo === '/logo-gama.png' || !rawLogo || rawLogo.trim() === '') {
-            rawLogo = '/assets/logo.png';
-          }
-          let rawFavicon = cfg.favicon_url || cfg.faviconUrl;
-          if (rawFavicon === '/logo-gama.png' || !rawFavicon || rawFavicon.trim() === '') {
-            rawFavicon = '/assets/logo.png';
-          }
           freshClinicConfig = {
             ...DEFAULT_CLINIC_CONFIG,
             clinicName: cfg.clinicName || cfg.clinic_name || '',
@@ -415,8 +399,8 @@ export default function App() {
             phoneWhatsapp: cfg.phoneWhatsapp || cfg.phone || '',
             email: cfg.email || '',
             instagram: cfg.instagram || '',
-            logoUrl: rawLogo,
-            faviconUrl: rawFavicon,
+            logoUrl: cfg.logoUrl || cfg.logo_url || DEFAULT_CLINIC_CONFIG.logoUrl,
+            faviconUrl: cfg.faviconUrl || cfg.favicon_url || DEFAULT_CLINIC_CONFIG.faviconUrl,
             useLetterheadByDefault: true,
             includeSignatureOnPrint: false
           };
