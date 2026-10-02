@@ -20,6 +20,15 @@ Este documento é a fonte de verdade para o acompanhamento contínuo de tarefas,
 ---
 ## 📜 3. CHANGELOG (Histórico Cronológico de Entregas)
 
+### [v1.3.1] - 2026-10-02: Máscaras de Telefone/CPF em Fono & Equipe, Usuário Master Atualizado & Persistência Dupla de Configurações
+- **Máscaras de Entrada e Limitação de Caracteres Padronizadas:**
+  - Aplicada formatação dinâmica e limite de caracteres nos campos de CPF (`000.000.000-00` - 14 chars) e Telefone/WhatsApp (`(21) 98988-7981` - 15 chars) no cadastro de Fonoaudiólogas & Equipe e na aba Clínica e RT.
+- **Persistência Dupla e Mapeamento Rigoroso de Configurações da Clínica:**
+  - Corrigido mapeamento bidirecional (`snake_case` e `camelCase`) das colunas do MariaDB (`clinic_name`, `technical_manager_name`, `technical_manager_crfa`, `phone`, etc.) tanto no endpoint `/api/clinic-config` quanto em `/api/sync/all`.
+  - Ao recarregar (F5), os dados salvos na aba Clínica e RT permanecem intactos.
+- **Usuário Master Atualizado:**
+  - Ajustado o cadastro master para **Filipe Leão da Gama** com e-mail **`filipe.gama@hotmail.com`** e acesso irrestrito de Administrador (`admin`).
+
 ### [v1.3.0] - 2026-10-02: Eliminação Definitiva do Firebase, Sincronização MariaDB & Gestão de RT e Usuários
 - **Desconexão Total do Firebase & Firestore:**
   - Remoção de dependências e sincronizações do Firestore em login, primeiro acesso e configurações.
