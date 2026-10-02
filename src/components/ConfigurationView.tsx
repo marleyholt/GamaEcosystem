@@ -607,9 +607,26 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
             {systemLogs.length === 0 ? (
               <p className="text-xs text-[#a69a8f]">Nenhum log de auditoria encontrado.</p>
             ) : (
-              <pre className="text-[10px] text-[#f4efe8] font-mono whitespace-pre-wrap">
-                {systemLogs.join('\n')}
-              </pre>
+              <table className="w-full text-left text-xs text-[#f4efe8]">
+                <thead>
+                  <tr className="text-[#a69a8f] border-b border-[#3e342e]">
+                    <th className="p-2">Data</th>
+                    <th className="p-2">Usuário</th>
+                    <th className="p-2">Ação</th>
+                    <th className="p-2">Detalhes</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {systemLogs.map((log: any) => (
+                    <tr key={log.id} className="border-b border-[#3e342e]">
+                      <td className="p-2">{new Date(log.created_at).toLocaleString()}</td>
+                      <td className="p-2">{log.user_id}</td>
+                      <td className="p-2">{log.action}</td>
+                      <td className="p-2 truncate max-w-xs">{log.details}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             )}
           </div>
         </div>
