@@ -44,6 +44,49 @@ if (mysql) {
   }
 }
 
+// Auto-migração resiliente para garantir colunas necessárias e compatibilidade total
+async function initDatabaseSchema() {
+  if (!pool) return;
+  try {
+    // Garante que clinic_config tenha favicon_url e permita campos nulos/vazios
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS clinic_config (
+        id VARCHAR(64) NOT NULL PRIMARY KEY,
+        clinic_name VARCHAR(255) DEFAULT '',
+        legal_name VARCHAR(255) DEFAULT '',
+        cnpj VARCHAR(32) DEFAULT '',
+        technical_manager_name VARCHAR(255) DEFAULT '',
+        technical_manager_crfa VARCHAR(64) DEFAULT '',
+        address TEXT DEFAULT NULL,
+        phone VARCHAR(64) DEFAULT '',
+        email VARCHAR(255) DEFAULT '',
+        instagram VARCHAR(128) DEFAULT '',
+        logo_url MEDIUMTEXT DEFAULT NULL,
+        favicon_url MEDIUMTEXT DEFAULT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    `);
+
+    // Tenta adicionar coluna favicon_url caso a tabela tenha sido criada antigamente
+    try {
+      await pool.query("ALTER TABLE clinic_config ADD COLUMN favicon_url MEDIUMTEXT DEFAULT NULL;");
+    } catch (ignore) {}
+
+    // Relaxa restrições NOT NULL para permitir que campos comecem em branco se desejado
+    try {
+      await pool.query("ALTER TABLE clinic_config MODIFY COLUMN clinic_name VARCHAR(255) DEFAULT '';");
+      await pool.query("ALTER TABLE clinic_config MODIFY COLUMN technical_manager_name VARCHAR(255) DEFAULT '';");
+      await pool.query("ALTER TABLE clinic_config MODIFY COLUMN technical_manager_crfa VARCHAR(64) DEFAULT '';");
+    } catch (ignore) {}
+
+    console.log('✅ Esquema MariaDB verificado e auto-migrado com sucesso (suporte a favicon_url e campos em branco).');
+  } catch (err) {
+    console.warn('Aviso na auto-migracao do MariaDB:', err.message);
+  }
+}
+setTimeout(initDatabaseSchema, 1000);
+
 // Teste de conexão
 app.get('/api/health', async (req, res) => {
   try {
@@ -76,20 +119,23 @@ app.get('/api/sync/all', async (req, res) => {
       caregivers,
       clinicConfig: clinicConfigRows[0] ? {
         id: clinicConfigRows[0].id,
-        clinicName: clinicConfigRows[0].clinic_name,
+        clinicName: clinicConfigRows[0].clinic_name || '',
         technicalResponsible: clinicConfigRows[0].technical_manager_name || '',
-        crfa: clinicConfigRows[0].technical_manager_crfa,
-        addressLine: clinicConfigRows[0].address,
-        phoneWhatsapp: clinicConfigRows[0].phone,
-        email: clinicConfigRows[0].email,
-        instagram: clinicConfigRows[0].instagram,
-        logoUrl: clinicConfigRows[0].logo_url,
+        crfa: clinicConfigRows[0].technical_manager_crfa || '',
+        addressLine: clinicConfigRows[0].address || '',
+        phoneWhatsapp: clinicConfigRows[0].phone || '',
+        email: clinicConfigRows[0].email || '',
+        instagram: clinicConfigRows[0].instagram || '',
+        logoUrl: clinicConfigRows[0].logo_url || null,
+        faviconUrl: clinicConfigRows[0].favicon_url || null,
         // Também preserva formato original
         clinic_name: clinicConfigRows[0].clinic_name,
         technical_manager_name: clinicConfigRows[0].technical_manager_name,
         technical_manager_crfa: clinicConfigRows[0].technical_manager_crfa,
         address: clinicConfigRows[0].address,
-        phone: clinicConfigRows[0].phone
+        phone: clinicConfigRows[0].phone,
+        logo_url: clinicConfigRows[0].logo_url,
+        favicon_url: clinicConfigRows[0].favicon_url
       } : null,
       medicalRecords,
       radi,
@@ -114,11 +160,12 @@ app.post('/api/clinic-config', async (req, res) => {
     const phone = cfg.phoneWhatsapp || cfg.phone || '';
     const email = cfg.email || '';
     const instagram = cfg.instagram || '';
-    const logoUrl = cfg.logoUrl || cfg.logo_url || '';
+    const logoUrl = cfg.logoUrl !== undefined ? cfg.logoUrl : (cfg.logo_url !== undefined ? cfg.logo_url : '');
+    const faviconUrl = cfg.faviconUrl !== undefined ? cfg.faviconUrl : (cfg.favicon_url !== undefined ? cfg.favicon_url : '');
 
     const query = `
-      INSERT INTO clinic_config (id, clinic_name, technical_manager_name, technical_manager_crfa, address, phone, email, instagram, logo_url, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+      INSERT INTO clinic_config (id, clinic_name, technical_manager_name, technical_manager_crfa, address, phone, email, instagram, logo_url, favicon_url, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
       ON DUPLICATE KEY UPDATE
         clinic_name = VALUES(clinic_name),
         technical_manager_name = VALUES(technical_manager_name),
@@ -128,6 +175,7 @@ app.post('/api/clinic-config', async (req, res) => {
         email = VALUES(email),
         instagram = VALUES(instagram),
         logo_url = VALUES(logo_url),
+        favicon_url = VALUES(favicon_url),
         updated_at = NOW()
     `;
     await pool.query(query, [
@@ -139,7 +187,8 @@ app.post('/api/clinic-config', async (req, res) => {
       phone,
       email,
       instagram,
-      logoUrl
+      logoUrl,
+      faviconUrl
     ]);
 
     // Atualiza atomicamente a RT na tabela therapists para garantir paridade 100%
