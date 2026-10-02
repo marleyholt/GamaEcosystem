@@ -154,7 +154,32 @@ export const ChangeLogView: React.FC<ChangeLogViewProps> = () => {
         </div>
 
         <div className="relative pl-6 space-y-6 before:content-[''] before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-[#382e27]">
-                                                            {/* Versão v1.3.5 - 02/10/2026 */}
+                                                            {/* Versão v1.3.6 - 02/10/2026 */}
+          <div className="relative space-y-3">
+            <div className="absolute -left-[21px] top-1.5 w-3 h-3 rounded-full bg-blue-500 ring-4 ring-[#1f1a17]" />
+            <div className="flex flex-wrap items-center gap-2.5">
+              <span className="px-2.5 py-0.5 rounded-full bg-blue-500 text-[#181513] font-bold text-xs">
+                v1.3.6
+              </span>
+              <span className="text-xs font-semibold text-[#f4efe8]">
+                Resiliência de Loops e Suporte a Grandes Payloads (Fotos)
+              </span>
+              <span className="text-[11px] text-[#a69a8f]">• 02/10/2026</span>
+            </div>
+            <ul className="text-xs text-[#a69a8f] space-y-1.5 list-disc pl-4">
+              <li>
+                <strong className="text-[#f4efe8]">Fix de Loop Crítico:</strong> Corrigido erro de recursividade que travava o navegador ao atingir o limite de cache.
+              </li>
+              <li>
+                <strong className="text-[#f4efe8]">Uploads de 200MB:</strong> Limite do servidor ampliado para aceitar registros com muitas fotos em alta resolução.
+              </li>
+              <li>
+                <strong className="text-[#f4efe8]">Sincronização Visual:</strong> Logo e Favicon agora atualizam instantaneamente no cabeçalho ao serem alterados.
+              </li>
+            </ul>
+          </div>
+
+          {/* Versão v1.3.5 - 02/10/2026 */}
           <div className="relative space-y-3">
             <div className="absolute -left-[21px] top-1.5 w-3 h-3 rounded-full bg-blue-500 ring-4 ring-[#1f1a17]" />
             <div className="flex flex-wrap items-center gap-2.5">
