@@ -170,6 +170,7 @@ CREATE TABLE IF NOT EXISTS `daily_feeding_logs` (
   `alertness_level` VARCHAR(64) DEFAULT NULL,
   `posture_adequate` TINYINT(1) DEFAULT 1,
   `observations` TEXT DEFAULT NULL,
+  `photos_json` LONGTEXT DEFAULT NULL,
   `logged_by` VARCHAR(255) DEFAULT NULL,
   `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
