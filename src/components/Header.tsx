@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { UserProfile, Patient, RadiAssessment, NavigationTab } from '../types';
+import { UserProfile, Patient, RadiAssessment, NavigationTab, ClinicConfig } from '../types';
 import { OfficialEvolutionData } from '../types/clinicalEvolution';
 import { Logo } from './Logo';
 import { UserProfileModal } from './UserProfileModal';
@@ -47,6 +47,7 @@ export interface HeaderProps {
   officialEvolutions?: OfficialEvolutionData[];
   radiAssessments?: RadiAssessment[];
   onNavigateToTab?: (tab: NavigationTab, patientId?: string) => void;
+  clinicConfig?: ClinicConfig;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -63,7 +64,8 @@ export const Header: React.FC<HeaderProps> = ({
   patients = [],
   officialEvolutions = [],
   radiAssessments = [],
-  onNavigateToTab
+  onNavigateToTab,
+  clinicConfig
 }) => {
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [isManualModalOpen, setIsManualModalOpen] = useState(false);
@@ -302,7 +304,7 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
 
             {/* Logomarca & Favicon com tamanho nítido e visível */}
-            <Logo size="sm" />
+            <Logo size="sm" customLogoUrl={clinicConfig?.faviconUrl || clinicConfig?.logoUrl} />
           </div>
 
           {/* Right: Ações & Sino de Pendências */}
