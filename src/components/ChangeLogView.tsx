@@ -154,7 +154,57 @@ export const ChangeLogView: React.FC<ChangeLogViewProps> = () => {
         </div>
 
         <div className="relative pl-6 space-y-6 before:content-[''] before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-[#382e27]">
-                                                            {/* Versão v1.3.6 - 02/10/2026 */}
+                                                            {/* Versão v1.3.8 - 02/10/2026 */}
+          <div className="relative space-y-3">
+            <div className="absolute -left-[21px] top-1.5 w-3 h-3 rounded-full bg-blue-500 ring-4 ring-[#1f1a17]" />
+            <div className="flex flex-wrap items-center gap-2.5">
+              <span className="px-2.5 py-0.5 rounded-full bg-blue-500 text-[#181513] font-bold text-xs">
+                v1.3.8
+              </span>
+              <span className="text-xs font-semibold text-[#f4efe8]">
+                Configuração de Rubrica e Assinatura Digital RT
+              </span>
+              <span className="text-[11px] text-[#a69a8f]">• 02/10/2026</span>
+            </div>
+            <ul className="text-xs text-[#a69a8f] space-y-1.5 list-disc pl-4">
+              <li>
+                <strong className="text-[#f4efe8]">Painel de Rubrica:</strong> Novo botão em "Marca" para configurar a assinatura digitalizada da Responsável Técnica.
+              </li>
+              <li>
+                <strong className="text-[#f4efe8]">Papel Timbrado v2:</strong> Agora o modelo com assinatura exibe a rubrica técnica e identificação profissional completa para laudos digitais.
+              </li>
+              <li>
+                <strong className="text-[#f4efe8]">Persistência Nativa:</strong> Rubrica salva diretamente no MariaDB para evitar perda de dados.
+              </li>
+            </ul>
+          </div>
+
+          {/* Versão v1.3.7 - 02/10/2026 */}
+          <div className="relative space-y-3">
+            <div className="absolute -left-[21px] top-1.5 w-3 h-3 rounded-full bg-blue-500 ring-4 ring-[#1f1a17]" />
+            <div className="flex flex-wrap items-center gap-2.5">
+              <span className="px-2.5 py-0.5 rounded-full bg-blue-500 text-[#181513] font-bold text-xs">
+                v1.3.7
+              </span>
+              <span className="text-xs font-semibold text-[#f4efe8]">
+                Compactação de Fotos e Histórico Ampliado
+              </span>
+              <span className="text-[11px] text-[#a69a8f]">• 02/10/2026</span>
+            </div>
+            <ul className="text-xs text-[#a69a8f] space-y-1.5 list-disc pl-4">
+              <li>
+                <strong className="text-[#f4efe8]">Compactação Automática:</strong> Fotos de refeição agora são convertidas para JPEG (60% qualidade) no upload, economizando espaço e evitando erros de salvamento.
+              </li>
+              <li>
+                <strong className="text-[#f4efe8]">Persistência MariaDB:</strong> Ativado o salvamento real dos diários de alimentação e fotos no banco de dados do servidor.
+              </li>
+              <li>
+                <strong className="text-[#f4efe8]">Histórico Visual:</strong> Miniaturas no histórico agora são maiores e possuem recurso de "Clique para Ampliar" em tela cheia.
+              </li>
+            </ul>
+          </div>
+
+          {/* Versão v1.3.6 - 02/10/2026 */}
           <div className="relative space-y-3">
             <div className="absolute -left-[21px] top-1.5 w-3 h-3 rounded-full bg-blue-500 ring-4 ring-[#1f1a17]" />
             <div className="flex flex-wrap items-center gap-2.5">
