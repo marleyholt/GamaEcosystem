@@ -287,7 +287,33 @@ app.delete('/api/therapists/:id', async (req, res) => {
   try {
     await pool.query('DELETE FROM therapists WHERE id = ?', [req.params.id]);
     res.json({ success: true });
-// Diário de Alimentação
+// Helper de Auditoria
+const fs = require('fs');
+const path = require('path');
+const auditLogPath = path.join(__dirname, 'system_audit.log');
+
+const logAuditAction = (action, details, userId = 'system') => {
+  const timestamp = new Date().toISOString();
+  const logEntry = `[${timestamp}] [USER: ${userId}] [ACTION: ${action}] [DETAILS: ${JSON.stringify(details)}]\n`;
+  fs.appendFile(auditLogPath, logEntry, (err) => {
+    if (err) console.error('Erro ao escrever no arquivo de auditoria:', err);
+  });
+};
+
+// ... existing code ...
+app.get('/api/system-logs', async (req, res) => {
+  try {
+    if (!fs.existsSync(auditLogPath)) {
+      return res.json([]);
+    }
+    const logs = fs.readFileSync(auditLogPath, 'utf8').split('\n').filter(Boolean);
+    res.json(logs);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+// ... existing code ...
+
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 app.post('/api/feeding-logs', async (req, res) => {
@@ -344,6 +370,7 @@ app.post('/api/feeding-logs', async (req, res) => {
       photosJson,
       log.caregiverName || log.logged_by || ''
     ]);
+    logAuditAction('INSERT_FEEDING_LOG', { id: log.id, patientId: log.patientId }, log.caregiverName || 'unknown');
     res.json({ success: true });
   } catch (err) {
     console.error('Erro ao salvar feeding log:', err);
@@ -353,7 +380,9 @@ app.post('/api/feeding-logs', async (req, res) => {
 
 app.delete('/api/feeding-logs/:id', async (req, res) => {
   try {
-    await pool.query('DELETE FROM daily_feeding_logs WHERE id = ?', [req.params.id]);
+    const logId = req.params.id;
+    logAuditAction('DELETE_FEEDING_LOG', { id: logId }, 'user');
+    await pool.query('DELETE FROM daily_feeding_logs WHERE id = ?', [logId]);
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: err.message });
