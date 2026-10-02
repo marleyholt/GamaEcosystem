@@ -10,7 +10,9 @@ import {
   Calendar, 
   Filter, 
   AlertTriangle,
-  ChevronRight
+  ChevronRight,
+  X,
+  Maximize2
 } from 'lucide-react';
 
 interface HistoryTimelineViewProps {
@@ -32,6 +34,7 @@ export const HistoryTimelineView: React.FC<HistoryTimelineViewProps> = ({
 }) => {
   const [activePatient, setActivePatient] = useState<Patient | null>(selectedPatient);
   const [filterType, setFilterType] = useState<'all' | 'radi' | 'logs'>('all');
+  const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
 
   if (!activePatient) {
     return (
@@ -249,10 +252,20 @@ export const HistoryTimelineView: React.FC<HistoryTimelineViewProps> = ({
                   )}
 
                   {log.photos && log.photos.length > 0 && (
-                    <div className="flex items-center gap-2 pt-1 overflow-x-auto">
+                    <div className="flex items-center gap-3 pt-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-[#3a312c]">
                       {log.photos.map((photo) => (
-                        <div key={photo.id} className="w-16 h-16 rounded-lg overflow-hidden border border-[#3a312c] shrink-0 bg-[#181513]">
+                        <div 
+                          key={photo.id} 
+                          onClick={() => setSelectedPhoto(photo.photoUrl)}
+                          className="group relative w-32 h-32 sm:w-40 sm:h-40 rounded-2xl overflow-hidden border border-[#3a312c] shrink-0 bg-[#181513] cursor-zoom-in transition-transform hover:scale-[1.02]"
+                        >
                           <img src={photo.photoUrl} alt={photo.mealType} className="w-full h-full object-cover" />
+                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <span className="text-[10px] font-bold text-white uppercase tracking-widest">Ver Ampliado</span>
+                          </div>
+                          <div className="absolute bottom-1 right-1 px-1.5 py-0.5 rounded-md bg-black/60 text-[9px] text-[#c8a88a] font-bold uppercase">
+                            {photo.mealType}
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -268,6 +281,29 @@ export const HistoryTimelineView: React.FC<HistoryTimelineViewProps> = ({
           </div>
         )}
       </div>
+
+      {/* Modal de Ampliação de Foto */}
+      {selectedPhoto && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md animate-in fade-in duration-200"
+          onClick={() => setSelectedPhoto(null)}
+        >
+          <div className="relative max-w-5xl w-full h-full flex items-center justify-center">
+            <button
+              onClick={() => setSelectedPhoto(null)}
+              className="absolute top-4 right-4 p-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer z-10"
+            >
+              <X className="w-6 h-6" />
+            </button>
+            <img 
+              src={selectedPhoto} 
+              alt="Foto ampliada" 
+              className="max-w-full max-h-full object-contain rounded-xl shadow-2xl animate-in zoom-in-95 duration-300"
+              onClick={e => e.stopPropagation()}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
