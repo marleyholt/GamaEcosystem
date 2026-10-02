@@ -547,9 +547,10 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
               <label className="block text-xs font-medium text-[#c8a88a] mb-1">Nome da Clínica / Consultório</label>
               <input
                 type="text"
-                value={tempConfig.clinicName}
+                placeholder="Ex: GAMA FONOAUDIOLOGIA"
+                value={tempConfig.clinicName || ""}
                 onChange={e => setTempConfig({ ...tempConfig, clinicName: e.target.value })}
-                className="w-full bg-[#181513] border border-[#3e342e] rounded-xl px-3 py-2 text-xs text-[#f4efe8] focus:border-[#c8a88a] outline-none"
+                className="w-full bg-[#181513] border border-[#3e342e] rounded-xl px-3 py-2 text-xs text-[#f4efe8] placeholder:text-[#a69a8f]/40 focus:border-[#c8a88a] outline-none"
               />
             </div>
 
@@ -557,9 +558,10 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
               <label className="block text-xs font-medium text-[#c8a88a] mb-1">Responsável Técnica Padrão</label>
               <input
                 type="text"
-                value={tempConfig.technicalResponsible}
+                placeholder="Ex: Adriane Paes da Gama"
+                value={tempConfig.technicalResponsible || ""}
                 onChange={e => setTempConfig({ ...tempConfig, technicalResponsible: e.target.value })}
-                className="w-full bg-[#181513] border border-[#3e342e] rounded-xl px-3 py-2 text-xs text-[#f4efe8] focus:border-[#c8a88a] outline-none"
+                className="w-full bg-[#181513] border border-[#3e342e] rounded-xl px-3 py-2 text-xs text-[#f4efe8] placeholder:text-[#a69a8f]/40 focus:border-[#c8a88a] outline-none"
               />
             </div>
 
@@ -567,9 +569,10 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
               <label className="block text-xs font-medium text-[#c8a88a] mb-1">Conselho Profissional (CRFa / CREFONO)</label>
               <input
                 type="text"
-                value={tempConfig.crfa}
+                placeholder="Ex: CREFONO 9531-RJ"
+                value={tempConfig.crfa || ""}
                 onChange={e => setTempConfig({ ...tempConfig, crfa: e.target.value })}
-                className="w-full bg-[#181513] border border-[#3e342e] rounded-xl px-3 py-2 text-xs text-[#f4efe8] focus:border-[#c8a88a] outline-none"
+                className="w-full bg-[#181513] border border-[#3e342e] rounded-xl px-3 py-2 text-xs text-[#f4efe8] placeholder:text-[#a69a8f]/40 focus:border-[#c8a88a] outline-none"
               />
             </div>
 
@@ -614,9 +617,10 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
               <label className="block text-xs font-medium text-[#c8a88a] mb-1">E-mail Institucional</label>
               <input
                 type="email"
-                value={tempConfig.email}
+                placeholder="Ex: adrianepaesdagama@gmail.com"
+                value={tempConfig.email || ""}
                 onChange={e => setTempConfig({ ...tempConfig, email: e.target.value })}
-                className="w-full bg-[#181513] border border-[#3e342e] rounded-xl px-3 py-2 text-xs text-[#f4efe8] focus:border-[#c8a88a] outline-none"
+                className="w-full bg-[#181513] border border-[#3e342e] rounded-xl px-3 py-2 text-xs text-[#f4efe8] placeholder:text-[#a69a8f]/40 focus:border-[#c8a88a] outline-none"
               />
             </div>
 
@@ -624,9 +628,10 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
               <label className="block text-xs font-medium text-[#c8a88a] mb-1">Instagram Oficial</label>
               <input
                 type="text"
-                value={tempConfig.instagram}
+                placeholder="Ex: @gama_fonoaudiologia"
+                value={tempConfig.instagram || ""}
                 onChange={e => setTempConfig({ ...tempConfig, instagram: e.target.value })}
-                className="w-full bg-[#181513] border border-[#3e342e] rounded-xl px-3 py-2 text-xs text-[#f4efe8] focus:border-[#c8a88a] outline-none"
+                className="w-full bg-[#181513] border border-[#3e342e] rounded-xl px-3 py-2 text-xs text-[#f4efe8] placeholder:text-[#a69a8f]/40 focus:border-[#c8a88a] outline-none"
               />
             </div>
 
@@ -634,9 +639,10 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
               <label className="block text-xs font-medium text-[#c8a88a] mb-1">Endereço / Polo de Atendimento</label>
               <input
                 type="text"
-                value={tempConfig.addressLine || ''}
+                placeholder="Ex: Rio de Janeiro - RJ • Atendimento Clínico e Domiciliar Especializado"
+                value={tempConfig.addressLine || ""}
                 onChange={e => setTempConfig({ ...tempConfig, addressLine: e.target.value })}
-                className="w-full bg-[#181513] border border-[#3e342e] rounded-xl px-3 py-2 text-xs text-[#f4efe8] focus:border-[#c8a88a] outline-none"
+                className="w-full bg-[#181513] border border-[#3e342e] rounded-xl px-3 py-2 text-xs text-[#f4efe8] placeholder:text-[#a69a8f]/40 focus:border-[#c8a88a] outline-none"
               />
             </div>
           </div>
