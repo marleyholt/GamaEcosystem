@@ -56,7 +56,7 @@ export const DEFAULT_CLINIC_CONFIG: ClinicConfig = {
   crfa: 'CREFONO 9531-RJ',
   cpf: '071151437-22',
   phoneWhatsapp: '(21) 98988-7981',
-  email: 'gamafono@gamafono.com.br',
+  email: 'adrianepaesdagama@gmail.com',
   instagram: '@gama_fonoaudiologia',
   addressLine: 'Rio de Janeiro - RJ • Atendimento Clínico e Domiciliar',
   logoUrl: DEFAULT_OFFICIAL_LOGO_BASE64,
@@ -133,7 +133,7 @@ export const INITIAL_THERAPISTS: Therapist[] = [
     crfa: 'CREFONO 9531-RJ',
     cpf: '071151437-22',
     phone: '(21) 98988-7981',
-    email: 'gamafono@gamafono.com.br',
+    email: 'adrianepaesdagama@gmail.com',
     instagram: '@gama_fonoaudiologia',
     specialty: 'Disfagia & Reabilitação Orofaríngea',
     active: true
