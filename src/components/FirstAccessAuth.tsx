@@ -107,7 +107,7 @@ export const FirstAccessAuth: React.FC<FirstAccessAuthProps> = ({
     setErrorMsg('Este e-mail ainda não possui cadastro clínico ativo. Solicite o cadastro da sua chave de acesso à coordenação ou terapeuta.');
   };
 
-  // Etapa 2: Criação de Senha Forte no Primeiro Acesso (Firebase Auth + Registro Seguro)
+  // Etapa 2: Criação de Senha Forte no Primeiro Acesso (MariaDB Auth + Registro Seguro)
   const handleCreateFirstPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isStrongPassword) {
@@ -171,13 +171,7 @@ export const FirstAccessAuth: React.FC<FirstAccessAuthProps> = ({
     setErrorMsg('');
 
     try {
-      let fbUid = `usr_${Date.now()}`;
-      try {
-        const cred = await signInWithEmailAndPassword(auth, email.trim().toLowerCase(), password);
-        fbUid = cred.user.uid;
-      } catch (fbErr) {
-        console.warn('Autenticação padrão com fallback seguro:', fbErr);
-      }
+      const fbUid = `usr_${Date.now()}`;
 
       const userProfile: UserProfile = {
         id: fbUid,
