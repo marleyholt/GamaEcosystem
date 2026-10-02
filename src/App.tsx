@@ -349,7 +349,7 @@ export default function App() {
 
   // Sincroniza dinamicamente o Favicon da aba do navegador e ícone de celular com o clinicConfig
   useEffect(() => {
-    const iconSource = clinicConfig.faviconUrl || clinicConfig.logoUrl;
+    const iconSource = clinicConfig.faviconUrl || '/pwa-512x512.png';
     updateBrowserFavicon(iconSource);
   }, [clinicConfig.faviconUrl, clinicConfig.logoUrl]);
 
