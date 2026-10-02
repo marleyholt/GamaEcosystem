@@ -20,6 +20,15 @@ Este documento é a fonte de verdade para o acompanhamento contínuo de tarefas,
 ---
 ## 📜 3. CHANGELOG (Histórico Cronológico de Entregas)
 
+### [v1.3.6] - 2026-10-02: Resiliência Máxima, Correção de Loops e Aumento de Payload
+- **Correção de Loop Infinito (Recursividade):**
+  - Corrigido o erro `Maximum call stack size exceeded` que travava o sistema ao tentar gravar no `localStorage`.
+- **Estabilização de Grandes Payloads (Fotos):**
+  - Aumentado o limite de recepção do servidor MariaDB/Express para **200MB** para suportar múltiplos registros com fotos em alta definição sem erro `413`.
+- **Sincronização Visual de Marca:**
+  - O Favicon e Logo agora são passados diretamente para o `Header`, garantindo que qualquer alteração de marca seja refletida instantaneamente sem necessidade de refresh.
+  - Implementada gravação segura no `localStorage` que ignora falhas se o limite do navegador for atingido, priorizando o banco de dados.
+
 ### [v1.3.5] - 2026-10-02: Fix de Persistência de Logo e Favicon no MariaDB e Fim de Sobrescrita no F5
 - **Persistência de Imagens Nativas no Banco:**
   - Adicionada coluna `favicon_url` na tabela `clinic_config` do MariaDB via auto-migração resiliente.
