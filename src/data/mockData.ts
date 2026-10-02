@@ -90,18 +90,8 @@ export const SYMPTOMS_LIST = [
 export const INITIAL_USERS: UserProfile[] = [
   {
     id: 'user_filipe_dev',
-    name: 'Filipe (DEV)',
+    name: 'Filipe Leão da Gama',
     email: 'filipe.gama@hotmail.com',
-    role: 'admin',
-    approved: true,
-    crfaNumber: 'ADMIN-DEV',
-    allowedTabs: ['resumo', 'prontuario', 'radi', 'registro', 'historico', 'chat', 'pacientes', 'relatorios', 'configuracao'],
-    createdAt: new Date().toISOString()
-  },
-  {
-    id: 'user_master_dev',
-    name: 'Filipe (DEV)',
-    email: 'leaog.8@gmail.com',
     role: 'admin',
     approved: true,
     crfaNumber: 'ADMIN-DEV',
