@@ -397,8 +397,9 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
     onUpdateTherapists(therapists.filter(t => t.id !== id));
     deleteTherapistFromMariaDB(id);
 
-    if (thToDelete?.email && onUpdateUsers) {
-      const remainingUsers = users.filter(u => u.email.toLowerCase() !== thToDelete.email.toLowerCase());
+    if (thToDelete && thToDelete.email && onUpdateUsers) {
+      const targetEmail = thToDelete.email.toLowerCase();
+      const remainingUsers = users.filter(u => u.email.toLowerCase() !== targetEmail);
       onUpdateUsers(remainingUsers);
       deleteUserFromMariaDB(`user_${id}`);
     }
