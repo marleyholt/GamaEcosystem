@@ -127,11 +127,11 @@ app.get('/api/sync/all', async (req, res) => {
 
     const [medicalRecords] = await pool.query('SELECT * FROM patient_medical_records');
     const [radi] = await pool.query('SELECT * FROM radi_assessments');
-    const [dailyLogsRaw] = await pool.query('SELECT * FROM daily_feeding_logs ORDER BY date DESC, created_at DESC');
+    const [dailyLogsRaw] = await pool.query('SELECT d.*, p.name as patient_name FROM daily_feeding_logs d LEFT JOIN patients p ON d.patient_id = p.id ORDER BY d.date DESC, d.created_at DESC');
     const dailyLogs = dailyLogsRaw.map(l => ({
       id: l.id,
       patientId: l.patient_id,
-      patientName: l.patientName || '',
+      patientName: l.patient_name || '',
       caregiverId: l.caregiver_id || '',
       caregiverName: l.logged_by || '',
       date: l.date,
@@ -286,6 +286,8 @@ app.delete('/api/therapists/:id', async (req, res) => {
     await pool.query('DELETE FROM therapists WHERE id = ?', [req.params.id]);
     res.json({ success: true });
 // Diário de Alimentação
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
 app.post('/api/feeding-logs', async (req, res) => {
   try {
     const log = req.body;
