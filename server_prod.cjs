@@ -10,7 +10,7 @@ const path = require('path');
 const fs = require('fs');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3005;
 
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
@@ -18,9 +18,9 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Pool de conexão com o banco de dados MariaDB / MySQL
 const pool = mysql.createPool({
-  host: process.env.DB_HOST || 'localhost',
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || '',
+  host: process.env.DB_HOST || '127.0.0.1',
+  user: process.env.DB_USER || 'gama_user',
+  password: process.env.DB_PASSWORD || 'GamaEco#2026!Secure',
   database: process.env.DB_NAME || 'gamaecosystem_db',
   waitForConnections: true,
   connectionLimit: 10,
