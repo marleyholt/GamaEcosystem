@@ -92,6 +92,13 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
   onUpdateUserPermissions
 }) => {
   const [activeTab, setActiveTab] = useState<'geral' | 'marca' | 'cuidadores' | 'terapeutas' | 'usuarios' | 'database' | 'changelog' | 'system_logs'>('geral');
+  const [tempConfig, setTempConfig] = useState<ClinicConfig>(clinicConfig);
+
+  // Mantém tempConfig sempre sincronizado quando clinicConfig for atualizado
+  useEffect(() => {
+    setTempConfig(clinicConfig);
+  }, [clinicConfig]);
+  
   const [systemLogs, setSystemLogs] = useState<string[]>([]);
 
   useEffect(() => {
