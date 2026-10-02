@@ -287,9 +287,10 @@ app.delete('/api/therapists/:id', async (req, res) => {
   try {
     await pool.query('DELETE FROM therapists WHERE id = ?', [req.params.id]);
     res.json({ success: true });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
 // Helper de Auditoria
-const fs = require('fs');
-const path = require('path');
 const auditLogPath = path.join(__dirname, 'system_audit.log');
 
 const logAuditAction = (action, details, userId = 'system') => {
@@ -300,7 +301,6 @@ const logAuditAction = (action, details, userId = 'system') => {
   });
 };
 
-// ... existing code ...
 app.get('/api/system-logs', async (req, res) => {
   try {
     if (!fs.existsSync(auditLogPath)) {
@@ -312,10 +312,7 @@ app.get('/api/system-logs', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-// ... existing code ...
 
-  } catch (e) { res.status(500).json({ error: e.message }); }
-});
 app.post('/api/feeding-logs', async (req, res) => {
   try {
     const log = req.body;
