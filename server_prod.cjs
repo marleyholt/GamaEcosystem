@@ -357,12 +357,6 @@ app.delete('/api/feeding-logs/:id', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
 // Cuidadores
 app.post('/api/caregivers', async (req, res) => {
   try {
