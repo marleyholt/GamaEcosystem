@@ -94,7 +94,18 @@ async function initDatabaseSchema() {
       await pool.query("ALTER TABLE daily_feeding_logs ADD COLUMN photos_json LONGTEXT DEFAULT NULL;");
     } catch (ignore) {}
 
-    console.log('✅ Esquema MariaDB verificado e auto-migrado com sucesso (suporte a favicon_url e campos em branco).');
+    // Garante a tabela audit_logs
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS audit_logs (
+        id VARCHAR(64) NOT NULL PRIMARY KEY,
+        user_id VARCHAR(255) DEFAULT 'system',
+        action VARCHAR(255) NOT NULL,
+        details LONGTEXT DEFAULT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    `);
+
+    console.log('✅ Esquema MariaDB verificado e auto-migrado com sucesso.');
   } catch (err) {
     console.warn('Aviso na auto-migracao do MariaDB:', err.message);
   }
