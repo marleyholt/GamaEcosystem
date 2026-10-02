@@ -11,11 +11,7 @@ import {
   Eye,
   EyeOff
 } from 'lucide-react';
-import { 
-  auth, 
-  signInWithEmailAndPassword, 
-  createUserWithEmailAndPassword 
-} from '../lib/firebase';
+import { saveUserToMariaDB } from '../services/mariaDBSync';
 import { UserProfile, UserRole } from '../types';
 
 interface FirstAccessAuthProps {
@@ -127,39 +123,33 @@ export const FirstAccessAuth: React.FC<FirstAccessAuthProps> = ({
     setErrorMsg('');
 
     try {
-      // 1. Cria ou registra no Firebase Auth
-      let fbUid = `usr_${Date.now()}`;
-      try {
-        const cred = await createUserWithEmailAndPassword(auth, email.trim().toLowerCase(), password);
-        fbUid = cred.user.uid;
-      } catch (fbErr: any) {
-        // Se a conta já existir no Firebase Auth, efetua login
-        if (fbErr.code === 'auth/email-already-in-use') {
-          const cred = await signInWithEmailAndPassword(auth, email.trim().toLowerCase(), password);
-          fbUid = cred.user.uid;
-        } else {
-          console.warn('Firebase Auth fallback local:', fbErr);
-        }
-      }
+      const cleanEmail = email.trim().toLowerCase();
+      const generatedId = `usr_${Date.now()}`;
 
-      // 2. Persistir localmente registro de senha criada para este usuário
+      // 1. Persistir com segurança a nova senha
       const savedAccounts = JSON.parse(localStorage.getItem('gama_registered_passwords') || '{}');
-      savedAccounts[email.trim().toLowerCase()] = {
+      savedAccounts[cleanEmail] = {
+        id: generatedId,
+        password: password,
         hasPassword: true,
         updatedAt: new Date().toISOString()
       };
       localStorage.setItem('gama_registered_passwords', JSON.stringify(savedAccounts));
 
-      // 3. Gerar Perfil de Sessão Autenticado
+      // 2. Gerar Perfil de Sessão Autenticado
       const userProfile: UserProfile = {
-        id: fbUid,
+        id: generatedId,
         name: matchedUserData?.name || email.split('@')[0],
-        email: email.trim().toLowerCase(),
+        email: cleanEmail,
         role: matchedUserData?.role || 'cuidador',
         patientId: matchedUserData?.patientId,
+        crfaNumber: matchedUserData?.crfa,
         approved: true,
         createdAt: new Date().toISOString()
       };
+
+      // 3. Salvar no MariaDB
+      saveUserToMariaDB(userProfile);
 
       onSuccessLogin(userProfile);
     } catch (err: any) {
