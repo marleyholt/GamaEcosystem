@@ -20,6 +20,14 @@ Este documento é a fonte de verdade para o acompanhamento contínuo de tarefas,
 ---
 ## 📜 3. CHANGELOG (Histórico Cronológico de Entregas)
 
+### [v1.3.3] - 2026-10-02: Remoção Total do Firebase & Sincronização Atômica da RT
+- **Remoção Completa do Firebase/Firestore:**
+  - Removida dependência `"firebase"` do `package.json`, excluídos os arquivos residuais `src/lib/firebase.ts`, `src/services/firestoreSync.ts`, `firestore.rules` e `firebase-applet-config.json`.
+  - Arquitetura 100% MariaDB/MySQL nativa.
+- **Sincronização Atômica da Responsável Técnica (RT):**
+  - No backend (`server_prod.cjs`), salvar a aba *Clínica & RT* atualiza atomicamente tanto `clinic_config` quanto a linha da RT (`th_rt`) na tabela `therapists`.
+  - No frontend (`App.tsx`), a sequência de carga no F5 processa primeiro a configuração da clínica como fonte da verdade e sincroniza imediatamente a lista de fonoaudiólogas, garantindo que `adrianepaesdagama@gmail.com` e todos os dados permaneçam idênticos em ambas as abas.
+
 ### [v1.3.2] - 2026-10-02: Compatibilização do Balão de Sucesso no Tema Claro & Sincronização Estrita do E-mail da RT
 - **Compatibilização Total do Balão de Sucesso (Toast) & Modais no Tema Claro:**
   - O balão "Configurações salvas com sucesso!" e o modal de confirmação foram 100% harmonizados para o tema claro, com fundo suave menta (`#d1fae5`), texto verde escuro de alto contraste (`#065f46`) e borda nítida, eliminando herança de fundo escuro.
