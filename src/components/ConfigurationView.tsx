@@ -104,6 +104,7 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const faviconInputRef = useRef<HTMLInputElement>(null);
+  const signatureInputRef = useRef<HTMLInputElement>(null);
 
   // Estados para Backup do Banco MariaDB
   const [isBackingUp, setIsBackingUp] = useState<boolean>(false);
@@ -272,7 +273,40 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
     }
   };
 
-  const handleResetFavicon = () => {
+
+  // Upload da Rubrica / Assinatura Digitalizada da RT (com auto-trim para ficar limpa no papel)
+  const handleSignatureUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      // Otimiza a rubrica: converte para PNG transparente, corta margens brancas e escala
+      const optimizedBase64 = await resizeImageToTarget(file, 600, 240, 'contain');
+      const updated = { ...tempConfig, signatureUrl: optimizedBase64 };
+      setTempConfig(updated);
+      setHasPendingChanges(true);
+
+      // Auto-gravação imediata
+      onUpdateClinicConfig(updated);
+      safeLocalStorageSetItem('health_deglut_clinic_config', JSON.stringify(updated));
+      saveClinicConfigToMariaDB(updated);
+    } catch {
+      alert('Erro ao processar imagem da rubrica.');
+    }
+  };
+
+  const handleResetSignature = () => {
+    const updated = { ...tempConfig, signatureUrl: undefined };
+    setTempConfig(updated);
+    setHasPendingChanges(true);
+    onUpdateClinicConfig(updated);
+    safeLocalStorageSetItem('health_deglut_clinic_config', JSON.stringify(updated));
+    saveClinicConfigToMariaDB(updated);
+    if (signatureInputRef.current) {
+      signatureInputRef.current.value = '';
+    }
+  };
+\n  const handleResetFavicon = () => {
     const updated = { ...tempConfig, faviconUrl: '/pwa-512x512.png' };
     setTempConfig(updated);
     setHasPendingChanges(true);
@@ -842,7 +876,96 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
 
           </div>
 
-          {/* Barra Superior / Alerta de Alterações Pendentes na Marca com Botão de Salvar Alterações */}
+
+            {/* CARD 3: Rubrica / Assinatura Digitalizada (RESPONSÁVEL TÉCNICA) */}
+            <div className="bg-[#1f1a17] border border-[#382e27] rounded-2xl p-6 space-y-4 flex flex-col justify-between lg:col-span-2">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div className="flex-1 space-y-4">
+                  <div className="border-b border-[#382e27] pb-3">
+                    <div className="flex items-center gap-2">
+                      <h2 className="text-base font-bold font-serif text-[#f4efe8] flex items-center gap-2">
+                        <FileBadge className="w-5 h-5 text-[#c8a88a]" />
+                        3. Rubrica & Identificação Profissional (RT)
+                      </h2>
+                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-[#c8a88a]/20 text-[#c8a88a] border border-[#c8a88a]/30">
+                        Laudos & PDF
+                      </span>
+                    </div>
+                    <p className="text-xs text-[#a69a8f] mt-1 leading-relaxed">
+                      Configure a rubrica padrão que será anexada ao <strong>Papel Timbrado (Modelo 2)</strong>. Esta imagem substitui a assinatura manual em laudos digitais.
+                    </p>
+                  </div>
+
+                  <div className="p-4 rounded-xl bg-[#181513] border border-[#2e2621] space-y-3">
+                    <div className="flex items-center gap-3 text-xs">
+                      <div className="w-8 h-8 rounded-lg bg-[#27211d] flex items-center justify-center text-[#c8a88a]">
+                        <UserCheck className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <p className="font-bold text-[#f4efe8]">{tempConfig.technicalResponsible || 'Responsável não definida'}</p>
+                        <p className="text-[#a69a8f]">{tempConfig.crfa || 'CRFa não configurado'}</p>
+                      </div>
+                    </div>
+                    <div className="pt-2 flex items-start gap-2">
+                      <Info className="w-3.5 h-3.5 text-[#c8a88a] shrink-0 mt-0.5" />
+                      <p className="text-[10px] text-[#8a7b70] leading-tight italic">
+                        Dica: Use uma imagem com fundo transparente (PNG) ou fundo branco nítido. O sistema irá centralizar e otimizar para o papel timbrado.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Área de Visualização da Rubrica */}
+                <div className="w-full md:w-64 h-32 rounded-2xl bg-white flex items-center justify-center p-4 shadow-inner border-2 border-dashed border-[#c8a88a]/20 relative overflow-hidden group">
+                  {tempConfig.signatureUrl ? (
+                    <img 
+                      src={tempConfig.signatureUrl} 
+                      alt="Rubrica Técnica" 
+                      className="max-w-full max-h-full object-contain transition-transform group-hover:scale-105" 
+                    />
+                  ) : (
+                    <div className="text-center space-y-1">
+                      <FileBadge className="w-8 h-8 text-neutral-300 mx-auto" />
+                      <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-tighter">Rubrica não configurada</p>
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-neutral-900/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+                </div>
+              </div>
+
+              {/* Botões de Ação do Card 3 */}
+              <div className="pt-4 border-t border-[#382e27] flex items-center gap-3">
+                <input
+                  type="file"
+                  ref={signatureInputRef}
+                  onChange={handleSignatureUpload}
+                  accept="image/png, image/jpeg, image/webp"
+                  className="hidden"
+                />
+
+                <button
+                  type="button"
+                  onClick={() => signatureInputRef.current?.click()}
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#c8a88a] to-[#b69474] hover:brightness-110 text-[#181513] font-bold text-xs shadow-md transition-all cursor-pointer active:scale-95"
+                >
+                  <CloudUpload className="w-4 h-4" />
+                  Configurar / Alterar Rubrica Técnica
+                </button>
+
+                {tempConfig.signatureUrl && (
+                  <button
+                    type="button"
+                    onClick={handleResetSignature}
+                    className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#27211d] hover:bg-rose-950/30 text-[#a69a8f] hover:text-rose-400 border border-[#3e342e] text-xs font-semibold transition-colors shrink-0"
+                    title="Remover rubrica"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    Remover
+                  </button>
+                )}
+              </div>
+            </div>
+\n                    {/* Barra Superior / Alerta de Alterações Pendentes na Marca com Botão de Salvar Alterações */}
           <div className="bg-[#1f1a17] border border-[#382e27] rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-lg">
             <div className="flex items-center gap-3">
               <div className={`w-3 h-3 rounded-full ${hasPendingChanges ? 'bg-amber-400 animate-ping' : 'bg-emerald-400'}`} />
