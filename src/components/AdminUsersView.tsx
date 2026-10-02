@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { UserProfile, UserRole, NavigationTab } from '../types';
 import { 
-  Users, 
+  Users,
+  Trash2, 
   Shield, 
   Check, 
   X, 
@@ -218,6 +219,22 @@ export const AdminUsersView: React.FC<AdminUsersViewProps> = ({
                   </div>
                   <p className="text-xs text-[#a69a8f] mt-0.5">{selectedUser.email}</p>
                 </div>
+
+                {onRejectUser && !isSelectedUserMaster && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (confirm(`Tem certeza que deseja excluir o cadastro do profissional ${selectedUser.name}? Esta ação removerá os acessos do usuário.`)) {
+                        onRejectUser(selectedUser.id);
+                      }
+                    }}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-rose-400 bg-rose-950/40 hover:bg-rose-900/60 border border-rose-800/50 transition-all cursor-pointer shadow-xs active:scale-95"
+                    title={`Excluir ${selectedUser.name} do sistema`}
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                    <span>Excluir Usuário</span>
+                  </button>
+                )}
 
                 <div className="flex items-center gap-2">
                   <button
