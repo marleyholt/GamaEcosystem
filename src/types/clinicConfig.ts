@@ -60,7 +60,7 @@ export const DEFAULT_CLINIC_CONFIG: ClinicConfig = {
   instagram: '@gama_fonoaudiologia',
   addressLine: 'Rio de Janeiro - RJ • Atendimento Clínico e Domiciliar',
   logoUrl: DEFAULT_OFFICIAL_LOGO_BASE64,
-  faviconUrl: DEFAULT_OFFICIAL_LOGO_BASE64,
+  faviconUrl: '/pwa-512x512.png',
   useLetterheadByDefault: true,
   includeSignatureOnPrint: false // Modelo padrão: papel timbrado sem rubrica conforme solicitação
 };
