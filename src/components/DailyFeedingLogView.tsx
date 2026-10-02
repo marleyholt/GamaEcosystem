@@ -32,6 +32,7 @@ import {
   X,
   Upload
 } from 'lucide-react';
+import { compressImage } from '../utils/imageOptimizer';
 
 interface DailyFeedingLogViewProps {
   patients: Patient[];
@@ -138,29 +139,32 @@ export const DailyFeedingLogView: React.FC<DailyFeedingLogViewProps> = ({
     }
   };
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
-    Array.from(files).forEach((file, index) => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      try {
+        // Compacta a imagem antes de adicionar ao estado e enviar ao MariaDB
+        const optimizedUrl = await compressImage(file);
+        
         const newPhoto: MealPhoto = {
-          id: `photo_${Date.now()}_${index}_${Math.random().toString(36).substring(2, 6)}`,
+          id: `photo_${Date.now()}_${i}_${Math.random().toString(36).substring(2, 6)}`,
           patientId: activePatient.id,
           mealType: currentMealType,
-          photoUrl: reader.result as string,
+          photoUrl: optimizedUrl,
           date: logDate,
-          notes: photoNote || `Foto ${index + 1} de ${currentMealType}`,
+          notes: photoNote || `Foto ${i + 1} de ${currentMealType}`,
           uploadedAt: new Date().toISOString()
         };
         onAddPhoto(newPhoto);
-      };
-      reader.readAsDataURL(file);
-    });
+      } catch (err) {
+        console.error('Erro ao processar imagem:', err);
+      }
+    }
 
     setPhotoNote('');
-    // Limpar o input para permitir selecionar as mesmas fotos novamente se desejar
     e.target.value = '';
   };
 
