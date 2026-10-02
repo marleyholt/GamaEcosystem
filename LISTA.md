@@ -20,6 +20,14 @@ Este documento é a fonte de verdade para o acompanhamento contínuo de tarefas,
 ---
 ## 📜 3. CHANGELOG (Histórico Cronológico de Entregas)
 
+### [v1.3.2] - 2026-10-02: Compatibilização do Balão de Sucesso no Tema Claro & Sincronização Estrita do E-mail da RT
+- **Compatibilização Total do Balão de Sucesso (Toast) & Modais no Tema Claro:**
+  - O balão "Configurações salvas com sucesso!" e o modal de confirmação foram 100% harmonizados para o tema claro, com fundo suave menta (`#d1fae5`), texto verde escuro de alto contraste (`#065f46`) e borda nítida, eliminando herança de fundo escuro.
+- **Sincronização Estrita e Durabilidade do E-mail da RT (`adrianepaesdagama@gmail.com`):**
+  - Corrigida a divergência entre a aba 'Clínica & Responsável Técnica' e 'Fonoaudiólogas & Equipe'.
+  - Ao salvar o e-mail na aba Clínica & RT, tanto o banco MariaDB quanto a lista de Fono & Equipe são atualizados na hora.
+  - Ao recarregar com F5, a função de sincronização restaura o e-mail cadastrado em ambas as abas sem reverter para o valor antigo.
+
 ### [v1.3.1] - 2026-10-02: Máscaras de Telefone/CPF em Fono & Equipe, Usuário Master Atualizado & Persistência Dupla de Configurações
 - **Máscaras de Entrada e Limitação de Caracteres Padronizadas:**
   - Aplicada formatação dinâmica e limite de caracteres nos campos de CPF (`000.000.000-00` - 14 chars) e Telefone/WhatsApp (`(21) 98988-7981` - 15 chars) no cadastro de Fonoaudiólogas & Equipe e na aba Clínica e RT.
