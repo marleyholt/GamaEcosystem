@@ -291,22 +291,18 @@ app.delete('/api/therapists/:id', async (req, res) => {
 });
 
 // Helper de Auditoria
-const auditLogPath = path.join(__dirname, 'system_audit.log');
-
-const logAuditAction = (action, details, userId = 'system') => {
-  const timestamp = new Date().toISOString();
-  const logEntry = `[${timestamp}] [USER: ${userId}] [ACTION: ${action}] [DETAILS: ${JSON.stringify(details)}]\n`;
-  fs.appendFile(auditLogPath, logEntry, (err) => {
-    if (err) console.error('Erro ao escrever no arquivo de auditoria:', err);
-  });
+const logAuditAction = async (action, details, userId = 'system') => {
+  try {
+    await pool.query('INSERT INTO audit_logs (id, user_id, action, details) VALUES (?, ?, ?, ?)', 
+      [`audit_${Date.now()}_${Math.random().toString(36).substring(7)}`, userId, action, JSON.stringify(details)]);
+  } catch (err) {
+    console.error('Erro ao registrar log de auditoria no banco:', err);
+  }
 };
 
 app.get('/api/system-logs', async (req, res) => {
   try {
-    if (!fs.existsSync(auditLogPath)) {
-      return res.json([]);
-    }
-    const logs = fs.readFileSync(auditLogPath, 'utf8').split('\n').filter(Boolean);
+    const [logs] = await pool.query('SELECT * FROM audit_logs ORDER BY created_at DESC LIMIT 100');
     res.json(logs);
   } catch (err) {
     res.status(500).json({ error: err.message });
