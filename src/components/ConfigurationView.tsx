@@ -431,9 +431,9 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
         </div>
 
         {savedSuccess && (
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-950/80 border border-emerald-500/50 text-emerald-300 text-xs font-semibold animate-pulse">
-            <CheckCircle className="w-4 h-4" />
-            Configurações salvas com sucesso!
+          <div className="flex items-center gap-2.5 px-4 py-2 rounded-xl bg-emerald-500/15 border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 text-xs font-bold shadow-md animate-in fade-in zoom-in-95 duration-200">
+            <CheckCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+            <span>Configurações salvas com sucesso!</span>
           </div>
         )}
       </div>
@@ -1567,10 +1567,10 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
 
       {/* Modal de Confirmação Obrigatório para Salvar Alterações */}
       {showConfirmModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
           <div className="bg-[#1f1a17] border border-[#c8a88a]/40 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl animate-in zoom-in-95 duration-200">
             <div className="flex items-start gap-3">
-              <div className="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0">
+              <div className="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-500 dark:text-amber-400 shrink-0">
                 <AlertTriangle className="w-5 h-5" />
               </div>
               <div className="space-y-1">
@@ -1596,7 +1596,7 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
               <button
                 type="button"
                 onClick={() => setShowConfirmModal(false)}
-                className="px-4 py-2 rounded-xl bg-[#27211d] hover:bg-[#342b26] text-[#a69a8f] hover:text-[#f4efe8] text-xs font-semibold transition-colors"
+                className="px-4 py-2 rounded-xl bg-[#27211d] hover:bg-[#342b26] text-[#a69a8f] hover:text-[#f4efe8] text-xs font-semibold transition-colors cursor-pointer"
               >
                 Cancelar
               </button>
