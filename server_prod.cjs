@@ -32,8 +32,8 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(express.json({ limit: '100mb' }));
-app.use(express.urlencoded({ extended: true, limit: '100mb' }));
+app.use(express.json({ limit: '200mb' }));
+app.use(express.urlencoded({ extended: true, limit: '200mb' }));
 
 // Pool de conexão com o banco de dados MariaDB / MySQL
 let pool = null;
