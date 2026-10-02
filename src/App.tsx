@@ -433,30 +433,38 @@ export default function App() {
         // Configuração da Clínica & RT do MariaDB
         if (dbData.clinicConfig) {
           const cfg = dbData.clinicConfig;
-          setClinicConfig(prev => {
-            let rawLogo = cfg.logo_url || cfg.logoUrl;
-            if (rawLogo === '/logo-gama.png' || !rawLogo || rawLogo.trim() === '') {
-              rawLogo = prev.logoUrl || '/assets/logo.png';
-            }
-            let rawFavicon = cfg.favicon_url || cfg.faviconUrl;
-            if (rawFavicon === '/logo-gama.png' || !rawFavicon || rawFavicon.trim() === '') {
-              rawFavicon = prev.faviconUrl || '/assets/logo.png';
-            }
-            const updated: ClinicConfig = {
-              ...prev,
-              clinicName: cfg.clinicName || cfg.clinic_name || prev.clinicName,
-              technicalResponsible: cfg.technicalResponsible || cfg.technical_manager_name || prev.technicalResponsible,
-              crfa: cfg.crfa || cfg.technical_manager_crfa || prev.crfa,
-              cpf: cfg.cpf || prev.cpf,
-              addressLine: cfg.addressLine || cfg.address || prev.addressLine,
-              phoneWhatsapp: cfg.phoneWhatsapp || cfg.phone || prev.phoneWhatsapp,
-              email: cfg.email || prev.email,
-              instagram: cfg.instagram || prev.instagram,
-              logoUrl: rawLogo,
-              faviconUrl: rawFavicon
-            };
-            localStorage.setItem('health_deglut_clinic_config', JSON.stringify(updated));
-            return updated;
+          let rawLogo = cfg.logo_url || cfg.logoUrl;
+          if (rawLogo === '/logo-gama.png' || !rawLogo || rawLogo.trim() === '') {
+            rawLogo = '/assets/logo.png';
+          }
+          let rawFavicon = cfg.favicon_url || cfg.faviconUrl;
+          if (rawFavicon === '/logo-gama.png' || !rawFavicon || rawFavicon.trim() === '') {
+            rawFavicon = '/assets/logo.png';
+          }
+          const loadedEmail = cfg.email || cfg.email || 'adrianepaesdagama@gmail.com';
+          const updatedConfig: ClinicConfig = {
+            ...DEFAULT_CLINIC_CONFIG,
+            clinicName: cfg.clinicName || cfg.clinic_name || 'GAMA FONOAUDIOLOGIA',
+            technicalResponsible: cfg.technicalResponsible || cfg.technical_manager_name || 'Adriane Gama',
+            crfa: cfg.crfa || cfg.technical_manager_crfa || 'CREFONO 9531-RJ',
+            cpf: cfg.cpf || '071151437-22',
+            addressLine: cfg.addressLine || cfg.address || 'Rio de Janeiro - RJ • Atendimento Clínico e Domiciliar',
+            phoneWhatsapp: cfg.phoneWhatsapp || cfg.phone || '(21) 98988-7981',
+            email: loadedEmail,
+            instagram: cfg.instagram || '@gama_fonoaudiologia',
+            logoUrl: rawLogo,
+            faviconUrl: rawFavicon,
+            useLetterheadByDefault: true,
+            includeSignatureOnPrint: false
+          };
+          setClinicConfig(updatedConfig);
+          localStorage.setItem('health_deglut_clinic_config', JSON.stringify(updatedConfig));
+
+          // Garante que a lista de terapeutas reflita IMEDIATAMENTE a RT atualizada do banco
+          setTherapists(currentTherapists => {
+            const synced = syncTherapistsWithRT(currentTherapists, updatedConfig);
+            localStorage.setItem('health_deglut_therapists', JSON.stringify(synced));
+            return synced;
           });
         }
       }
