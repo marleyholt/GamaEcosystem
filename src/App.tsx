@@ -113,7 +113,7 @@ export default function App() {
       if (isFilipeDev) {
         user = {
           ...user,
-          name: 'Filipe (DEV)',
+          name: 'Filipe Leão da Gama',
           role: 'admin',
           allowedTabs: ['resumo', 'prontuario', 'radi', 'registro', 'historico', 'chat', 'pacientes', 'relatorios', 'configuracao']
         };
@@ -189,7 +189,7 @@ export default function App() {
     if (!hasFilipe) {
       combinedList.push({
         id: 'user_filipe_dev',
-        name: 'Filipe (DEV)',
+        name: 'Filipe Leão da Gama',
         email: 'filipe.gama@hotmail.com',
         role: 'admin',
         approved: true,
@@ -206,7 +206,7 @@ export default function App() {
       if (isFilipe) {
         return {
           ...u,
-          name: 'Filipe (DEV)',
+          name: 'Filipe Leão da Gama',
           role: 'admin',
           allowedTabs: ['resumo', 'prontuario', 'radi', 'registro', 'historico', 'chat', 'pacientes', 'relatorios', 'configuracao']
         };
@@ -444,12 +444,12 @@ export default function App() {
             }
             const updated: ClinicConfig = {
               ...prev,
-              clinicName: cfg.clinic_name || cfg.clinicName || prev.clinicName,
-              technicalResponsible: cfg.technical_manager_name || cfg.technicalResponsible || prev.technicalResponsible,
-              crfa: cfg.technical_manager_crfa || cfg.crfa || prev.crfa,
+              clinicName: cfg.clinicName || cfg.clinic_name || prev.clinicName,
+              technicalResponsible: cfg.technicalResponsible || cfg.technical_manager_name || prev.technicalResponsible,
+              crfa: cfg.crfa || cfg.technical_manager_crfa || prev.crfa,
               cpf: cfg.cpf || prev.cpf,
-              addressLine: cfg.address || cfg.addressLine || prev.addressLine,
-              phoneWhatsapp: cfg.phone || cfg.phoneWhatsapp || prev.phoneWhatsapp,
+              addressLine: cfg.addressLine || cfg.address || prev.addressLine,
+              phoneWhatsapp: cfg.phoneWhatsapp || cfg.phone || prev.phoneWhatsapp,
               email: cfg.email || prev.email,
               instagram: cfg.instagram || prev.instagram,
               logoUrl: rawLogo,
