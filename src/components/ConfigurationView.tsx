@@ -66,6 +66,16 @@ interface ConfigurationViewProps {
   onUpdateUserPermissions?: (userId: string, allowedTabs: NavigationTab[]) => void;
 }
 
+
+// Helper para gravar no localStorage de forma resiliente
+const safeLocalStorageSetItem = (key: string, value: string) => {
+  try {
+    safeLocalStorageSetItem(key, value);
+  } catch (e) {
+    console.warn(`Aviso: Limite do LocalStorage atingido para ${key}. Dados salvos apenas no MariaDB.`);
+  }
+};
+
 export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
   clinicConfig,
   onUpdateClinicConfig,
@@ -137,7 +147,7 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
   // Efetiva as alterações apenas após confirmação explícita
   const handleConfirmSave = () => {
     onUpdateClinicConfig(tempConfig);
-    localStorage.setItem('health_deglut_clinic_config', JSON.stringify(tempConfig));
+    safeLocalStorageSetItem('health_deglut_clinic_config', JSON.stringify(tempConfig));
     
     // Grava de forma permanente no banco de dados MariaDB
     saveClinicConfigToMariaDB(tempConfig);
@@ -218,7 +228,7 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
 
       // Auto-gravação imediata no localStorage e estado global para impedir perda no F5
       onUpdateClinicConfig(updated);
-      localStorage.setItem('health_deglut_clinic_config', JSON.stringify(updated));
+      safeLocalStorageSetItem('health_deglut_clinic_config', JSON.stringify(updated));
       saveClinicConfigToMariaDB(updated);
       // Sincronizado com MariaDB
     } catch {
@@ -231,7 +241,7 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
     setTempConfig(updated);
     setHasPendingChanges(true);
     onUpdateClinicConfig(updated);
-    localStorage.setItem('health_deglut_clinic_config', JSON.stringify(updated));
+    safeLocalStorageSetItem('health_deglut_clinic_config', JSON.stringify(updated));
     saveClinicConfigToMariaDB(updated);
     // Sincronizado com MariaDB
     if (fileInputRef.current) {
@@ -253,7 +263,7 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
 
       // Auto-gravação imediata no localStorage e estado global para impedir perda no F5
       onUpdateClinicConfig(updated);
-      localStorage.setItem('health_deglut_clinic_config', JSON.stringify(updated));
+      safeLocalStorageSetItem('health_deglut_clinic_config', JSON.stringify(updated));
       saveClinicConfigToMariaDB(updated);
       // Sincronizado com MariaDB
       updateBrowserFavicon(optimizedSquareBase64);
@@ -267,7 +277,7 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
     setTempConfig(updated);
     setHasPendingChanges(true);
     onUpdateClinicConfig(updated);
-    localStorage.setItem('health_deglut_clinic_config', JSON.stringify(updated));
+    safeLocalStorageSetItem('health_deglut_clinic_config', JSON.stringify(updated));
     saveClinicConfigToMariaDB(updated);
     // Sincronizado com MariaDB
     updateBrowserFavicon('/pwa-512x512.png');
