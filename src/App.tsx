@@ -65,7 +65,7 @@ import {
 // Helper para gravar no localStorage de forma resiliente (evita crash se o limite do navegador for atingido)
 const safeLocalStorageSetItem = (key: string, value: string) => {
   try {
-    safeLocalStorageSetItem(key, value);
+    localStorage.setItem(key, value);
   } catch (e) {
     if (e instanceof DOMException && (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED')) {
       console.warn(`Aviso: Limite do Navegador (LocalStorage) atingido para a chave "${key}". Os dados estao salvos no MariaDB, mas o cache local esta saturado.`);
@@ -591,6 +591,7 @@ export default function App() {
       {/* Top Header com Botão Sanduíche e Sino de Pendências */}
       <Header
         user={currentUser}
+        clinicConfig={clinicConfig}
         darkMode={darkMode}
         setDarkMode={setDarkMode}
         onLogout={() => {
