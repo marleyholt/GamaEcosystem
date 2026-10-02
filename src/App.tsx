@@ -42,17 +42,12 @@ import {
   Therapist, 
   DEFAULT_CLINIC_CONFIG, 
   INITIAL_CAREGIVERS, 
-  INITIAL_THERAPISTS 
+  INITIAL_THERAPISTS, 
+  syncTherapistsWithRT 
 } from './types/clinicConfig';
 import { OfficialEvolutionData } from './types/clinicalEvolution';
 import { INITIAL_OFFICIAL_EVOLUTIONS } from './data/mockEvolutions';
-import { 
-  syncDocToFirestore, 
-  removeDocFromFirestore, 
-  fetchCollectionFromFirestore, 
-  backupAllLocalToFirestore,
-  FirestoreCollections 
-} from './services/firestoreSync';
+
 import { 
   fetchAllFromMariaDB, 
   savePatientToMariaDB, 
@@ -60,7 +55,10 @@ import {
   saveRadiToMariaDB, 
   saveFeedingLogToMariaDB, 
   saveEvolutionToMariaDB,
-  saveClinicConfigToMariaDB 
+  saveClinicConfigToMariaDB,
+  saveUserToMariaDB,
+  saveTherapistToMariaDB,
+  saveCaregiverToMariaDB
 } from './services/mariaDBSync';
 
 export default function App() {
@@ -261,7 +259,8 @@ export default function App() {
 
   const [therapists, setTherapists] = useState<Therapist[]>(() => {
     const saved = localStorage.getItem('health_deglut_therapists');
-    return saved ? JSON.parse(saved) : INITIAL_THERAPISTS;
+    const parsed = saved ? JSON.parse(saved) : INITIAL_THERAPISTS;
+    return syncTherapistsWithRT(parsed, clinicConfig);
   });
 
   const [officialEvolutions, setOfficialEvolutions] = useState<OfficialEvolutionData[]>(() => {
@@ -355,11 +354,11 @@ export default function App() {
 
   // Auto-sincronização inicial com o MariaDB (Produção) e Firestore (Backup)
   useEffect(() => {
-    // 1. Sincronização primária via API MariaDB em Produção
+    // 1. Sincronização e carregamento primário via API MariaDB / MySQL
     fetchAllFromMariaDB().then(dbData => {
       if (dbData) {
-        if (dbData.patients && Array.isArray(dbData.patients)) {
-          // Formata campos snake_case para camelCase se vierem do MariaDB
+        // Pacientes
+        if (dbData.patients && Array.isArray(dbData.patients) && dbData.patients.length > 0) {
           const mappedPatients: Patient[] = dbData.patients.map((p: any) => ({
             id: p.id,
             name: p.name,
@@ -394,6 +393,27 @@ export default function App() {
           }
         }
 
+        // Terapeutas do MariaDB
+        if (dbData.therapists && Array.isArray(dbData.therapists) && dbData.therapists.length > 0) {
+          setTherapists(prev => {
+            const synced = syncTherapistsWithRT(dbData.therapists, clinicConfig);
+            localStorage.setItem('health_deglut_therapists', JSON.stringify(synced));
+            return synced;
+          });
+        }
+
+        // Cuidadores do MariaDB
+        if (dbData.caregivers && Array.isArray(dbData.caregivers) && dbData.caregivers.length > 0) {
+          setCaregivers(dbData.caregivers);
+          localStorage.setItem('health_deglut_caregivers', JSON.stringify(dbData.caregivers));
+        }
+
+        // Prontuários do MariaDB
+        if (dbData.medicalRecords && Array.isArray(dbData.medicalRecords) && dbData.medicalRecords.length > 0) {
+          setMedicalRecords(dbData.medicalRecords);
+        }
+
+        // Usuários do MariaDB
         if (dbData.users && Array.isArray(dbData.users) && dbData.users.length > 0) {
           const mappedUsers: UserProfile[] = dbData.users.map((u: any) => ({
             id: u.id,
@@ -401,40 +421,39 @@ export default function App() {
             name: u.name,
             role: u.role || 'fonoaudiologo',
             approved: Boolean(u.approved),
-            crfaNumber: u.crfa_number,
-            allowedTabs: u.allowed_tabs ? (typeof u.allowed_tabs === 'string' ? JSON.parse(u.allowed_tabs) : u.allowed_tabs) : undefined,
+            crfaNumber: u.crfa_number || u.crfaNumber,
+            patientId: u.patient_id || u.patientId,
+            allowedTabs: u.allowed_tabs ? (typeof u.allowed_tabs === 'string' ? JSON.parse(u.allowed_tabs) : u.allowed_tabs) : (u.allowedTabs || undefined),
             createdAt: u.created_at || new Date().toISOString()
           }));
           setUsersList(mappedUsers);
+          localStorage.setItem('health_deglut_users_list', JSON.stringify(mappedUsers));
         }
 
+        // Configuração da Clínica & RT do MariaDB
         if (dbData.clinicConfig) {
           const cfg = dbData.clinicConfig;
           setClinicConfig(prev => {
-            // Se o logo vier do banco como o placeholder antigo inexistente ('/logo-gama.png'), substitui pelo /assets/logo.png
-            let rawLogo = cfg.logo_url;
+            let rawLogo = cfg.logo_url || cfg.logoUrl;
             if (rawLogo === '/logo-gama.png' || !rawLogo || rawLogo.trim() === '') {
               rawLogo = prev.logoUrl || '/assets/logo.png';
             }
-            const effectiveLogo = rawLogo;
-
-            let rawFavicon = cfg.favicon_url;
+            let rawFavicon = cfg.favicon_url || cfg.faviconUrl;
             if (rawFavicon === '/logo-gama.png' || !rawFavicon || rawFavicon.trim() === '') {
               rawFavicon = prev.faviconUrl || '/assets/logo.png';
             }
-            const effectiveFavicon = rawFavicon;
-
             const updated: ClinicConfig = {
               ...prev,
-              clinicName: cfg.clinic_name || prev.clinicName,
-              technicalResponsible: cfg.technical_manager_name || prev.technicalResponsible,
-              crfa: cfg.technical_manager_crfa || prev.crfa,
-              addressLine: cfg.address || prev.addressLine,
-              phoneWhatsapp: cfg.phone || prev.phoneWhatsapp,
+              clinicName: cfg.clinic_name || cfg.clinicName || prev.clinicName,
+              technicalResponsible: cfg.technical_manager_name || cfg.technicalResponsible || prev.technicalResponsible,
+              crfa: cfg.technical_manager_crfa || cfg.crfa || prev.crfa,
+              cpf: cfg.cpf || prev.cpf,
+              addressLine: cfg.address || cfg.addressLine || prev.addressLine,
+              phoneWhatsapp: cfg.phone || cfg.phoneWhatsapp || prev.phoneWhatsapp,
               email: cfg.email || prev.email,
               instagram: cfg.instagram || prev.instagram,
-              logoUrl: effectiveLogo,
-              faviconUrl: effectiveFavicon
+              logoUrl: rawLogo,
+              faviconUrl: rawFavicon
             };
             localStorage.setItem('health_deglut_clinic_config', JSON.stringify(updated));
             return updated;
@@ -442,74 +461,11 @@ export default function App() {
         }
       }
     });
-
-    // 2. Carregar pacientes remotos se existirem no Firestore (Fallback / Nuvem)
-    fetchCollectionFromFirestore<Patient>(FirestoreCollections.PATIENTS).then(remotePatients => {
-      if (remotePatients && remotePatients.length > 0) {
-        setPatients(remotePatients);
-      }
-    });
-
-    // Carregar terapeutas
-    fetchCollectionFromFirestore<Therapist>(FirestoreCollections.THERAPISTS).then(remoteTherapists => {
-      if (remoteTherapists && remoteTherapists.length > 0) {
-        setTherapists(remoteTherapists);
-      } else {
-        therapists.forEach(t => syncDocToFirestore(FirestoreCollections.THERAPISTS, t.id, t));
-      }
-    });
-
-    // Carregar cuidadores
-    fetchCollectionFromFirestore<Caregiver>(FirestoreCollections.CAREGIVERS).then(remoteCaregivers => {
-      if (remoteCaregivers && remoteCaregivers.length > 0) {
-        setCaregivers(remoteCaregivers);
-      } else {
-        caregivers.forEach(c => syncDocToFirestore(FirestoreCollections.CAREGIVERS, c.id, c));
-      }
-    });
-
-    // Carregar evoluções
-    fetchCollectionFromFirestore<OfficialEvolutionData>(FirestoreCollections.EVOLUTIONS).then(remoteEvolutions => {
-      if (remoteEvolutions && remoteEvolutions.length > 0) {
-        setOfficialEvolutions(remoteEvolutions);
-      } else {
-        officialEvolutions.forEach(e => syncDocToFirestore(FirestoreCollections.EVOLUTIONS, e.id, e));
-      }
-    });
-
-    // Carregar configuração da clínica sem sobrescrever logo/favicon locais com valores vazios
-    fetchCollectionFromFirestore<ClinicConfig>(FirestoreCollections.CLINIC_CONFIG).then(remoteConfig => {
-      if (remoteConfig && remoteConfig.length > 0) {
-        const rc = remoteConfig[0];
-        setClinicConfig(prev => {
-          let cleanLogo = rc.logoUrl;
-          if (cleanLogo === '/logo-gama.png' || !cleanLogo || cleanLogo.trim() === '') {
-            cleanLogo = prev.logoUrl || '/assets/logo.png';
-          }
-          let cleanFavicon = rc.faviconUrl;
-          if (cleanFavicon === '/logo-gama.png' || !cleanFavicon || cleanFavicon.trim() === '') {
-            cleanFavicon = prev.faviconUrl || '/assets/logo.png';
-          }
-
-          const merged: ClinicConfig = {
-            ...prev,
-            ...rc,
-            logoUrl: cleanLogo,
-            faviconUrl: cleanFavicon
-          };
-          localStorage.setItem('health_deglut_clinic_config', JSON.stringify(merged));
-          return merged;
-        });
-      } else {
-        syncDocToFirestore(FirestoreCollections.CLINIC_CONFIG, 'global_settings', clinicConfig);
-      }
-    });
   }, []);
 
   // Handlers
   const handleSaveAssessment = (newAssessment: RadiAssessment) => {
     setAssessments([newAssessment, ...assessments]);
-    syncDocToFirestore(FirestoreCollections.ASSESSMENTS, newAssessment.id, newAssessment);
     saveRadiToMariaDB(newAssessment);
     alert('Avaliação RaDI registrada com sucesso no prontuário do paciente!');
     setCurrentTab('reports');
@@ -517,7 +473,6 @@ export default function App() {
 
   const handleSaveLog = (newLog: DailyFeedingLog) => {
     setDailyLogs([newLog, ...dailyLogs]);
-    syncDocToFirestore(FirestoreCollections.DAILY_LOGS, newLog.id, newLog);
     saveFeedingLogToMariaDB(newLog);
     alert('Registro diário de alimentação e consistências salvo com sucesso!');
     setCurrentTab('history');
@@ -534,7 +489,6 @@ export default function App() {
       return [newPatient, ...prev];
     });
     setSelectedPatient(newPatient);
-    syncDocToFirestore(FirestoreCollections.PATIENTS, newPatient.id, newPatient);
     savePatientToMariaDB(newPatient);
   };
 
@@ -629,6 +583,7 @@ export default function App() {
         availableUsers={usersList}
         caregivers={caregivers}
         therapists={therapists}
+        clinicConfig={clinicConfig}
       />
     );
   }
@@ -839,11 +794,21 @@ export default function App() {
                 saveClinicConfigToMariaDB(newCfg);
               }}
               caregivers={caregivers}
-              onUpdateCaregivers={setCaregivers}
+              onUpdateCaregivers={(newCgs) => {
+                setCaregivers(newCgs);
+                localStorage.setItem('health_deglut_caregivers', JSON.stringify(newCgs));
+              }}
               therapists={therapists}
-              onUpdateTherapists={setTherapists}
+              onUpdateTherapists={(newThs) => {
+                setTherapists(newThs);
+                localStorage.setItem('health_deglut_therapists', JSON.stringify(newThs));
+              }}
               patients={patients}
               users={usersList}
+              onUpdateUsers={(newUsers) => {
+                setUsersList(newUsers);
+                localStorage.setItem('health_deglut_users_list', JSON.stringify(newUsers));
+              }}
               onApproveUser={handleApproveUser}
               onRejectUser={handleRejectUser}
               onChangeRole={handleChangeRole}
