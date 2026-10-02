@@ -405,17 +405,16 @@ export default function App() {
           if (rawFavicon === '/logo-gama.png' || !rawFavicon || rawFavicon.trim() === '') {
             rawFavicon = '/assets/logo.png';
           }
-          const loadedEmail = (cfg.email || '').trim() || 'adrianepaesdagama@gmail.com';
           freshClinicConfig = {
             ...DEFAULT_CLINIC_CONFIG,
-            clinicName: cfg.clinicName || cfg.clinic_name || 'GAMA FONOAUDIOLOGIA',
-            technicalResponsible: cfg.technicalResponsible || cfg.technical_manager_name || 'Adriane Gama',
-            crfa: cfg.crfa || cfg.technical_manager_crfa || 'CREFONO 9531-RJ',
-            cpf: cfg.cpf || '071151437-22',
-            addressLine: cfg.addressLine || cfg.address || 'Rio de Janeiro - RJ • Atendimento Clínico e Domiciliar',
-            phoneWhatsapp: cfg.phoneWhatsapp || cfg.phone || '(21) 98988-7981',
-            email: loadedEmail,
-            instagram: cfg.instagram || '@gama_fonoaudiologia',
+            clinicName: cfg.clinicName || cfg.clinic_name || '',
+            technicalResponsible: cfg.technicalResponsible || cfg.technical_manager_name || '',
+            crfa: cfg.crfa || cfg.technical_manager_crfa || '',
+            cpf: cfg.cpf || '',
+            addressLine: cfg.addressLine || cfg.address || '',
+            phoneWhatsapp: cfg.phoneWhatsapp || cfg.phone || '',
+            email: cfg.email || '',
+            instagram: cfg.instagram || '',
             logoUrl: rawLogo,
             faviconUrl: rawFavicon,
             useLetterheadByDefault: true,
