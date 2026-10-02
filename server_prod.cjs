@@ -23,8 +23,17 @@ const app = express();
 const PORT = process.env.PORT || 3005;
 
 app.use(cors());
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+// Middleware para logar o tamanho de requisições grandes (ajuda a debugar 413)
+app.use((req, res, next) => {
+  const size = req.headers['content-length'];
+  if (size && parseInt(size) > 10 * 1024 * 1024) { // > 10MB
+    console.log(`[Large Request] Path: ${req.path}, Size: ${(parseInt(size) / 1024 / 1024).toFixed(2)} MB`);
+  }
+  next();
+});
+
+app.use(express.json({ limit: '100mb' }));
+app.use(express.urlencoded({ extended: true, limit: '100mb' }));
 
 // Pool de conexão com o banco de dados MariaDB / MySQL
 let pool = null;
@@ -106,7 +115,11 @@ app.get('/api/sync/all', async (req, res) => {
     const [users] = await pool.query('SELECT id, email, name, role, crfa_number, approved, allowed_tabs, created_at FROM users');
     const [therapists] = await pool.query('SELECT * FROM therapists ORDER BY updated_at DESC');
     const [caregivers] = await pool.query('SELECT * FROM caregivers ORDER BY updated_at DESC');
-    const [clinicConfigRows] = await pool.query('SELECT * FROM clinic_config LIMIT 1');
+    // Busca a configuração global (singleton). Se não houver, tenta pegar a primeira disponível.
+    const [clinicConfigRows] = await pool.query('SELECT * FROM clinic_config WHERE id = "global_config"');
+    const [anyClinicRows] = clinicConfigRows.length === 0 ? await pool.query('SELECT * FROM clinic_config LIMIT 1') : [[]];
+    const targetRow = clinicConfigRows[0] || anyClinicRows[0];
+
     const [medicalRecords] = await pool.query('SELECT * FROM patient_medical_records');
     const [radi] = await pool.query('SELECT * FROM radi_assessments');
     const [dailyLogs] = await pool.query('SELECT * FROM daily_feeding_logs');
@@ -117,25 +130,25 @@ app.get('/api/sync/all', async (req, res) => {
       users,
       therapists,
       caregivers,
-      clinicConfig: clinicConfigRows[0] ? {
-        id: clinicConfigRows[0].id,
-        clinicName: clinicConfigRows[0].clinic_name || '',
-        technicalResponsible: clinicConfigRows[0].technical_manager_name || '',
-        crfa: clinicConfigRows[0].technical_manager_crfa || '',
-        addressLine: clinicConfigRows[0].address || '',
-        phoneWhatsapp: clinicConfigRows[0].phone || '',
-        email: clinicConfigRows[0].email || '',
-        instagram: clinicConfigRows[0].instagram || '',
-        logoUrl: clinicConfigRows[0].logo_url || null,
-        faviconUrl: clinicConfigRows[0].favicon_url || null,
+      clinicConfig: targetRow ? {
+        id: targetRow.id || 'global_config',
+        clinicName: targetRow.clinic_name || '',
+        technicalResponsible: targetRow.technical_manager_name || '',
+        crfa: targetRow.technical_manager_crfa || '',
+        addressLine: targetRow.address || '',
+        phoneWhatsapp: targetRow.phone || '',
+        email: targetRow.email || '',
+        instagram: targetRow.instagram || '',
+        logoUrl: targetRow.logo_url || null,
+        faviconUrl: targetRow.favicon_url || null,
         // Também preserva formato original
-        clinic_name: clinicConfigRows[0].clinic_name,
-        technical_manager_name: clinicConfigRows[0].technical_manager_name,
-        technical_manager_crfa: clinicConfigRows[0].technical_manager_crfa,
-        address: clinicConfigRows[0].address,
-        phone: clinicConfigRows[0].phone,
-        logo_url: clinicConfigRows[0].logo_url,
-        favicon_url: clinicConfigRows[0].favicon_url
+        clinic_name: targetRow.clinic_name,
+        technical_manager_name: targetRow.technical_manager_name,
+        technical_manager_crfa: targetRow.technical_manager_crfa,
+        address: targetRow.address,
+        phone: targetRow.phone,
+        logo_url: targetRow.logo_url,
+        favicon_url: targetRow.favicon_url
       } : null,
       medicalRecords,
       radi,
@@ -151,7 +164,8 @@ app.get('/api/sync/all', async (req, res) => {
 app.post('/api/clinic-config', async (req, res) => {
   try {
     const cfg = req.body;
-    const id = cfg.id || 'global_config';
+    // Força ID global para evitar múltiplas linhas de configuração
+    const id = 'global_config';
     // Salva ou atualiza a configuracao no banco
     const clinicName = cfg.clinicName || cfg.clinic_name || '';
     const techName = cfg.technicalResponsible || cfg.technical_manager_name || '';
