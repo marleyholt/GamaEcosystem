@@ -4,8 +4,18 @@
  */
 
 const express = require('express');
-const mysql = require('mysql2/promise');
-const cors = require('cors');
+let mysql;
+try {
+  mysql = require('mysql2/promise');
+} catch (e) {
+  console.warn('Pacote mysql2 nao encontrado localmente. Instale com npm i mysql2');
+}
+let cors;
+try {
+  cors = require('cors');
+} catch (e) {
+  cors = () => (req, res, next) => next();
+}
 const path = require('path');
 const fs = require('fs');
 
@@ -17,19 +27,27 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Pool de conexão com o banco de dados MariaDB / MySQL
-const pool = mysql.createPool({
-  host: process.env.DB_HOST || '127.0.0.1',
-  user: process.env.DB_USER || 'gama_user',
-  password: process.env.DB_PASSWORD || 'GamaEco#2026!Secure',
-  database: process.env.DB_NAME || 'gamaecosystem_db',
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0
-});
+let pool = null;
+if (mysql) {
+  try {
+    pool = mysql.createPool({
+      host: process.env.DB_HOST || '127.0.0.1',
+      user: process.env.DB_USER || 'gama_user',
+      password: process.env.DB_PASSWORD || 'GamaEco#2026!Secure',
+      database: process.env.DB_NAME || 'gamaecosystem_db',
+      waitForConnections: true,
+      connectionLimit: 10,
+      queueLimit: 0
+    });
+  } catch (err) {
+    console.error('Erro ao instanciar pool mysql2:', err.message);
+  }
+}
 
 // Teste de conexão
 app.get('/api/health', async (req, res) => {
   try {
+    if (!pool) return res.status(503).json({ status: 'warning', database: 'mysql2_not_installed' });
     const [rows] = await pool.query('SELECT 1 as test');
     res.json({ status: 'ok', database: 'connected', time: new Date() });
   } catch (err) {
@@ -40,6 +58,7 @@ app.get('/api/health', async (req, res) => {
 // Sincronização inicial de tudo
 app.get('/api/sync/all', async (req, res) => {
   try {
+    if (!pool) return res.json({ clinicConfig: null, users: [], therapists: [], caregivers: [], patients: [], medicalRecords: [], radi: [], dailyLogs: [], evolutions: [] });
     const [patients] = await pool.query('SELECT * FROM patients ORDER BY updated_at DESC');
     const [users] = await pool.query('SELECT id, email, name, role, crfa_number, approved, allowed_tabs, created_at FROM users');
     const [therapists] = await pool.query('SELECT * FROM therapists ORDER BY updated_at DESC');
