@@ -190,3 +190,49 @@ export const resizeImageToTarget = (
     reader.readAsDataURL(file);
   });
 };
+
+/**
+ * Compacta uma foto de alimentação para reduzir o consumo de espaço e 
+ * evitar erros de payload no servidor (413).
+ * Converte para JPEG com qualidade balanceada (0.6) e redimensiona 
+ * se for maior que 1280px (HD).
+ */
+export const compressImage = (file: File, maxWidth: number = 1280): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        let width = img.width;
+        let height = img.height;
+
+        // Redimensiona se ultrapassar o limite máximo (HD)
+        if (width > maxWidth) {
+          const ratio = maxWidth / width;
+          width = maxWidth;
+          height = height * ratio;
+        }
+
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          resolve(e.target?.result as string);
+          return;
+        }
+
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(img, 0, 0, width, height);
+
+        // Converte para JPEG com qualidade 0.6 (60%) - Reduz significativamente o tamanho sem perder legibilidade clínica
+        resolve(canvas.toDataURL('image/jpeg', 0.6));
+      };
+      img.onerror = reject;
+      img.src = e.target?.result as string;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+};
