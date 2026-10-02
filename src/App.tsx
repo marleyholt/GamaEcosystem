@@ -469,6 +469,13 @@ export default function App() {
     setCurrentTab('reports');
   };
 
+  const handleSaveLog = (newLog: DailyFeedingLog) => {
+    setDailyLogs([newLog, ...dailyLogs]);
+    saveFeedingLogToMariaDB(newLog);
+    alert('Registro diário de alimentação e consistências salvo com sucesso!');
+    setCurrentTab('history');
+  };
+
   const handleDeleteLog = async (logId: string) => {
     if (!confirm('Tem certeza que deseja excluir este registro? Esta ação é irreversível e será registrada no log de auditoria.')) return;
     try {
