@@ -75,14 +75,16 @@ export const AdminUsersView: React.FC<AdminUsersViewProps> = ({
 
   const selectedUser = users.find(u => u.id === selectedUserId) || users[0];
 
-  // Identificação do Usuário MASTER (Adriane Gama): Acesso perpétuo e irrevogável
+  // Identificação dos Usuários MASTER (Filipe DEV & Adriane Gama RT): Acesso perpétuo e irrevogável
   const isSelectedUserMaster = Boolean(
     selectedUser && (
       selectedUser.role === 'admin' ||
+      selectedUser.email.toLowerCase().includes('filipe.gama@hotmail.com') ||
+      selectedUser.email.toLowerCase().includes('leaog') ||
       selectedUser.email.toLowerCase().includes('adriane') ||
       selectedUser.email.toLowerCase().includes('gamafono') ||
-      selectedUser.email.toLowerCase().includes('leaog') ||
-      selectedUser.name.toLowerCase().includes('adriane gama')
+      selectedUser.name.toLowerCase().includes('adriane gama') ||
+      selectedUser.name.toLowerCase().includes('filipe')
     )
   );
 
@@ -90,7 +92,7 @@ export const AdminUsersView: React.FC<AdminUsersViewProps> = ({
   const togglePermission = (tabId: NavigationTab) => {
     if (!selectedUser) return;
     if (isSelectedUserMaster) {
-      alert('Adriane Gama é a Responsável Técnica e Usuária MASTER do sistema. Seu acesso a todas as janelas e configurações é perpétuo e irrevogável.');
+      alert('Usuários MASTER (Filipe DEV / Adriane Gama RT) possuem acesso perpétuo e irrevogável a todas as janelas e configurações do sistema.');
       return;
     }
     const currentList = userPermissions[selectedUser.id] || [];
