@@ -21,6 +21,7 @@ interface HistoryTimelineViewProps {
   onSelectPatient: (patient: Patient) => void;
   assessments: RadiAssessment[];
   dailyLogs: DailyFeedingLog[];
+  onDeleteLog: (logId: string) => void;
   onGenerateReport: (assessment: RadiAssessment, logs: DailyFeedingLog[]) => void;
 }
 
@@ -223,9 +224,18 @@ export const HistoryTimelineView: React.FC<HistoryTimelineViewProps> = ({
                       </div>
                     </div>
 
-                    <span className="text-xs text-[#85796f]">
-                      Por: {log.caregiverName}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-[#85796f]">
+                        Por: {log.caregiverName}
+                      </span>
+                      <button
+                        onClick={() => onDeleteLog(log.id)}
+                        className="p-1.5 rounded-lg bg-[#221d1a] hover:bg-rose-950/60 text-[#85796f] hover:text-rose-400 transition-colors border border-[#3a312c] hover:border-rose-800/40"
+                        title="Excluir registro"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
