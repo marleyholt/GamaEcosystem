@@ -103,9 +103,18 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
 
   useEffect(() => {
     fetch('/api/system-logs')
-      .then(res => res.json())
-      .then(data => setSystemLogs(data))
-      .catch(console.error);
+      .then(res => {
+        if (!res.ok) throw new Error('Falha ao buscar logs');
+        return res.json();
+      })
+      .then(data => {
+        if (Array.isArray(data)) setSystemLogs(data);
+        else setSystemLogs([]);
+      })
+      .catch(e => {
+        console.error('Erro ao carregar logs:', e);
+        setSystemLogs([]);
+      });
   }, []);
   const [savedSuccess, setSavedSuccess] = useState(false);
     const [syncStatusMsg, setSyncStatusMsg] = useState<string | null>(null);
