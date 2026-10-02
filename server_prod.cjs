@@ -135,14 +135,16 @@ app.get('/api/sync/all', async (req, res) => {
       caregiverId: l.caregiver_id || '',
       caregiverName: l.logged_by || '',
       date: l.date,
-      foodConsistency: l.consistency,
-      foodConsistencyLevel: 0, 
+      foodConsistency: l.consistency || '',
+      foodConsistencyLevel: 0,
       liquidConsistency: '',
       liquidConsistencyLevel: 0,
       liquidBrandDose: '',
-      symptoms: [], // Mapeamento simplificado por enquanto
+      symptoms: [],
       observations: l.observations || '',
       photos: l.photos_json ? JSON.parse(l.photos_json) : [],
+      mealType: l.meal_type || 'geral',
+      mealName: l.meal_name || '',
       createdAt: l.created_at
     }));
     const [evolutions] = await pool.query('SELECT * FROM official_evolutions');
