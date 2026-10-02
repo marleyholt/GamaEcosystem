@@ -352,7 +352,7 @@ export default function App() {
     updateBrowserFavicon(iconSource);
   }, [clinicConfig.faviconUrl, clinicConfig.logoUrl]);
 
-  // Auto-sincronização inicial com o MariaDB (Produção) e Firestore (Backup)
+  // Auto-sincronização inicial com o MariaDB / MySQL (Produção)
   useEffect(() => {
     // 1. Sincronização e carregamento primário via API MariaDB / MySQL
     fetchAllFromMariaDB().then(dbData => {
