@@ -306,7 +306,8 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
       signatureInputRef.current.value = '';
     }
   };
-\n  const handleResetFavicon = () => {
+
+  const handleResetFavicon = () => {
     const updated = { ...tempConfig, faviconUrl: '/pwa-512x512.png' };
     setTempConfig(updated);
     setHasPendingChanges(true);
@@ -965,7 +966,8 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
                 )}
               </div>
             </div>
-\n                    {/* Barra Superior / Alerta de Alterações Pendentes na Marca com Botão de Salvar Alterações */}
+
+                    {/* Barra Superior / Alerta de Alterações Pendentes na Marca com Botão de Salvar Alterações */}
           <div className="bg-[#1f1a17] border border-[#382e27] rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-lg">
             <div className="flex items-center gap-3">
               <div className={`w-3 h-3 rounded-full ${hasPendingChanges ? 'bg-amber-400 animate-ping' : 'bg-emerald-400'}`} />
