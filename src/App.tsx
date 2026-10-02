@@ -393,44 +393,8 @@ export default function App() {
           }
         }
 
-        // Terapeutas do MariaDB
-        if (dbData.therapists && Array.isArray(dbData.therapists) && dbData.therapists.length > 0) {
-          setTherapists(prev => {
-            const synced = syncTherapistsWithRT(dbData.therapists, clinicConfig);
-            localStorage.setItem('health_deglut_therapists', JSON.stringify(synced));
-            return synced;
-          });
-        }
-
-        // Cuidadores do MariaDB
-        if (dbData.caregivers && Array.isArray(dbData.caregivers) && dbData.caregivers.length > 0) {
-          setCaregivers(dbData.caregivers);
-          localStorage.setItem('health_deglut_caregivers', JSON.stringify(dbData.caregivers));
-        }
-
-        // Prontuários do MariaDB
-        if (dbData.medicalRecords && Array.isArray(dbData.medicalRecords) && dbData.medicalRecords.length > 0) {
-          setMedicalRecords(dbData.medicalRecords);
-        }
-
-        // Usuários do MariaDB
-        if (dbData.users && Array.isArray(dbData.users) && dbData.users.length > 0) {
-          const mappedUsers: UserProfile[] = dbData.users.map((u: any) => ({
-            id: u.id,
-            email: u.email,
-            name: u.name,
-            role: u.role || 'fonoaudiologo',
-            approved: Boolean(u.approved),
-            crfaNumber: u.crfa_number || u.crfaNumber,
-            patientId: u.patient_id || u.patientId,
-            allowedTabs: u.allowed_tabs ? (typeof u.allowed_tabs === 'string' ? JSON.parse(u.allowed_tabs) : u.allowed_tabs) : (u.allowedTabs || undefined),
-            createdAt: u.created_at || new Date().toISOString()
-          }));
-          setUsersList(mappedUsers);
-          localStorage.setItem('health_deglut_users_list', JSON.stringify(mappedUsers));
-        }
-
-        // Configuração da Clínica & RT do MariaDB
+        // 1. Configuração da Clínica & RT do MariaDB (processada PRIMEIRO para servir de fonte da verdade)
+        let freshClinicConfig = clinicConfig;
         if (dbData.clinicConfig) {
           const cfg = dbData.clinicConfig;
           let rawLogo = cfg.logo_url || cfg.logoUrl;
@@ -441,8 +405,8 @@ export default function App() {
           if (rawFavicon === '/logo-gama.png' || !rawFavicon || rawFavicon.trim() === '') {
             rawFavicon = '/assets/logo.png';
           }
-          const loadedEmail = cfg.email || cfg.email || 'adrianepaesdagama@gmail.com';
-          const updatedConfig: ClinicConfig = {
+          const loadedEmail = (cfg.email || '').trim() || 'adrianepaesdagama@gmail.com';
+          freshClinicConfig = {
             ...DEFAULT_CLINIC_CONFIG,
             clinicName: cfg.clinicName || cfg.clinic_name || 'GAMA FONOAUDIOLOGIA',
             technicalResponsible: cfg.technicalResponsible || cfg.technical_manager_name || 'Adriane Gama',
@@ -457,15 +421,44 @@ export default function App() {
             useLetterheadByDefault: true,
             includeSignatureOnPrint: false
           };
-          setClinicConfig(updatedConfig);
-          localStorage.setItem('health_deglut_clinic_config', JSON.stringify(updatedConfig));
+          setClinicConfig(freshClinicConfig);
+          localStorage.setItem('health_deglut_clinic_config', JSON.stringify(freshClinicConfig));
+        }
 
-          // Garante que a lista de terapeutas reflita IMEDIATAMENTE a RT atualizada do banco
-          setTherapists(currentTherapists => {
-            const synced = syncTherapistsWithRT(currentTherapists, updatedConfig);
-            localStorage.setItem('health_deglut_therapists', JSON.stringify(synced));
-            return synced;
-          });
+        // 2. Terapeutas do MariaDB (Sincronizados IMEDIATAMENTE com freshClinicConfig da RT)
+        const baseTherapists = (dbData.therapists && Array.isArray(dbData.therapists) && dbData.therapists.length > 0)
+          ? dbData.therapists
+          : therapists;
+        const syncedTherapists = syncTherapistsWithRT(baseTherapists, freshClinicConfig);
+        setTherapists(syncedTherapists);
+        localStorage.setItem('health_deglut_therapists', JSON.stringify(syncedTherapists));
+
+        // 3. Cuidadores do MariaDB
+        if (dbData.caregivers && Array.isArray(dbData.caregivers) && dbData.caregivers.length > 0) {
+          setCaregivers(dbData.caregivers);
+          localStorage.setItem('health_deglut_caregivers', JSON.stringify(dbData.caregivers));
+        }
+
+        // 4. Prontuários do MariaDB
+        if (dbData.medicalRecords && Array.isArray(dbData.medicalRecords) && dbData.medicalRecords.length > 0) {
+          setMedicalRecords(dbData.medicalRecords);
+        }
+
+        // 5. Usuários do MariaDB
+        if (dbData.users && Array.isArray(dbData.users) && dbData.users.length > 0) {
+          const mappedUsers: UserProfile[] = dbData.users.map((u: any) => ({
+            id: u.id,
+            email: u.email,
+            name: u.name,
+            role: u.role || 'fonoaudiologo',
+            approved: Boolean(u.approved),
+            crfaNumber: u.crfa_number || u.crfaNumber,
+            patientId: u.patient_id || u.patientId,
+            allowedTabs: u.allowed_tabs ? (typeof u.allowed_tabs === 'string' ? JSON.parse(u.allowed_tabs) : u.allowed_tabs) : (u.allowedTabs || undefined),
+            createdAt: u.created_at || new Date().toISOString()
+          }));
+          setUsersList(mappedUsers);
+          localStorage.setItem('health_deglut_users_list', JSON.stringify(mappedUsers));
         }
       }
     });
