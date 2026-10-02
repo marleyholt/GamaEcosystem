@@ -154,7 +154,29 @@ export const ChangeLogView: React.FC<ChangeLogViewProps> = () => {
         </div>
 
         <div className="relative pl-6 space-y-6 before:content-[''] before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-[#382e27]">
-                                        {/* Versão v1.3.2 - 02/10/2026 */}
+                                                  {/* Versão v1.3.3 - 02/10/2026 */}
+          <div className="relative space-y-3">
+            <div className="absolute -left-[21px] top-1.5 w-3 h-3 rounded-full bg-emerald-500 ring-4 ring-[#1f1a17]" />
+            <div className="flex flex-wrap items-center gap-2.5">
+              <span className="px-2.5 py-0.5 rounded-full bg-emerald-500 text-[#181513] font-bold text-xs">
+                v1.3.3
+              </span>
+              <span className="text-xs font-semibold text-[#f4efe8]">
+                Remoção Total do Firebase & Sincronização Atômica da RT
+              </span>
+              <span className="text-[11px] text-[#a69a8f]">• 02/10/2026</span>
+            </div>
+            <ul className="text-xs text-[#a69a8f] space-y-1.5 list-disc pl-4">
+              <li>
+                <strong className="text-[#f4efe8]">Arquitetura 100% MariaDB:</strong> Removida a biblioteca do Firebase de <code className="text-[#c8a88a]">package.json</code> e deletados todos os scripts e regras residuais do Firestore.
+              </li>
+              <li>
+                <strong className="text-[#f4efe8]">Sincronização Atômica RT:</strong> Atualização simultânea na tabela <code className="text-[#c8a88a]">therapists</code> ao salvar dados da clínica e inversão da ordem de inicialização no F5, garantindo integridade estrita e duradoura.
+              </li>
+            </ul>
+          </div>
+
+{/* Versão v1.3.2 - 02/10/2026 */}
           <div className="relative space-y-3">
             <div className="absolute -left-[21px] top-1.5 w-3 h-3 rounded-full bg-emerald-500 ring-4 ring-[#1f1a17]" />
             <div className="flex flex-wrap items-center gap-2.5">
