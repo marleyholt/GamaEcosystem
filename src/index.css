@@ -256,6 +256,38 @@ body.theme-light,
 .theme-light .hover\:text-\[\#c8a88a\]:hover { color: #6f4016 !important; }
 
 /* 5. CORREÇÃO CRÍTICA DE STATUS & BADGES NO MODO CLARO */
+/* Balão de Sucesso ao Salvar e Notificações Toast no Tema Claro */
+.theme-light .bg-emerald-950\/80,
+.theme-light .bg-emerald-950\/90,
+.theme-light .bg-emerald-950\/60 {
+  background-color: #d1fae5 !important;
+  color: #065f46 !important;
+  border-color: #34d399 !important;
+  box-shadow: 0 4px 12px -2px rgba(16, 185, 129, 0.15) !important;
+}
+
+.theme-light .text-emerald-300 {
+  color: #065f46 !important;
+}
+
+.theme-light .border-emerald-500\/50,
+.theme-light .border-emerald-500\/40 {
+  border-color: #10b981 !important;
+}
+
+/* Badges e Tags no Tema Claro */
+.theme-light .bg-amber-950\/60,
+.theme-light .bg-amber-950\/40 {
+  background-color: #fef3c7 !important;
+  color: #92400e !important;
+  border-color: #f59e0b !important;
+}
+
+.theme-light .text-amber-300 {
+  color: #92400e !important;
+}
+
+
 /* Verde / Sucesso / Estável */
 .theme-light .bg-emerald-950,
 .theme-light .bg-emerald-950\/70,
