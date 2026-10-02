@@ -20,6 +20,16 @@ Este documento é a fonte de verdade para o acompanhamento contínuo de tarefas,
 ---
 ## 📜 3. CHANGELOG (Histórico Cronológico de Entregas)
 
+### [v1.3.4] - 2026-10-02: Formulário de Clínica & RT com Padrão em Branco e Limpeza de Fallbacks Fictícios
+- **Padrão 100% em Branco (Zero Dados Fictícios):**
+  - Todos os campos do formulário da aba *Clínica & Responsável Técnica* iniciam completamente vazios por padrão (`""`).
+  - Adicionados placeholders contextuais e elegantes para guiar o preenchimento sem preencher o campo de verdade.
+- **Persistência Estrita e Fiel:**
+  - O sistema e o banco MariaDB não inserem mais valores legados como `GAMA FONOAUDIOLOGIA`, `Adriane Gama`, `gamafono@gamafono.com.br` ou `CREFONO 9531-RJ` automaticamente.
+  - O que estiver salvo no banco MariaDB é exatamente o que foi digitado pelo usuário. Se nada foi cadastrado, os campos e os cards permanecem limpos e em branco.
+- **Sincronização Condicional com Fono & Equipe:**
+  - A RT só é criada/exibida na aba *Fonoaudiólogas & Equipe* se houver dados cadastrados na aba *Clínica & RT*, respeitando listas vazias por padrão.
+
 ### [v1.3.3] - 2026-10-02: Remoção Total do Firebase & Sincronização Atômica da RT
 - **Remoção Completa do Firebase/Firestore:**
   - Removida dependência `"firebase"` do `package.json`, excluídos os arquivos residuais `src/lib/firebase.ts`, `src/services/firestoreSync.ts`, `firestore.rules` e `firebase-applet-config.json`.
