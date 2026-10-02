@@ -91,13 +91,15 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
   onChangeRole = () => {},
   onUpdateUserPermissions
 }) => {
-  const [activeTab, setActiveTab] = useState<'geral' | 'marca' | 'cuidadores' | 'terapeutas' | 'usuarios' | 'database' | 'changelog'>('geral');
-  const [tempConfig, setTempConfig] = useState<ClinicConfig>(clinicConfig);
+  const [activeTab, setActiveTab] = useState<'geral' | 'marca' | 'cuidadores' | 'terapeutas' | 'usuarios' | 'database' | 'changelog' | 'system_logs'>('geral');
+  const [systemLogs, setSystemLogs] = useState<string[]>([]);
 
-  // Mantém tempConfig sempre sincronizado quando clinicConfig for atualizado
   useEffect(() => {
-    setTempConfig(clinicConfig);
-  }, [clinicConfig]);
+    fetch('/api/system-logs')
+      .then(res => res.json())
+      .then(data => setSystemLogs(data))
+      .catch(console.error);
+  }, []);
   const [savedSuccess, setSavedSuccess] = useState(false);
     const [syncStatusMsg, setSyncStatusMsg] = useState<string | null>(null);
   const [previewTherapistId, setPreviewTherapistId] = useState<string>(''); // Vazio = Usar dados da Clínica & RT
@@ -572,7 +574,39 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
           <ClipboardList className="w-4 h-4 text-emerald-400 shrink-0" />
           <span>ChangeLog & Entregas</span>
         </button>
+
+        {/* SUB-ABA: Logs do Sistema */}
+        <button
+          onClick={() => setActiveTab('system_logs')}
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+            activeTab === 'system_logs'
+              ? 'bg-[#c8a88a] text-[#181513] shadow-md font-bold'
+              : 'text-[#a69a8f] hover:text-[#181513] hover:bg-[#c8a88a] hover:shadow-xs group/tab'
+          }`}
+        >
+          <HardDrive className="w-4 h-4 text-emerald-400 shrink-0" />
+          <span>Logs do Sistema (Auditoria)</span>
+        </button>
       </div>
+
+      {/* Conteúdo da Tab: Logs do Sistema */}
+      {activeTab === 'system_logs' && (
+        <div className="bg-[#1f1a17] border border-[#382e27] rounded-2xl p-6 space-y-4">
+          <h2 className="text-base font-bold font-serif text-[#f4efe8] flex items-center gap-2">
+            <HardDrive className="w-4 h-4 text-[#c8a88a]" />
+            Logs de Auditoria do Banco de Dados
+          </h2>
+          <div className="bg-[#181513] border border-[#3e342e] rounded-xl p-4 h-96 overflow-y-auto">
+            {systemLogs.length === 0 ? (
+              <p className="text-xs text-[#a69a8f]">Nenhum log de auditoria encontrado.</p>
+            ) : (
+              <pre className="text-[10px] text-[#f4efe8] font-mono whitespace-pre-wrap">
+                {systemLogs.join('\n')}
+              </pre>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Conteúdo da Tab 1: Dados Gerais da Clínica & RT */}
       {activeTab === 'geral' && (
