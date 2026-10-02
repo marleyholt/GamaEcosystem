@@ -1,16 +1,19 @@
 /**
- * Serviço de sincronização com a API REST do MariaDB em Produção
- * Endpoints servidos pelo Express (server_prod.cjs) em /api/*
+ * Serviço completo de sincronização direta com a API REST do MariaDB / MySQL
+ * Todos os dados da clínica, usuários, terapeutas, cuidadores, prontuários e logs
+ * são centralizados no MariaDB.
  */
 
 export interface MariaDBSyncData {
+  clinicConfig: any | null;
+  users: any[];
+  therapists: any[];
+  caregivers: any[];
   patients: any[];
   medicalRecords: any[];
   radi: any[];
   dailyLogs: any[];
   evolutions: any[];
-  clinicConfig: any | null;
-  users: any[];
 }
 
 export const checkServerHealth = async (): Promise<boolean> => {
@@ -34,11 +37,118 @@ export const fetchAllFromMariaDB = async (): Promise<MariaDBSyncData | null> => 
     }
     return null;
   } catch (err) {
-    console.warn('API MariaDB offline ou inacessível no momento, utilizando armazenamento local:', err);
+    console.warn('API MariaDB em modo offline ou aguardando conexão:', err);
     return null;
   }
 };
 
+// ==========================================
+// Configuração Institucional da Clínica & RT
+// ==========================================
+export const saveClinicConfigToMariaDB = async (config: any): Promise<boolean> => {
+  try {
+    const res = await fetch('/api/clinic-config', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(config)
+    });
+    return res.ok;
+  } catch (err) {
+    console.warn('Erro ao salvar configuração da clínica no MariaDB:', err);
+    return false;
+  }
+};
+
+// ==========================================
+// Usuários e Acesso
+// ==========================================
+export const saveUserToMariaDB = async (user: any): Promise<boolean> => {
+  try {
+    const res = await fetch('/api/users', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(user)
+    });
+    return res.ok;
+  } catch (err) {
+    console.warn('Erro ao salvar usuário no MariaDB:', err);
+    return false;
+  }
+};
+
+export const deleteUserFromMariaDB = async (id: string): Promise<boolean> => {
+  try {
+    const res = await fetch(`/api/users/${id}`, {
+      method: 'DELETE'
+    });
+    return res.ok;
+  } catch (err) {
+    console.warn('Erro ao excluir usuário no MariaDB:', err);
+    return false;
+  }
+};
+
+// ==========================================
+// Terapeutas / Fonoaudiólogas & Equipe
+// ==========================================
+export const saveTherapistToMariaDB = async (therapist: any): Promise<boolean> => {
+  try {
+    const res = await fetch('/api/therapists', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(therapist)
+    });
+    return res.ok;
+  } catch (err) {
+    console.warn('Erro ao salvar terapeuta no MariaDB:', err);
+    return false;
+  }
+};
+
+export const deleteTherapistFromMariaDB = async (id: string): Promise<boolean> => {
+  try {
+    const res = await fetch(`/api/therapists/${id}`, {
+      method: 'DELETE'
+    });
+    return res.ok;
+  } catch (err) {
+    console.warn('Erro ao excluir terapeuta no MariaDB:', err);
+    return false;
+  }
+};
+
+// ==========================================
+// Cuidadores
+// ==========================================
+export const saveCaregiverToMariaDB = async (caregiver: any): Promise<boolean> => {
+  try {
+    const res = await fetch('/api/caregivers', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(caregiver)
+    });
+    return res.ok;
+  } catch (err) {
+    console.warn('Erro ao salvar cuidador no MariaDB:', err);
+    return false;
+  }
+};
+
+export const deleteCaregiverFromMariaDB = async (id: string): Promise<boolean> => {
+  try {
+    const res = await fetch(`/api/caregivers/${id}`, {
+      method: 'DELETE'
+    });
+    return res.ok;
+  } catch (err) {
+    console.warn('Erro ao excluir cuidador no MariaDB:', err);
+    return false;
+  }
+};
+
+// ==========================================
+// Pacientes, Prontuários, Avaliações e Logs
+// ==========================================
 export const savePatientToMariaDB = async (patient: any): Promise<boolean> => {
   try {
     const res = await fetch('/api/patients', {
@@ -109,20 +219,9 @@ export const saveEvolutionToMariaDB = async (evolution: any): Promise<boolean> =
   }
 };
 
-export const saveClinicConfigToMariaDB = async (config: any): Promise<boolean> => {
-  try {
-    const res = await fetch('/api/clinic-config', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(config)
-    });
-    return res.ok;
-  } catch (err) {
-    console.warn('Erro ao salvar configuração da clínica no MariaDB:', err);
-    return false;
-  }
-};
-
+// ==========================================
+// Backup & Dump do Banco MariaDB
+// ==========================================
 export const triggerDatabaseBackup = async (): Promise<{ success: boolean; message: string; filename?: string }> => {
   try {
     const res = await fetch('/api/admin/backup', {
