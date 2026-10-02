@@ -577,8 +577,17 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
               <label className="block text-xs font-medium text-[#c8a88a] mb-1">CPF da Responsável Técnica</label>
               <input
                 type="text"
+                placeholder="000.000.000-00"
                 value={tempConfig.cpf}
-                onChange={e => setTempConfig({ ...tempConfig, cpf: e.target.value })}
+                maxLength={14}
+                onChange={e => {
+                  const raw = e.target.value.replace(/\D/g, '').slice(0, 11);
+                  const formatted = raw
+                    .replace(/(\d{3})(\d)/, '$1.$2')
+                    .replace(/(\d{3})(\d)/, '$1.$2')
+                    .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+                  setTempConfig({ ...tempConfig, cpf: formatted });
+                }}
                 className="w-full bg-[#181513] border border-[#3e342e] rounded-xl px-3 py-2 text-xs text-[#f4efe8] focus:border-[#c8a88a] outline-none"
               />
             </div>
@@ -587,8 +596,16 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
               <label className="block text-xs font-medium text-[#c8a88a] mb-1">Telefone & WhatsApp Comercial</label>
               <input
                 type="text"
+                placeholder="(21) 98988-7981"
                 value={tempConfig.phoneWhatsapp}
-                onChange={e => setTempConfig({ ...tempConfig, phoneWhatsapp: e.target.value })}
+                maxLength={15}
+                onChange={e => {
+                  const raw = e.target.value.replace(/\D/g, '').slice(0, 11);
+                  const formatted = raw.length > 10
+                    ? raw.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3')
+                    : raw.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
+                  setTempConfig({ ...tempConfig, phoneWhatsapp: formatted });
+                }}
                 className="w-full bg-[#181513] border border-[#3e342e] rounded-xl px-3 py-2 text-xs text-[#f4efe8] focus:border-[#c8a88a] outline-none"
               />
             </div>
@@ -1228,7 +1245,15 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
                   type="text"
                   placeholder="000.000.000-00"
                   value={newTherapistCpf}
-                  onChange={e => setNewTherapistCpf(e.target.value)}
+                  maxLength={14}
+                  onChange={e => {
+                    const raw = e.target.value.replace(/\D/g, '').slice(0, 11);
+                    const formatted = raw
+                      .replace(/(\d{3})(\d)/, '$1.$2')
+                      .replace(/(\d{3})(\d)/, '$1.$2')
+                      .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+                    setNewTherapistCpf(formatted);
+                  }}
                   className="w-full bg-[#181513] border border-[#3e342e] rounded-xl px-3 py-2 text-xs text-[#f4efe8] outline-none focus:border-[#c8a88a]"
                 />
               </div>
@@ -1237,9 +1262,16 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
                 <label className="block text-xs font-medium text-[#c8a88a] mb-1">Telefone / WhatsApp (Em branco herda RT)</label>
                 <input
                   type="text"
-                  placeholder={tempConfig.phoneWhatsapp}
+                  placeholder={tempConfig.phoneWhatsapp || "(21) 98988-7981"}
                   value={newTherapistPhone}
-                  onChange={e => setNewTherapistPhone(e.target.value)}
+                  maxLength={15}
+                  onChange={e => {
+                    const raw = e.target.value.replace(/\D/g, '').slice(0, 11);
+                    const formatted = raw.length > 10
+                      ? raw.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3')
+                      : raw.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
+                    setNewTherapistPhone(formatted);
+                  }}
                   className="w-full bg-[#181513] border border-[#3e342e] rounded-xl px-3 py-2 text-xs text-[#f4efe8] outline-none focus:border-[#c8a88a]"
                 />
               </div>
