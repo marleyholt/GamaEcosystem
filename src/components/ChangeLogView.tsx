@@ -130,127 +130,16 @@ export const ChangeLogView: React.FC<ChangeLogViewProps> = () => {
           <span className="text-xs text-[#a69a8f]">Sprints em andamento</span>
         </div>
 
-        <div className="space-y-3">
-          {/* Alta Prioridade */}
-          <div className="p-4 rounded-xl bg-[#241a18] border border-red-900/30 space-y-2.5">
-            <div className="flex items-center gap-2 text-xs font-bold text-red-400 uppercase tracking-wider">
-              <span className="w-2 h-2 rounded-full bg-red-500" />
-              Alta Prioridade (Próximos Passos Imediatos)
-            </div>
-            <ul className="space-y-2 text-xs sm:text-sm text-[#e8dfd5] pl-2">
-              <li className="flex items-start gap-2.5">
-                <div className="w-4 h-4 mt-0.5 rounded border border-[#c8a88a]/40 bg-[#1f1a17] flex items-center justify-center shrink-0">
-                  <CheckCircle2 className="w-3 h-3 text-emerald-400" />
-                </div>
-                <div>
-                  <strong className="text-white">API de Sincronização MariaDB Completa (CRUD de Produção):</strong>
-                  <p className="text-xs text-[#a69a8f] mt-0.5">
-                    Persistência direta de Pacientes (<code className="text-[#c8a88a]">/api/patients</code>), Prontuários Médicos (<code className="text-[#c8a88a]">/api/medical-records</code>), Avaliações RaDI (<code className="text-[#c8a88a]">/api/radi</code>), Registros de Alimentação (<code className="text-[#c8a88a]">/api/feeding-logs</code>) e Configurações da Clínica.
-                  </p>
-                </div>
-              </li>
-              <li className="flex items-start gap-2.5">
-                <div className="w-4 h-4 mt-0.5 rounded border border-[#c8a88a]/40 bg-[#1f1a17] flex items-center justify-center shrink-0">
-                  <CheckCircle2 className="w-3 h-3 text-emerald-400" />
-                </div>
-                <div>
-                  <strong className="text-white">Cabeçalho Enxuto, Logo Alinhada (-30%) & Persistência Blindada no F5:</strong>
-                  <p className="text-xs text-[#a69a8f] mt-0.5">
-                    Redução de 30% na altura da logo alinhada com o título. Persistência imediata no momento do upload que impede perda da logo ao atualizar a página.
-                  </p>
-                </div>
-              </li>
-              <li className="flex items-start gap-2.5">
-                <div className="w-4 h-4 mt-0.5 rounded border border-[#c8a88a]/40 bg-[#1f1a17] flex items-center justify-center shrink-0">
-                  <CheckCircle2 className="w-3 h-3 text-emerald-400" />
-                </div>
-                <div>
-                  <strong className="text-white">Manual do Usuário com Restrição de Acesso (RBAC):</strong>
-                  <p className="text-xs text-[#a69a8f] mt-0.5">
-                    Botão discreto de interrogação ao lado do sino abrindo guia completo por módulo. Segue as mesmas permissões do usuário logado.
-                  </p>
-                </div>
-              </li>
-              <li className="flex items-start gap-2.5">
-                <div className="w-4 h-4 mt-0.5 rounded border border-[#c8a88a]/40 bg-[#1f1a17] flex items-center justify-center shrink-0">
-                  <CheckCircle2 className="w-3 h-3 text-emerald-400" />
-                </div>
-                <div>
-                  <strong className="text-white">Pop-up de Usuário no Topo Estilo Google:</strong>
-                  <p className="text-xs text-[#a69a8f] mt-0.5">
-                    Troca de senha com validação de senha atual, botão de tema claro/escuro integrado, atalho para configurações e sino de notificações à esquerda.
-                  </p>
-                </div>
-              </li>
-              <li className="flex items-start gap-2.5">
-                <div className="w-4 h-4 mt-0.5 rounded border border-[#c8a88a]/40 bg-[#1f1a17] flex items-center justify-center shrink-0">
-                  <Clock className="w-3 h-3 text-amber-400" />
-                </div>
-                <div>
-                  <strong className="text-white">Sino de Notificações com Lista de Pendências Clínicas:</strong>
-                  <p className="text-xs text-[#a69a8f] mt-0.5">
-                    Listagem de pendências (assinaturas, familiares aguardando retorno, chat) com link direto para os modais clínicos.
-                  </p>
-                </div>
-              </li>
-            </ul>
+        <div className="p-4 rounded-xl bg-[#25201c] border border-[#382e27] text-center py-6 space-y-2">
+          <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-400 mb-1">
+            <CheckCircle2 className="w-5 h-5" />
           </div>
-
-          {/* Média Prioridade */}
-          <div className="p-4 rounded-xl bg-[#242018] border border-amber-900/30 space-y-2.5">
-            <div className="flex items-center gap-2 text-xs font-bold text-amber-400 uppercase tracking-wider">
-              <span className="w-2 h-2 rounded-full bg-amber-500" />
-              Média Prioridade (Otimizações Clínicas & Performance)
-            </div>
-            <ul className="space-y-2 text-xs sm:text-sm text-[#e8dfd5] pl-2">
-              <li className="flex items-start gap-2.5">
-                <div className="w-4 h-4 mt-0.5 rounded border border-[#a69a8f]/40 bg-[#1f1a17] shrink-0" />
-                <div>
-                  <strong className="text-white">Módulo de Relatórios e Exportação em Lote:</strong>
-                  <p className="text-xs text-[#a69a8f] mt-0.5">
-                    Geração e download unificado de laudos e pareceres fonoaudiológicos em PDF com timbrado institucional e assinatura da Dra. Adriane Gama.
-                  </p>
-                </div>
-              </li>
-              <li className="flex items-start gap-2.5">
-                <div className="w-4 h-4 mt-0.5 rounded border border-[#a69a8f]/40 bg-[#1f1a17] shrink-0" />
-                <div>
-                  <strong className="text-white">Otimização de Code Splitting / Chunking no Vite:</strong>
-                  <p className="text-xs text-[#a69a8f] mt-0.5">
-                    Isolamento dinâmico de bibliotecas pesadas de geração de PDF (<code className="text-[#c8a88a]">jspdf</code>, <code className="text-[#c8a88a]">html2canvas</code>) para carregamento ultrarrápido em redes móveis 4G/5G.
-                  </p>
-                </div>
-              </li>
-            </ul>
-          </div>
-
-          {/* Baixa Prioridade / Roadmap */}
-          <div className="p-4 rounded-xl bg-[#1a221d] border border-emerald-900/30 space-y-2.5">
-            <div className="flex items-center gap-2 text-xs font-bold text-emerald-400 uppercase tracking-wider">
-              <span className="w-2 h-2 rounded-full bg-emerald-500" />
-              Baixa Prioridade & Roadmap de Expansão
-            </div>
-            <ul className="space-y-2 text-xs sm:text-sm text-[#e8dfd5] pl-2">
-              <li className="flex items-start gap-2.5">
-                <div className="w-4 h-4 mt-0.5 rounded border border-[#a69a8f]/40 bg-[#1f1a17] shrink-0" />
-                <div>
-                  <strong className="text-white">Rotinas de Backup Automático do Banco de Dados:</strong>
-                  <p className="text-xs text-[#a69a8f] mt-0.5">
-                    Cronjob diário no Linux para dump automatizado do MariaDB com retenção de segurança de 7 dias.
-                  </p>
-                </div>
-              </li>
-              <li className="flex items-start gap-2.5">
-                <div className="w-4 h-4 mt-0.5 rounded border border-[#a69a8f]/40 bg-[#1f1a17] shrink-0" />
-                <div>
-                  <strong className="text-white">PWA / Notificações no Dispositivo:</strong>
-                  <p className="text-xs text-[#a69a8f] mt-0.5">
-                    Instalação direta do GamaEcosystem como aplicativo nativo na tela inicial do celular dos cuidadores e familiares.
-                  </p>
-                </div>
-              </li>
-            </ul>
-          </div>
+          <p className="text-sm font-semibold text-[#f4efe8]">
+            Todas as tarefas prioritárias da sprint atual foram concluídas e homologadas!
+          </p>
+          <p className="text-xs text-[#a69a8f] max-w-xl mx-auto">
+            Os itens finalizados (eliminação do Firebase, persistência no MariaDB, RT em Fono & Equipe e gestão de usuários) migraram para o Histórico de Versões abaixo, mantendo a tela limpa e despoluída.
+          </p>
         </div>
       </div>
 
@@ -265,7 +154,35 @@ export const ChangeLogView: React.FC<ChangeLogViewProps> = () => {
         </div>
 
         <div className="relative pl-6 space-y-6 before:content-[''] before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-[#382e27]">
-          {/* Versão v1.2.0 - Unificada do dia 01/10/2026 */}
+                    {/* Versão v1.3.0 - 02/10/2026 */}
+          <div className="relative space-y-3">
+            <div className="absolute -left-[21px] top-1.5 w-3 h-3 rounded-full bg-[#c8a88a] ring-4 ring-[#1f1a17]" />
+            <div className="flex flex-wrap items-center gap-2.5">
+              <span className="px-2.5 py-0.5 rounded-full bg-[#c8a88a] text-[#181513] font-bold text-xs">
+                v1.3.0
+              </span>
+              <span className="text-xs font-semibold text-[#f4efe8]">
+                Eliminação do Firebase, Sincronização MariaDB & Gestão de RT e Usuários
+              </span>
+              <span className="text-[11px] text-[#a69a8f]">• 02/10/2026</span>
+            </div>
+            <ul className="text-xs text-[#a69a8f] space-y-1.5 list-disc pl-4">
+              <li>
+                <strong className="text-[#f4efe8]">Eliminação Completa do Firebase & Firestore:</strong> Login, primeiro acesso e sincronização agora utilizam exclusivamente a API REST do MariaDB/MySQL.
+              </li>
+              <li>
+                <strong className="text-[#f4efe8]">Persistência Blindada no F5:</strong> Configurações institucionais e dados clínicos salvam de forma imediata na API e no cache, sem reversão de valores.
+              </li>
+              <li>
+                <strong className="text-[#f4efe8]">Responsável Técnica (RT) Integrada:</strong> A RT é espelhada automaticamente na aba 'Fonoaudiólogas & Equipe' com proteção contra exclusão, e seu e-mail institucional é a credencial de login com perfil de Administrador.
+              </li>
+              <li>
+                <strong className="text-[#f4efe8]">Cadastro Imediato em Gestão de Usuários:</strong> Novos profissionais cadastrados entram na hora na aba de Gestão de Usuários para configuração prévia de telas e permissões.
+              </li>
+            </ul>
+          </div>
+
+{/* Versão v1.2.0 - Unificada do dia 01/10/2026 */}
           <div className="relative space-y-3">
             <div className="absolute -left-[21px] top-1.5 w-3 h-3 rounded-full bg-emerald-500 ring-4 ring-[#1f1a17]" />
             <div className="flex flex-wrap items-center gap-2.5">
