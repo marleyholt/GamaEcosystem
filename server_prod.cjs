@@ -141,6 +141,24 @@ app.post('/api/clinic-config', async (req, res) => {
       instagram,
       logoUrl
     ]);
+
+    // Atualiza atomicamente a RT na tabela therapists para garantir paridade 100%
+    try {
+      const rtQuery = `
+        INSERT INTO therapists (id, name, specialty, crfa_or_registry, email, phone, updated_at)
+        VALUES ('th_rt', ?, 'Responsável Técnica & Fonoaudiologia Clínica', ?, ?, ?, NOW())
+        ON DUPLICATE KEY UPDATE
+          name = VALUES(name),
+          crfa_or_registry = VALUES(crfa_or_registry),
+          email = VALUES(email),
+          phone = VALUES(phone),
+          updated_at = NOW()
+      `;
+      await pool.query(rtQuery, [techName, crfa, email, phone]);
+    } catch (e) {
+      console.error('Aviso ao sincronizar RT na tabela therapists:', e.message);
+    }
+
     res.json({ success: true, message: 'Configuração atualizada com sucesso no MariaDB.' });
   } catch (err) {
     res.status(500).json({ error: err.message });
