@@ -201,3 +201,14 @@ CREATE TABLE IF NOT EXISTS `official_evolutions` (
   INDEX `idx_evolutions_patient` (`patient_id`),
   CONSTRAINT `fk_evolution_patient` FOREIGN KEY (`patient_id`) REFERENCES `patients` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 10. Tabela de Logs de Auditoria do Sistema
+CREATE TABLE IF NOT EXISTS `audit_logs` (
+  `id` VARCHAR(64) NOT NULL,
+  `user_id` VARCHAR(255) DEFAULT 'system',
+  `action` VARCHAR(255) NOT NULL,
+  `details` LONGTEXT DEFAULT NULL,
+  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  INDEX `idx_audit_created_at` (`created_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
