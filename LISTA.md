@@ -20,6 +20,26 @@ Este documento é a fonte de verdade para o acompanhamento contínuo de tarefas,
 ---
 ## 📜 3. CHANGELOG (Histórico Cronológico de Entregas)
 
+### [v1.3.8] - 2026-10-02: Configuração de Rubrica Técnica e Assinatura Digital
+- **Módulo de Rubrica RT:**
+  - Adicionado painel em "Configuração de Marca" para upload da assinatura digitalizada da Responsável Técnica (RT).
+  - Inclui auto-otimização e recorte de transparência para que a rubrica fique limpa e centralizada no papel timbrado.
+- **Identificação Profissional Completa:**
+  - O Papel Timbrado agora substitui o nome simples da RT pela rubrica digitalizada + Nome + CRFa + CPF quando o modelo com assinatura for selecionado.
+- **Sincronização de Banco:**
+  - Garantida a persistência da `signatureUrl` no MariaDB para que a rubrica não se perca no F5.
+
+### [v1.3.7] - 2026-10-02: Otimização de Imagens (JPEG 60%) e Histórico Ampliado
+- **Compactação Nativa de Fotos:**
+  - Implementada compactação JPEG (60% qualidade) e redimensionamento HD (1280px) automático no upload de fotos de refeição.
+  - Isso reduz drasticamente o consumo de banda e evita o erro `413 (Payload Too Large)` mesmo com várias fotos.
+- **Persistência de Logs no MariaDB:**
+  - Ativado o endpoint `/api/feeding-logs` que estava pendente no servidor.
+  - Adicionada coluna `photos_json` no banco de dados para salvar as fotos permanentemente.
+- **Melhoria Visual no Histórico:**
+  - Fotos no histórico clínico agora são exibidas em tamanho ampliado (`w-40`).
+  - Adicionado recurso de "Clique para Ampliar" (LightBox) para visualização detalhada em tela cheia.
+
 ### [v1.3.6] - 2026-10-02: Resiliência Máxima, Correção de Loops e Aumento de Payload
 - **Correção de Loop Infinito (Recursividade):**
   - Corrigido o erro `Maximum call stack size exceeded` que travava o sistema ao tentar gravar no `localStorage`.
