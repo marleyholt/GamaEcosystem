@@ -469,11 +469,20 @@ export default function App() {
     setCurrentTab('reports');
   };
 
-  const handleSaveLog = (newLog: DailyFeedingLog) => {
-    setDailyLogs([newLog, ...dailyLogs]);
-    saveFeedingLogToMariaDB(newLog);
-    alert('Registro diário de alimentação e consistências salvo com sucesso!');
-    setCurrentTab('history');
+  const handleDeleteLog = async (logId: string) => {
+    if (!confirm('Tem certeza que deseja excluir este registro? Esta ação é irreversível e será registrada no log de auditoria.')) return;
+    try {
+      const res = await fetch(`/api/feeding-logs/${logId}`, { method: 'DELETE' });
+      if (res.ok) {
+        setDailyLogs(prev => prev.filter(l => l.id !== logId));
+        alert('Registro excluído com sucesso.');
+      } else {
+        alert('Erro ao excluir registro.');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Erro ao excluir registro.');
+    }
   };
 
   const handleSavePatient = (newPatient: Patient) => {
@@ -742,6 +751,7 @@ export default function App() {
               onSelectPatient={setSelectedPatient}
               assessments={assessments}
               dailyLogs={dailyLogs}
+              onDeleteLog={handleDeleteLog}
               onGenerateReport={(assessment) => handleGenerateDirectReport(assessment)}
             />
           )}
