@@ -531,28 +531,50 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* MODAL DE RENOVAÇÃO DE SESSÃO (PROTEÇÃO DE DADOS NÃO SALVOS) */}
         {showSessionRenewModal && (
-          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="w-full max-w-md bg-[#1e1915] border-2 border-[#c8a88a] rounded-3xl p-6 sm:p-7 shadow-2xl space-y-5 text-center">
-              <div className="w-16 h-16 rounded-2xl bg-[#c8a88a]/10 border border-[#c8a88a]/30 flex items-center justify-center mx-auto text-[#c8a88a] shadow-inner">
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-200">
+            <div className={`w-full max-w-md border-2 border-[#c8a88a] rounded-3xl p-6 sm:p-7 shadow-2xl space-y-5 text-center transition-colors ${
+              darkMode 
+                ? 'bg-[#1e1915] text-[#f4efe8]' 
+                : 'bg-[#fffdfa] text-[#2c2420] shadow-[0_20px_50px_rgba(44,36,32,0.25)]'
+            }`}>
+              <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mx-auto text-[#c8a88a] shadow-inner ${
+                darkMode
+                  ? 'bg-[#c8a88a]/10 border border-[#c8a88a]/30'
+                  : 'bg-[#c8a88a]/20 border border-[#c8a88a]/50'
+              }`}>
                 <ShieldAlert className="w-9 h-9" />
               </div>
 
               <div className="space-y-2">
-                <span className="px-3 py-1 rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/20 text-[11px] font-bold uppercase tracking-wider">
+                <span className={`px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider ${
+                  darkMode
+                    ? 'bg-amber-500/10 text-amber-300 border border-amber-500/20'
+                    : 'bg-amber-100 text-amber-900 border border-amber-300'
+                }`}>
                   Sessão Prestes a Expirar
                 </span>
-                <h3 className="text-xl font-bold font-serif text-[#f4efe8]">
+                <h3 className={`text-xl font-bold font-serif ${
+                  darkMode ? 'text-[#f4efe8]' : 'text-[#2c2420]'
+                }`}>
                   Deseja renovar sua sessão?
                 </h3>
-                <p className="text-xs text-[#a69a8f] leading-relaxed">
-                  Os 15 minutos da sua sessão clínica se encerraram. Para sua comodidade e <strong className="text-[#f4efe8]">evitar que você perca dados digitados em prontuários ou evoluções</strong>, clique em <strong className="text-[#c8a88a]">"Renovar por +15 minutos"</strong> para continuar exatamente de onde parou.
+                <p className={`text-xs leading-relaxed ${
+                  darkMode ? 'text-[#a69a8f]' : 'text-[#6b5d52]'
+                }`}>
+                  Os 15 minutos da sua sessão clínica se encerraram. Para sua comodidade e <strong className={darkMode ? 'text-[#f4efe8]' : 'text-[#2c2420]'}>evitar que você perca dados digitados em prontuários ou evoluções</strong>, clique em <strong className="text-[#a8825e] dark:text-[#c8a88a]">"Renovar por +15 minutos"</strong> para continuar exatamente de onde parou.
                 </p>
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-[#14110f] border border-[#3e342e] text-left flex items-center gap-3">
-                <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
-                <p className="text-[11px] text-[#f4efe8]/90 leading-tight">
-                  <span className="font-semibold text-emerald-400">Seus dados estão seguros:</span> nada foi apagado ou recarregado.
+              <div className={`p-3.5 rounded-2xl border text-left flex items-center gap-3 ${
+                darkMode
+                  ? 'bg-[#14110f] border-[#3e342e]'
+                  : 'bg-[#f5ece3] border-[#e2d5c5]'
+              }`}>
+                <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping" />
+                <p className={`text-[11px] leading-tight ${
+                  darkMode ? 'text-[#f4efe8]/90' : 'text-[#2c2420]'
+                }`}>
+                  <span className="font-bold text-emerald-600 dark:text-emerald-400">Seus dados estão seguros:</span> nada foi apagado ou recarregado.
                 </p>
               </div>
 
@@ -563,14 +585,18 @@ export const Header: React.FC<HeaderProps> = ({
                     setShowSessionRenewModal(false);
                     if (onLogout) onLogout();
                   }}
-                  className="w-full py-3 px-4 rounded-xl border border-[#4a3e35] hover:bg-[#2a221d] text-[#a69a8f] hover:text-[#f4efe8] text-xs font-bold transition-all cursor-pointer"
+                  className={`w-full py-3 px-4 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
+                    darkMode
+                      ? 'border-[#4a3e35] hover:bg-[#2a221d] text-[#a69a8f] hover:text-[#f4efe8]'
+                      : 'border-[#d4c3b3] bg-[#f9f4ee] hover:bg-[#ebdcd0] text-[#6b5d52] hover:text-[#2c2420]'
+                  }`}
                 >
                   Encerrar Sessão
                 </button>
                 <button
                   type="button"
                   onClick={handleRenewSession}
-                  className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-[#c8a88a] to-[#d6bca3] hover:from-[#d6bca3] hover:to-[#e2cdb8] text-[#181513] text-xs font-bold shadow-lg transition-all cursor-pointer flex items-center justify-center gap-2"
+                  className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-[#c8a88a] to-[#d6bca3] hover:from-[#d6bca3] hover:to-[#e2cdb8] text-[#181513] text-xs font-bold shadow-lg hover:shadow-xl transition-all cursor-pointer flex items-center justify-center gap-2 active:scale-95"
                 >
                   <RefreshCw className="w-4 h-4" />
                   Renovar (+15 min)
