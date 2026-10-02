@@ -20,6 +20,16 @@ Este documento é a fonte de verdade para o acompanhamento contínuo de tarefas,
 ---
 ## 📜 3. CHANGELOG (Histórico Cronológico de Entregas)
 
+### [v1.3.5] - 2026-10-02: Fix de Persistência de Logo e Favicon no MariaDB e Fim de Sobrescrita no F5
+- **Persistência de Imagens Nativas no Banco:**
+  - Adicionada coluna `favicon_url` na tabela `clinic_config` do MariaDB via auto-migração resiliente.
+  - Ajustadas as rotas de backend (`server_prod.cjs`) para salvar e retornar tanto o `logo_url` quanto o `favicon_url` sem perdas.
+- **Resiliência ao Refresh (F5):**
+  - Removida a lógica agressiva no `App.tsx` que substituía imagens personalizadas por padrões fictícios durante o carregamento.
+  - Sincronização bidirecional entre `localStorage` e MariaDB priorizando a "Fonte da Verdade" do banco de dados quando disponível.
+- **Banco de Dados Flexível:**
+  - Removidas restrições `NOT NULL` de campos cadastrais no banco para permitir que o sistema aceite estados em branco sem falhar no salvamento.
+
 ### [v1.3.4] - 2026-10-02: Formulário de Clínica & RT com Padrão em Branco e Limpeza de Fallbacks Fictícios
 - **Padrão 100% em Branco (Zero Dados Fictícios):**
   - Todos os campos do formulário da aba *Clínica & Responsável Técnica* iniciam completamente vazios por padrão (`""`).
