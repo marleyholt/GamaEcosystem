@@ -13,16 +13,17 @@ USE `gamaecosystem_db`;
 -- 1. Tabela de Configuração Operacional da Clínica (Singleton por clínica)
 CREATE TABLE IF NOT EXISTS `clinic_config` (
   `id` VARCHAR(64) NOT NULL,
-  `clinic_name` VARCHAR(255) NOT NULL,
+  `clinic_name` VARCHAR(255) DEFAULT '',
   `legal_name` VARCHAR(255) DEFAULT NULL,
   `cnpj` VARCHAR(32) DEFAULT NULL,
-  `technical_manager_name` VARCHAR(255) NOT NULL,
-  `technical_manager_crfa` VARCHAR(64) NOT NULL,
+  `technical_manager_name` VARCHAR(255) DEFAULT '',
+  `technical_manager_crfa` VARCHAR(64) DEFAULT '',
   `address` TEXT DEFAULT NULL,
   `phone` VARCHAR(64) DEFAULT NULL,
   `email` VARCHAR(255) DEFAULT NULL,
   `instagram` VARCHAR(128) DEFAULT NULL,
   `logo_url` MEDIUMTEXT DEFAULT NULL,
+  `favicon_url` MEDIUMTEXT DEFAULT NULL,
   `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
   `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
