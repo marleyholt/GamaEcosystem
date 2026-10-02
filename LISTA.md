@@ -20,6 +20,20 @@ Este documento é a fonte de verdade para o acompanhamento contínuo de tarefas,
 ---
 ## 📜 3. CHANGELOG (Histórico Cronológico de Entregas)
 
+### [v1.3.0] - 2026-10-02: Eliminação Definitiva do Firebase, Sincronização MariaDB & Gestão de RT e Usuários
+- **Desconexão Total do Firebase & Firestore:**
+  - Remoção de dependências e sincronizações do Firestore em login, primeiro acesso e configurações.
+  - Toda a persistência agora é realizada via endpoints REST diretos conectados ao MariaDB/MySQL.
+- **Persistência Imediata de Configurações da Clínica & Blindagem no F5:**
+  - Correção do recarregamento que revertia alterações: dados agora salvam no banco MariaDB e no cache imediatamente, sem sobrescrita.
+- **Sincronização Automática da Responsável Técnica (RT):**
+  - Dados do RT (Nome, CRFa, E-mail, Contatos) espelhados automaticamente como primeiro membro protegido na aba 'Fonoaudiólogas & Equipe'.
+  - O e-mail do RT passa a ser sua credencial oficial de login com perfil de Administrador (`admin`).
+- **Inclusão Imediata em Gestão de Usuários & Telas:**
+  - Novos profissionais cadastrados aparecem instantaneamente na aba de Gestão de Usuários para liberação prévia de telas, antes mesmo da criação de senha no primeiro acesso.
+- **Servidor Express de Produção com Pool MariaDB:**
+  - Rotas nativas `/api/clinic-config`, `/api/therapists`, `/api/caregivers`, `/api/users`, `/api/patients` e `/api/sync/all`.
+
 ### [v1.2.0] - 2026-10-01: Consolidação Geral do GamaEcosystem (Notificações, Temas, Marca, Acessos e Apresentação Comercial)
 - **Consistência de Identidade & Nome de Exibição Fixo por Cadastro:**
   - Regra estrita de auditoria: o nome de exibição exibido no sistema é estritamente o nome cadastrado no usuário (evitando inconsistências de assinatura ou adulteração de perfis clínicos).
