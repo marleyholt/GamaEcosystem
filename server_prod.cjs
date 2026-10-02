@@ -89,6 +89,11 @@ async function initDatabaseSchema() {
       await pool.query("ALTER TABLE clinic_config MODIFY COLUMN technical_manager_crfa VARCHAR(64) DEFAULT '';");
     } catch (ignore) {}
 
+        // Garante que daily_feeding_logs tenha photos_json para persistência de fotos
+    try {
+      await pool.query("ALTER TABLE daily_feeding_logs ADD COLUMN photos_json LONGTEXT DEFAULT NULL;");
+    } catch (ignore) {}
+
     console.log('✅ Esquema MariaDB verificado e auto-migrado com sucesso (suporte a favicon_url e campos em branco).');
   } catch (err) {
     console.warn('Aviso na auto-migracao do MariaDB:', err.message);
@@ -122,7 +127,24 @@ app.get('/api/sync/all', async (req, res) => {
 
     const [medicalRecords] = await pool.query('SELECT * FROM patient_medical_records');
     const [radi] = await pool.query('SELECT * FROM radi_assessments');
-    const [dailyLogs] = await pool.query('SELECT * FROM daily_feeding_logs');
+    const [dailyLogsRaw] = await pool.query('SELECT * FROM daily_feeding_logs ORDER BY date DESC, created_at DESC');
+    const dailyLogs = dailyLogsRaw.map(l => ({
+      id: l.id,
+      patientId: l.patient_id,
+      patientName: l.patientName || '',
+      caregiverId: l.caregiver_id || '',
+      caregiverName: l.logged_by || '',
+      date: l.date,
+      foodConsistency: l.consistency,
+      foodConsistencyLevel: 0, 
+      liquidConsistency: '',
+      liquidConsistencyLevel: 0,
+      liquidBrandDose: '',
+      symptoms: [], // Mapeamento simplificado por enquanto
+      observations: l.observations || '',
+      photos: l.photos_json ? JSON.parse(l.photos_json) : [],
+      createdAt: l.created_at
+    }));
     const [evolutions] = await pool.query('SELECT * FROM official_evolutions');
 
     res.json({
@@ -263,6 +285,77 @@ app.delete('/api/therapists/:id', async (req, res) => {
   try {
     await pool.query('DELETE FROM therapists WHERE id = ?', [req.params.id]);
     res.json({ success: true });
+// Diário de Alimentação
+app.post('/api/feeding-logs', async (req, res) => {
+  try {
+    const log = req.body;
+    const query = `
+      INSERT INTO daily_feeding_logs (
+        id, patient_id, date, meal_type, meal_name, consistency, 
+        cough_choke, wet_voice, multiple_swallows, oral_residue, 
+        nasal_reflux, swallowing_difficulty, amount_consumed, 
+        meal_duration, alertness_level, posture_adequate, 
+        observations, photos_json, logged_by, created_at
+      )
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+      ON DUPLICATE KEY UPDATE
+        meal_name = VALUES(meal_name),
+        consistency = VALUES(consistency),
+        cough_choke = VALUES(cough_choke),
+        wet_voice = VALUES(wet_voice),
+        multiple_swallows = VALUES(multiple_swallows),
+        oral_residue = VALUES(oral_residue),
+        nasal_reflux = VALUES(nasal_reflux),
+        swallowing_difficulty = VALUES(swallowing_difficulty),
+        amount_consumed = VALUES(amount_consumed),
+        meal_duration = VALUES(meal_duration),
+        alertness_level = VALUES(alertness_level),
+        posture_adequate = VALUES(posture_adequate),
+        observations = VALUES(observations),
+        photos_json = VALUES(photos_json),
+        logged_by = VALUES(logged_by)
+    `;
+    
+    // Converte array de fotos para JSON string para o banco
+    const photosJson = log.photos ? JSON.stringify(log.photos) : '[]';
+
+    await pool.query(query, [
+      log.id,
+      log.patientId,
+      log.date,
+      log.mealType || 'geral',
+      log.mealName || '',
+      log.foodConsistency || '',
+      log.coughChoke ? 1 : 0,
+      log.wetVoice ? 1 : 0,
+      log.multipleSwallows ? 1 : 0,
+      log.oralResidue ? 1 : 0,
+      log.nasalReflux ? 1 : 0,
+      log.swallowingDifficulty || 'Nenhuma',
+      log.amountConsumed || '',
+      log.mealDuration || 0,
+      log.alertnessLevel || '',
+      log.postureAdequate ? 1 : 0,
+      log.observations || '',
+      photosJson,
+      log.caregiverName || log.logged_by || ''
+    ]);
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Erro ao salvar feeding log:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.delete('/api/feeding-logs/:id', async (req, res) => {
+  try {
+    await pool.query('DELETE FROM daily_feeding_logs WHERE id = ?', [req.params.id]);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
