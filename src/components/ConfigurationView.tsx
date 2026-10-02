@@ -104,7 +104,7 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
 
   // Sincronizar Favicon e Ícones do Navegador/PWA
   useEffect(() => {
-    const iconSource = tempConfig.faviconUrl || tempConfig.logoUrl;
+    const iconSource = tempConfig.faviconUrl || '/pwa-512x512.png';
     updateBrowserFavicon(iconSource);
   }, [tempConfig.faviconUrl, tempConfig.logoUrl]);
 
@@ -147,7 +147,7 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
     setTimeout(() => setSavedSuccess(false), 3500);
 
     // Sincroniza Favicon do navegador com a nova configuração confirmada
-    const iconSource = tempConfig.faviconUrl || tempConfig.logoUrl;
+    const iconSource = tempConfig.faviconUrl || '/pwa-512x512.png';
     updateBrowserFavicon(iconSource);
   };
 
@@ -215,14 +215,14 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
   };
 
   const handleResetFavicon = () => {
-    const updated = { ...tempConfig, faviconUrl: '/assets/logo.png' };
+    const updated = { ...tempConfig, faviconUrl: '/pwa-512x512.png' };
     setTempConfig(updated);
     setHasPendingChanges(true);
     onUpdateClinicConfig(updated);
     localStorage.setItem('health_deglut_clinic_config', JSON.stringify(updated));
     saveClinicConfigToMariaDB(updated);
     // Sincronizado com MariaDB
-    updateBrowserFavicon('/assets/logo.png');
+    updateBrowserFavicon('/pwa-512x512.png');
     if (faviconInputRef.current) {
       faviconInputRef.current.value = '';
     }
@@ -1196,14 +1196,20 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
                     </div>
                   </div>
 
-                  {th.name !== 'Adriane Gama' && (
+                  {th.name !== 'Adriane Gama' ? (
                     <button
+                      type="button"
                       onClick={() => handleDeleteTherapist(th.id)}
-                      className="p-1.5 rounded-lg text-rose-400 hover:bg-rose-950/40 hover:text-rose-300 transition-colors"
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-rose-400 bg-rose-950/40 hover:bg-rose-900/60 border border-rose-800/50 transition-all cursor-pointer shadow-xs active:scale-95 shrink-0"
                       title="Excluir fonoaudióloga"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Trash2 className="w-3.5 h-3.5" />
+                      <span>Excluir Fono</span>
                     </button>
+                  ) : (
+                    <span className="text-[10px] px-2.5 py-1 rounded-lg bg-amber-950/60 text-amber-300 border border-amber-800/40 font-semibold shrink-0">
+                      RT Responsável
+                    </span>
                   )}
                 </div>
               );
