@@ -99,7 +99,7 @@ export const ConfigurationView: React.FC<ConfigurationViewProps> = ({
     setTempConfig(clinicConfig);
   }, [clinicConfig]);
   
-  const [systemLogs, setSystemLogs] = useState<string[]>([]);
+  const [systemLogs, setSystemLogs] = useState<any[]>([]);
 
   useEffect(() => {
     fetch('/api/system-logs')
