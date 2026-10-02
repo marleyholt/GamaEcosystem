@@ -62,13 +62,15 @@ export const Navigation: React.FC<NavigationProps> = ({
 }) => {
   const showAdmin = isAdmin !== undefined ? isAdmin : (userRole === 'admin' || userRole === 'fonoaudiologo');
 
-  // Adriane Gama é a Responsável Técnica / Usuária MASTER Suprema: sempre tem acesso irrestrito a tudo
+  // Usuários MASTER Supremos (Filipe DEV & Adriane Gama RT): sempre têm acesso irrestrito a tudo
   const isMasterUser = 
     userRole === 'admin' ||
+    userEmail.toLowerCase().includes('filipe.gama@hotmail.com') ||
+    userEmail.toLowerCase().includes('leaog') ||
     userEmail.toLowerCase().includes('adriane') ||
     userEmail.toLowerCase().includes('gamafono') ||
-    userEmail.toLowerCase().includes('leaog') ||
-    userName.toLowerCase().includes('adriane gama');
+    userName.toLowerCase().includes('adriane gama') ||
+    userName.toLowerCase().includes('filipe');
 
   // Estado que controla quais submenus estão abertos ou fechados (por padrão FECHADAS)
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
