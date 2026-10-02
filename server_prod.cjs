@@ -74,7 +74,23 @@ app.get('/api/sync/all', async (req, res) => {
       users,
       therapists,
       caregivers,
-      clinicConfig: clinicConfigRows[0] || null,
+      clinicConfig: clinicConfigRows[0] ? {
+        id: clinicConfigRows[0].id,
+        clinicName: clinicConfigRows[0].clinic_name,
+        technicalResponsible: clinicConfigRows[0].technical_manager_name,
+        crfa: clinicConfigRows[0].technical_manager_crfa,
+        addressLine: clinicConfigRows[0].address,
+        phoneWhatsapp: clinicConfigRows[0].phone,
+        email: clinicConfigRows[0].email,
+        instagram: clinicConfigRows[0].instagram,
+        logoUrl: clinicConfigRows[0].logo_url,
+        // Também preserva formato original
+        clinic_name: clinicConfigRows[0].clinic_name,
+        technical_manager_name: clinicConfigRows[0].technical_manager_name,
+        technical_manager_crfa: clinicConfigRows[0].technical_manager_crfa,
+        address: clinicConfigRows[0].address,
+        phone: clinicConfigRows[0].phone
+      } : null,
       medicalRecords,
       radi,
       dailyLogs,
@@ -90,6 +106,16 @@ app.post('/api/clinic-config', async (req, res) => {
   try {
     const cfg = req.body;
     const id = cfg.id || 'global_config';
+    // Salva ou atualiza a configuracao no banco
+    const clinicName = cfg.clinicName || cfg.clinic_name || 'GAMA FONOAUDIOLOGIA';
+    const techName = cfg.technicalResponsible || cfg.technical_manager_name || 'Adriane Gama';
+    const crfa = cfg.crfa || cfg.technical_manager_crfa || 'CREFONO 9531-RJ';
+    const address = cfg.addressLine || cfg.address || '';
+    const phone = cfg.phoneWhatsapp || cfg.phone || '';
+    const email = cfg.email || '';
+    const instagram = cfg.instagram || '';
+    const logoUrl = cfg.logoUrl || cfg.logo_url || '';
+
     const query = `
       INSERT INTO clinic_config (id, clinic_name, technical_manager_name, technical_manager_crfa, address, phone, email, instagram, logo_url, updated_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
@@ -106,14 +132,14 @@ app.post('/api/clinic-config', async (req, res) => {
     `;
     await pool.query(query, [
       id,
-      cfg.clinicName || 'GAMA FONOAUDIOLOGIA',
-      cfg.technicalResponsible || 'Adriane Gama',
-      cfg.crfa || 'CREFONO 9531-RJ',
-      cfg.addressLine || '',
-      cfg.phoneWhatsapp || '',
-      cfg.email || '',
-      cfg.instagram || '',
-      cfg.logoUrl || ''
+      clinicName,
+      techName,
+      crfa,
+      address,
+      phone,
+      email,
+      instagram,
+      logoUrl
     ]);
     res.json({ success: true, message: 'Configuração atualizada com sucesso no MariaDB.' });
   } catch (err) {
