@@ -61,6 +61,20 @@ import {
   saveCaregiverToMariaDB
 } from './services/mariaDBSync';
 
+
+// Helper para gravar no localStorage de forma resiliente (evita crash se o limite do navegador for atingido)
+const safeLocalStorageSetItem = (key: string, value: string) => {
+  try {
+    safeLocalStorageSetItem(key, value);
+  } catch (e) {
+    if (e instanceof DOMException && (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED')) {
+      console.warn(`Aviso: Limite do Navegador (LocalStorage) atingido para a chave "${key}". Os dados estao salvos no MariaDB, mas o cache local esta saturado.`);
+    } else {
+      console.error(`Erro ao gravar no localStorage [${key}]:`, e);
+    }
+  }
+};
+
 export default function App() {
   // Authentication State:
   // Regras estritas de segurança de sessão:
@@ -266,57 +280,57 @@ export default function App() {
 
   // Sync to localStorage
   useEffect(() => {
-    localStorage.setItem('health_deglut_official_evolutions', JSON.stringify(officialEvolutions));
+    safeLocalStorageSetItem('health_deglut_official_evolutions', JSON.stringify(officialEvolutions));
   }, [officialEvolutions]);
 
   // Sync to localStorage
   useEffect(() => {
-    localStorage.setItem('health_deglut_clinic_config', JSON.stringify(clinicConfig));
+    safeLocalStorageSetItem('health_deglut_clinic_config', JSON.stringify(clinicConfig));
   }, [clinicConfig]);
 
   useEffect(() => {
-    localStorage.setItem('health_deglut_caregivers', JSON.stringify(caregivers));
+    safeLocalStorageSetItem('health_deglut_caregivers', JSON.stringify(caregivers));
   }, [caregivers]);
 
   useEffect(() => {
-    localStorage.setItem('health_deglut_therapists', JSON.stringify(therapists));
+    safeLocalStorageSetItem('health_deglut_therapists', JSON.stringify(therapists));
   }, [therapists]);
 
   // Sync to localStorage
   useEffect(() => {
     if (currentUser) {
-      localStorage.setItem('health_deglut_user', JSON.stringify(currentUser));
+      safeLocalStorageSetItem('health_deglut_user', JSON.stringify(currentUser));
     } else {
       localStorage.removeItem('health_deglut_user');
     }
   }, [currentUser]);
 
   useEffect(() => {
-    localStorage.setItem('health_deglut_patients', JSON.stringify(patients));
+    safeLocalStorageSetItem('health_deglut_patients', JSON.stringify(patients));
   }, [patients]);
 
   useEffect(() => {
-    localStorage.setItem('health_deglut_medical_records', JSON.stringify(medicalRecords));
+    safeLocalStorageSetItem('health_deglut_medical_records', JSON.stringify(medicalRecords));
   }, [medicalRecords]);
 
   useEffect(() => {
-    localStorage.setItem('health_deglut_assessments', JSON.stringify(assessments));
+    safeLocalStorageSetItem('health_deglut_assessments', JSON.stringify(assessments));
   }, [assessments]);
 
   useEffect(() => {
-    localStorage.setItem('health_deglut_logs', JSON.stringify(dailyLogs));
+    safeLocalStorageSetItem('health_deglut_logs', JSON.stringify(dailyLogs));
   }, [dailyLogs]);
 
   useEffect(() => {
-    localStorage.setItem('health_deglut_photos', JSON.stringify(allPhotos));
+    safeLocalStorageSetItem('health_deglut_photos', JSON.stringify(allPhotos));
   }, [allPhotos]);
 
   useEffect(() => {
-    localStorage.setItem('health_deglut_messages', JSON.stringify(chatMessages));
+    safeLocalStorageSetItem('health_deglut_messages', JSON.stringify(chatMessages));
   }, [chatMessages]);
 
   useEffect(() => {
-    localStorage.setItem('health_deglut_users_list', JSON.stringify(usersList));
+    safeLocalStorageSetItem('health_deglut_users_list', JSON.stringify(usersList));
   }, [usersList]);
 
   // Theme state (Dark mode by default, persisted)
@@ -326,7 +340,7 @@ export default function App() {
   });
 
   useEffect(() => {
-    localStorage.setItem('health_deglut_theme', darkMode ? 'dark' : 'light');
+    safeLocalStorageSetItem('health_deglut_theme', darkMode ? 'dark' : 'light');
     if (darkMode) {
       document.documentElement.classList.remove('theme-light');
       document.documentElement.classList.add('theme-dark');
@@ -405,7 +419,7 @@ export default function App() {
             includeSignatureOnPrint: false
           };
           setClinicConfig(freshClinicConfig);
-          localStorage.setItem('health_deglut_clinic_config', JSON.stringify(freshClinicConfig));
+          safeLocalStorageSetItem('health_deglut_clinic_config', JSON.stringify(freshClinicConfig));
         }
 
         // 2. Terapeutas do MariaDB (Sincronizados IMEDIATAMENTE com freshClinicConfig da RT)
@@ -414,12 +428,12 @@ export default function App() {
           : therapists;
         const syncedTherapists = syncTherapistsWithRT(baseTherapists, freshClinicConfig);
         setTherapists(syncedTherapists);
-        localStorage.setItem('health_deglut_therapists', JSON.stringify(syncedTherapists));
+        safeLocalStorageSetItem('health_deglut_therapists', JSON.stringify(syncedTherapists));
 
         // 3. Cuidadores do MariaDB
         if (dbData.caregivers && Array.isArray(dbData.caregivers) && dbData.caregivers.length > 0) {
           setCaregivers(dbData.caregivers);
-          localStorage.setItem('health_deglut_caregivers', JSON.stringify(dbData.caregivers));
+          safeLocalStorageSetItem('health_deglut_caregivers', JSON.stringify(dbData.caregivers));
         }
 
         // 4. Prontuários do MariaDB
@@ -441,7 +455,7 @@ export default function App() {
             createdAt: u.created_at || new Date().toISOString()
           }));
           setUsersList(mappedUsers);
-          localStorage.setItem('health_deglut_users_list', JSON.stringify(mappedUsers));
+          safeLocalStorageSetItem('health_deglut_users_list', JSON.stringify(mappedUsers));
         }
       }
     });
@@ -561,7 +575,7 @@ export default function App() {
             updatedUser.role = 'admin';
             updatedUser.allowedTabs = ['resumo', 'prontuario', 'radi', 'registro', 'historico', 'chat', 'pacientes', 'relatorios', 'configuracao'];
           }
-          localStorage.setItem('health_deglut_user', JSON.stringify(updatedUser));
+          safeLocalStorageSetItem('health_deglut_user', JSON.stringify(updatedUser));
           setCurrentUser(updatedUser);
         }}
         availableUsers={usersList}
@@ -780,18 +794,18 @@ export default function App() {
               caregivers={caregivers}
               onUpdateCaregivers={(newCgs) => {
                 setCaregivers(newCgs);
-                localStorage.setItem('health_deglut_caregivers', JSON.stringify(newCgs));
+                safeLocalStorageSetItem('health_deglut_caregivers', JSON.stringify(newCgs));
               }}
               therapists={therapists}
               onUpdateTherapists={(newThs) => {
                 setTherapists(newThs);
-                localStorage.setItem('health_deglut_therapists', JSON.stringify(newThs));
+                safeLocalStorageSetItem('health_deglut_therapists', JSON.stringify(newThs));
               }}
               patients={patients}
               users={usersList}
               onUpdateUsers={(newUsers) => {
                 setUsersList(newUsers);
-                localStorage.setItem('health_deglut_users_list', JSON.stringify(newUsers));
+                safeLocalStorageSetItem('health_deglut_users_list', JSON.stringify(newUsers));
               }}
               onApproveUser={handleApproveUser}
               onRejectUser={handleRejectUser}
