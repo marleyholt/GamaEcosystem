@@ -77,7 +77,7 @@ app.get('/api/sync/all', async (req, res) => {
       clinicConfig: clinicConfigRows[0] ? {
         id: clinicConfigRows[0].id,
         clinicName: clinicConfigRows[0].clinic_name,
-        technicalResponsible: clinicConfigRows[0].technical_manager_name || 'Adriane Paes da Gama',
+        technicalResponsible: clinicConfigRows[0].technical_manager_name || '',
         crfa: clinicConfigRows[0].technical_manager_crfa,
         addressLine: clinicConfigRows[0].address,
         phoneWhatsapp: clinicConfigRows[0].phone,
@@ -107,12 +107,12 @@ app.post('/api/clinic-config', async (req, res) => {
     const cfg = req.body;
     const id = cfg.id || 'global_config';
     // Salva ou atualiza a configuracao no banco
-    const clinicName = cfg.clinicName || cfg.clinic_name || 'GAMA FONOAUDIOLOGIA';
-    const techName = cfg.technicalResponsible || cfg.technical_manager_name || 'Adriane Gama';
-    const crfa = cfg.crfa || cfg.technical_manager_crfa || 'CREFONO 9531-RJ';
+    const clinicName = cfg.clinicName || cfg.clinic_name || '';
+    const techName = cfg.technicalResponsible || cfg.technical_manager_name || '';
+    const crfa = cfg.crfa || cfg.technical_manager_crfa || '';
     const address = cfg.addressLine || cfg.address || '';
     const phone = cfg.phoneWhatsapp || cfg.phone || '';
-    const email = cfg.email || 'adrianepaesdagama@gmail.com';
+    const email = cfg.email || '';
     const instagram = cfg.instagram || '';
     const logoUrl = cfg.logoUrl || cfg.logo_url || '';
 
